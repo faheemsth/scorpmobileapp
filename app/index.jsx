@@ -1,0 +1,43 @@
+import { router } from 'expo-router';
+import { useEffect } from 'react';
+import { StyleSheet, Text } from 'react-native';
+import datalayer from './datalayer';
+import { useFonts } from 'expo-font';
+
+export default function App() {
+  const [loaded, error] = useFonts({
+    'outfit-100': require('../assets/fonts/outfit-100.otf'),
+    'outfit-200': require('../assets/fonts/outfit-200.otf'),
+    'outfit-300': require('../assets/fonts/outfit-300.otf'),
+    'outfit-400': require('../assets/fonts/outfit-400.otf'),
+    'outfit-500': require('../assets/fonts/outfit-500.otf'),
+    'outfit-600': require('../assets/fonts/outfit-600.otf'),
+    'outfit-700': require('../assets/fonts/outfit-700.otf'),
+    'outfit-800': require('../assets/fonts/outfit-800.otf'),
+    'outfit-900': require('../assets/fonts/outfit-900.otf'),
+  })
+  useEffect(() => {
+    const authCheck = async () => {
+      const token = await datalayer.getData(datalayer.KEYS.token)
+      console.log("index ", token)
+      if (!!token) { // token exists 
+        router.replace("/clock-in-out")
+      } else {
+        router.replace("./onboarding/hello")
+      }
+    }
+    if (loaded) {
+      authCheck().catch(console.error)
+    } 
+  }, [loaded])
+  return (<Text>Loading Fonts</Text>);
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});
