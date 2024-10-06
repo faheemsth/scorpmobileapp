@@ -1,7 +1,7 @@
 import { router } from 'expo-router';
 import { useEffect } from 'react';
 import { StyleSheet, Text } from 'react-native';
-import datalayer from './datalayer';
+import datalayer from '../datalayer/datalayer';
 import { useFonts } from 'expo-font';
 
 export default function App() {

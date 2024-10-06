@@ -11,6 +11,14 @@ const TasksStack = () => {
                     headerShown: false
                 }}
             />
+            <Stack.Screen
+                name='create-task'
+                options={{
+                    headerTitle: "Create Task",
+                    headerTransparent: true,
+
+                }}
+                />
         </Stack>
     )
 }

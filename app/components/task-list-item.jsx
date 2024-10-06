@@ -1,4 +1,4 @@
-import { StyleSheet, View, Image, Text, TouchableOpacity } from "react-native";
+import {StyleSheet, View, Image, Text, TouchableOpacity} from 'react-native';
 
 export function TaskListItem({
   imageUrl,
@@ -13,13 +13,12 @@ export function TaskListItem({
     <>
       <View
         style={{
-          display: "flex",
-          flexDirection: "row",
-          alignItems: "baseline",
-          width: "100%",
-        }}
-      >
-        <View style={{ flex: 1, flexDirection: "row", alignItems: "center" }}>
+          display: 'flex',
+          flexDirection: 'row',
+          alignItems: 'baseline',
+          width: '100%',
+        }}>
+        <View style={{flex: 1, flexDirection: 'row', alignItems: 'center'}}>
           <View>
             <Image
               style={{
@@ -28,12 +27,12 @@ export function TaskListItem({
                 marginLeft: 12,
                 borderRadius: 20,
                 borderWidth: 1,
-                borderColor: "black",
+                borderColor: 'black',
               }}
-              source={{ uri: imageUrl }}
+              source={{uri: imageUrl}}
             />
           </View>
-          <View style={{ marginLeft: 8 }}>
+          <View style={{marginLeft: 8}}>
             <Text style={styles.texts}>{name}</Text>
             <Text style={styles.dates}>{date}</Text>
           </View>
@@ -44,12 +43,14 @@ export function TaskListItem({
               styles.btnStatus,
               {
                 backgroundColor:
-                  status?.toLowerCase() == "on going" ? "#FDC933" : (status?.toLowerCase() == "overdue" ? "#D5213C" : "#11A120") ,
-                color:
-                  status?.toLowerCase() == "on going" ? "#000" : "#FFFFFF",
+                  status?.toLowerCase() == 'on going'
+                    ? '#FDC933'
+                    : status?.toLowerCase() == 'overdue'
+                    ? '#D5213C'
+                    : '#11A120',
+                color: status?.toLowerCase() == 'on going' ? '#000' : '#FFFFFF',
               },
-            ]}
-          >
+            ]}>
             {status}
           </Text>
         </View>
@@ -57,35 +58,39 @@ export function TaskListItem({
 
       <View
         style={{
-          display: "flex",
-          flexDirection: "row",
-          alignItems: "baseline",
-          width: "100%",
+          display: 'flex',
+          flexDirection: 'row',
+          alignItems: 'baseline',
+
           marginLeft: 50,
-          justifyContent: "flex-start",
+          marginRight: 15,
+          justifyContent: 'space-between',
           marginBottom: 10,
-          justifyContent: "space-between",
-        }}
-      >
+          justifyContent: 'space-between',
+        }}>
         <View>
-          <Text style={styles.description}>{description}</Text>
-          <Text style={styles.subdescription}>{descriptionText}</Text>
+          {!!description && (
+            <Text style={styles.description}>{description}</Text>
+          )}
+          {!!descriptionText && (
+            <Text style={styles.subdescription}>{descriptionText}</Text>
+          )}
         </View>
-        <TouchableOpacity activeOpacity={0.7} style={{ alignSelf: "flex-end" }}>
-          <View>
-            <Text style={styles.details}>{onDetailClick}</Text>
-          </View>
-        </TouchableOpacity>
+        {!!onDetailClick && (
+          <TouchableOpacity onPress={onDetailClick} activeOpacity={0.7} style={{alignSelf: 'flex-end'}}>
+            <Text style={styles.details}>Show Details</Text>
+          </TouchableOpacity>
+        )}
       </View>
 
       <View
         style={{
           borderBottomWidth: 1,
-          borderBottomColor: "rgba(0, 0, 0, 0.25)",
-          borderStyle: "dashed",
-          width: "100%",
-          justifyContent: "center",
-          alignSelf: "center",
+          borderBottomColor: 'rgba(0, 0, 0, 0.25)',
+          borderStyle: 'dashed',
+          width: '100%',
+          justifyContent: 'center',
+          alignSelf: 'center',
         }}
       />
     </>
@@ -95,26 +100,26 @@ export function TaskListItem({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: '#FFFFFF',
     gap: 17,
   },
 
   dates: {
-    backgroundColor: "#4884FB",
-    width: "auto",
+    backgroundColor: '#4884FB',
+    width: 'auto',
     borderRadius: 20,
 
-    color: "#FFFFFF",
+    color: '#FFFFFF',
     fontSize: 11,
     marginTop: 3,
     paddingVertical: 2,
-    justifyContent: "center",
-    textAlign: "center",
+    justifyContent: 'center',
+    textAlign: 'center',
   },
   btnStatus: {
-    alignSelf: "flex-end",
+    alignSelf: 'flex-end',
     marginRight: 13,
-    backgroundColor: "#FDC933",
+    backgroundColor: '#FDC933',
     borderRadius: 20,
     paddingHorizontal: 10,
     paddingVertical: 3,
@@ -122,30 +127,29 @@ const styles = StyleSheet.create({
   },
 
   description: {
-    fontWeight: "600",
+    fontWeight: '600',
   },
 
   subdescription: {
     fontSize: 11,
-    color: "#6C6C6C",
+    color: '#6C6C6C',
   },
 
   details: {
-    color: "#3FA3FF",
+    color: '#3FA3FF',
     fontSize: 10,
-    marginRight: 70,
   },
   btnB: {
-    backgroundColor: "#11A120",
+    backgroundColor: '#11A120',
     borderRadius: 20,
     marginRight: 13,
-    color: "#FFFFFF",
+    color: '#FFFFFF',
     paddingHorizontal: 10,
     paddingVertical: 3,
     fontSize: 11,
-    alignSelf: "flex-end",
+    alignSelf: 'flex-end',
   },
   texts: {
-    fontWeight: "600",
+    fontWeight: '600',
   },
 });

@@ -7,7 +7,7 @@ import Lock from "../../assets/icons/lock.svg";
 import Eye from "../../assets/icons/eye.svg";
 import ScreenOrientation, { Orientation } from 'expo-screen-orientation'
 import Btn from '../components/btn';
-import datalayer from '../datalayer';
+import datalayer from '../../datalayer/datalayer';
 import { router, useNavigation } from 'expo-router';
 import InputField from '../components/input-field';
 

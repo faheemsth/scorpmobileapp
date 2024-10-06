@@ -1,11 +1,12 @@
-import React from "react";
+import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
+import React, {useRef} from 'react';
 import {
   StyleSheet,
   View,
   TextInput,
   TouchableWithoutFeedback,
   Keyboard,
-} from "react-native";
+} from 'react-native';
 
 const InputField = ({
   style,
@@ -16,19 +17,37 @@ const InputField = ({
   onChange,
   trailing,
   multiline,
+  isBottomSheet,
+  readonly = false,
 }) => {
+  const ref = useRef()
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={[styles.iconedTextField, style]}>
         {leading}
-        <TextInput
-          multiline={multiline ?? false}
-          secureTextEntry={secureTextEntry}
-          style={styles.iconedTextField.inputField}
-          placeholder={placeholder}
-          value={value}
-          onChangeText={onChange}
-        />
+        {!!isBottomSheet ?? false ? (
+          <BottomSheetTextInput
+            ref={ref}
+            multiline={multiline ?? false}
+            secureTextEntry={secureTextEntry}
+            style={styles.iconedTextField.inputField}
+            placeholder={placeholder}
+            value={value}
+            onChangeText={onChange}
+            readOnly={readonly}
+          />
+        ) : (
+          <TextInput
+            ref={ref}
+            multiline={multiline ?? false}
+            secureTextEntry={secureTextEntry}
+            style={styles.iconedTextField.inputField}
+            placeholder={placeholder}
+            value={value}
+            onChangeText={onChange}
+            readOnly={readonly}
+          />
+        )}
         {trailing}
       </View>
     </TouchableWithoutFeedback>
@@ -40,18 +59,18 @@ const styles = StyleSheet.create({
     inputField: {
       paddingHorizontal: 8,
       flexGrow: 1,
-      height: "100%",
-      textAlignVertical: "top",
+      height: '100%',
+      textAlignVertical: 'top',
     },
-    overflow: "scroll",
-    display: "flex",
-    flexDirection: "row",
-    flexWrap: "nowrap",
-    alignItems: "center",
+    overflow: 'scroll',
+    display: 'flex',
+    flexDirection: 'row',
+    flexWrap: 'nowrap',
+    alignItems: 'center',
     padding: 8,
     borderWidth: 1,
     borderRadius: 5,
-    borderColor: "#167BC4",
+    borderColor: '#167BC4',
     marginHorizontal: 10,
   },
 });

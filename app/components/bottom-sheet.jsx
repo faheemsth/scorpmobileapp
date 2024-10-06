@@ -1,11 +1,14 @@
 import { View, Text, StyleSheet } from 'react-native'
 import React, { forwardRef, useEffect, useRef } from 'react'
-import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet';
+import BottomSheet, { BottomSheetModal, BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useFocusEffect } from 'expo-router';
 
 const Bottomsheet = forwardRef((props, ref) => {
-  const { children, onChange, style, onClose } = props
+  const { children, style } = props
+  const focusHook = useFocusEffect(()=>{
+    console.log("yoyoyo focused")
+  })
   
   return (
     <GestureHandlerRootView style={[styles.container, style]}>
@@ -17,6 +20,10 @@ const Bottomsheet = forwardRef((props, ref) => {
         enableDynamicSizing={true}
         animateOnMount={true}
         style={props.sheetStyle}
+        focusHook={focusHook}
+        snapPoints={["30%"]}
+        keyboardBehavior='extend'
+        android_keyboardInputMode='adjustPan'
       >
         <BottomSheetScrollView contentContainerStyle={[styles.contentContainer, style?.contentContainer]}>
           {children}
@@ -35,7 +42,7 @@ const styles = StyleSheet.create({
   contentContainer: {
     flex: 1,
     alignItems: 'flex-start',
-    padding: 15
+    padding: 15,
   },
 });
 

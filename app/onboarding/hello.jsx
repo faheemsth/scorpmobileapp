@@ -15,7 +15,7 @@ const Hello = () => {
                 <Text style={styles.hello}>Hello</Text>
                 <Image source={require("../../assets/welcome_icon.png")} />
                 <Text style={styles.message}>Streamline and Access Your Entire Business, Right from the Palm of Your Hand. Comprehensive Management from Operations to Analytics, All in One Place.</Text>
-                <Btn title={"Login to your Account"} handleClick={handleBtnClick} style={{paddingHorizontal: 50}} trailing={<><ArrowRight /></>} />
+                <Btn title={"Login to your Account"} handleClick={handleBtnClick} style={{paddingHorizontal: 50}} trailing={<><ArrowRight style={{color: "#fff"}} /></>} />
             </LinearGradient>
         </View>
     )
