@@ -17,7 +17,7 @@ import Clockmarked from '../../../assets/icons/clockmarked.svg';
 
 import {LinearGradient} from 'expo-linear-gradient';
 import datalayer from '../../../datalayer/datalayer';
-import {router} from 'expo-router';
+import {router, useFocusEffect} from 'expo-router';
 import WriteEarlyCheckoutReason from './write-early-check-out-reason';
 import Btn from '../../components/btn';
 

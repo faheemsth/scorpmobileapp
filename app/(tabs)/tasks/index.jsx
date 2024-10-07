@@ -1,46 +1,62 @@
 import {View, Text, Pressable} from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useCallback} from 'react';
 import {TaskListItem} from '../../components/task-list-item';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {ScrollView, StyleSheet} from 'react-native';
 import datalayer from '../../../datalayer/datalayer';
 
 import Plus from '../../../assets/icons/plus.svg';
-import CreateTask from './create-task';
-import {router, useNavigation} from 'expo-router';
-import ViewTask from './view-task';
+import {router, useFocusEffect} from 'expo-router';
 
 const AllTasks = () => {
   const [tasks, setTasks] = useState([]);
-  const [taskToView, setTaskToView] = useState()
   const [user, setUser] = useState();
 
   const addTaskBtnClick = async () => {
     router.push('/tasks/create-task');
   };
 
-  handleShowDetailClick = (task) => {
-    console.log("task to show", task)
-    setTaskToView(task?.["id"])
-  }
+  handleShowDetailClick = task => {
+    console.log('task to show', task);
+    router.navigate(`tasks/${task?.['id']}`);
+  };
 
-  useEffect(() => {
-    const asyncCall = async () => {
-      const u = await datalayer.authLayer.getUserAsync();
-      setUser(u);
-      const data = await datalayer.taskLayer.getTasks();
-      setTasks(data['tasks']);
-      console.log('tasks are', data['tasks']);
-    };
-    asyncCall().catch(console.error);
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      // Fetch user and tasks data asynchronously
+      const asyncCall = async () => {
+        try {
+          const u = await datalayer.authLayer.getUserAsync();
+          setUser(u);
+
+          const data = await datalayer.taskLayer.getTasks();
+          setTasks(data['tasks']);
+          console.log('tasks are', data['tasks']);
+        } catch (error) {
+          console.error(error);
+        }
+      };
+
+      asyncCall().catch(console.error);
+
+      // Cleanup function (optional)
+      return () => {
+        setUser(null); // Clear user data if needed
+        setTasks([]); // Clear tasks when screen is unfocused
+      };
+    }, []), // Empty dependency array to run only when the screen is focused
+  );
 
   return (
-    <SafeAreaView style={{position: 'relative', height: '100%'}}>
-      <ScrollView contentContainerStyle={{flex: 1}}>
-        {tasks.length == 0 && <Text style={styles.txt}>No Record Found</Text>}
-        {tasks.length > 0 && <Text style={styles.txt}>All Tasks</Text>}
-        {tasks.map(t => {
+    <SafeAreaView
+      style={{position: 'relative', height: '100%', backgroundColor: 'EFF3F7'}}>
+      <ScrollView contentContainerStyle={{flex: 1, gap: 10, padding: 10}}>
+        <Text style={[styles.txt, {fontSize: 24, alignSelf: 'center'}]}>
+          Tasks
+        </Text>
+        {tasks?.length == 0 && <Text style={styles.txt}>No Record Found</Text>}
+        {tasks?.length > 0 && <Text style={styles.txt}>All Tasks</Text>}
+        {tasks?.map(t => {
           let taskStatus;
           if (t['status'] == '1') {
             taskStatus = 'Completed';
@@ -55,48 +71,34 @@ const AllTasks = () => {
           }
           return (
             <TaskListItem
+              key={t?.['id']}
               name={user?.['name']}
               date={t?.['due_date']}
               imageUrl={user?.['avatar']}
               description={t?.['name']}
               status={taskStatus}
               descriptionText={t?.['description']}
-              onDetailClick={()=>{handleShowDetailClick(t)}}
+              onDetailClick={() => {
+                handleShowDetailClick(t);
+              }}
             />
           );
         })}
       </ScrollView>
-      {!!!taskToView && (
-        <Pressable
-          onPress={addTaskBtnClick}
-          style={{
-            position: 'absolute',
-            bottom: 29,
-            right: 13,
-            padding: 16,
-            backgroundColor: '#167BC4',
-            borderRadius: 5,
-            elevation: 4,
-            zIndex: 1,
-          }}>
-          <Plus />
-        </Pressable>
-      )}
-      {!!taskToView && (
-        <View
-          style={{
-            position: 'absolute',
-            width: '100%',
-            height: '100%',
-            bottom: 0,
-            backgroundColor: 'transparent',
-          }}>
-          <ViewTask
-            onClose={()=>setTaskToView(undefined)}
-            id={taskToView}
-          />
-        </View>
-      )}
+      <Pressable
+        onPress={addTaskBtnClick}
+        style={{
+          position: 'absolute',
+          bottom: 29,
+          right: 13,
+          padding: 16,
+          backgroundColor: '#167BC4',
+          borderRadius: 5,
+          elevation: 4,
+          zIndex: 1,
+        }}>
+        <Plus />
+      </Pressable>
     </SafeAreaView>
   );
 };

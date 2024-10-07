@@ -61,7 +61,7 @@ const RequestLeave = () => {
       end_date: `${endDate.getFullYear()}-${endDate.getMonth()}-${endDate.getDate()}`,
     });
     console.log('req', req);
-    if (req) router.back();
+    if (req) router.dismiss();
   };
 
   return (

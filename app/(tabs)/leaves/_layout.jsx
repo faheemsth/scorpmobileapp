@@ -7,6 +7,7 @@ const LeavesStack = () => {
     <Stack>
       <Stack.Screen name='index' options={{headerShown: false}} />
       <Stack.Screen name="request-leave" options={{headerTitle: "Request Leave", headerTransparent: true}} />
+      <Stack.Screen name="leave-history" options={{headerTitle: "Leave History", headerTransparent: true}} />
     </Stack>
   )
 }

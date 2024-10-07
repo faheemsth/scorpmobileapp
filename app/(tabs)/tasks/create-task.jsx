@@ -6,7 +6,7 @@ import {router, useNavigation} from 'expo-router';
 import datalayer from '../../../datalayer/datalayer';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import DateIcon from '../../../assets/icons/calendar.svg';
-import ClockIcon from '../../../assets/icons/clock.svg';
+import ClockIcon from '../../../assets/icons/timer.svg';
 import SearchableDropdown from '../../components/searchable-dropdown';
 
 const TaskField = ({
@@ -161,7 +161,7 @@ const CreateTask = ({onClose}) => {
     `${date.getHours()}:${date.getMinutes()}`;
 
   const dateToYYYYMMDD = (date = new Date()) => 
-    `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`
+    `${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()}`
 
   const create = async () => {
     const response = await datalayer.taskLayer.createTask({
@@ -177,6 +177,9 @@ const CreateTask = ({onClose}) => {
       remainder_time: dateToHHMM(remainderTime),
       assign_type: "user"
     });
+    if (response?.["status"].toLowerCase() == "success") {
+      router.dismiss()
+    }
     console.log("response", response)
   };
 

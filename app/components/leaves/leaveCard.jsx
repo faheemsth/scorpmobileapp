@@ -4,7 +4,13 @@ import styles from '../theme';
 
 const LeaveCard = ({
   uName = 'No Name...',
-  data = [{heading: 'heading', value: 'value', style: StyleSheet.create({style:{}}).style}],
+  data = [
+    {
+      heading: 'heading',
+      value: 'value',
+      style: StyleSheet.create({style: {}}).style,
+    },
+  ],
   url = 'https://s3-alpha-sig.figma.com/img/1097/3fce/926bc64490c18217630a6c74affe3172?Expires=1728864000&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=aMAoK8gJb54DRLNClhEt8YpqwjHcpF8D2u8t3kXfEOoXoJDsV3jOgG0VyW22ICGEDOdrEEGyURcAqwoKdmKG1WEAc~OwuOC8fSwKbY26HnBde64zxOU49Df0U1FNCVrAVyb1b205tFXJHqgHC~wmvUytSId3vrmsHzEOClI5OLSILmm5nyQPHq80XGk2UAqaUlO0jJRhJoFQ1eWVihPJbnnFGefHtbKZrUaIGZVT6bXEiMOg9cDrTC8SmkPMkgZBtDsICmYw2Qwax8WShjtoNwCtwPoYNlqiHd9lnMPO7zh-m0Za8n5JeQAtaAg4bMiGspR4QdFxdsTw7WKlLq1QDg__',
 }) => {
   return (
@@ -31,9 +37,19 @@ const LeaveCard = ({
       </View>
       {data?.map(e => (
         <View
-          style={[styles.row, styles.justifyBetween, styles.alignItemsCenter]}>
-          <Text style={[styles.font(400), styles.size(12)]}>{e.heading}</Text>
-          <Text style={[styles.font(400), styles.size(10), e.style]}>{e.value}</Text>
+          style={[
+            styles.row,
+            styles.alignItemsCenter,
+            {justifyContent: 'flex-start'},
+          ]}>
+          <Text style={[styles.font(400), styles.size(12), {flex: 0.8}]}>
+            {e.heading}
+          </Text>
+          <View style={{flex: 1}}>
+            <Text style={[styles.font(400), styles.size(10), e.style]}>
+              {e.value}
+            </Text>
+          </View>
         </View>
       ))}
     </View>
@@ -41,3 +57,4 @@ const LeaveCard = ({
 };
 
 export default LeaveCard;
+0;

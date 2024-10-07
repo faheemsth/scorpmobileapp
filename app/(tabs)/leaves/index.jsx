@@ -1,5 +1,5 @@
 import {View, Text, StyleSheet, Pressable, ScrollView} from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import LeavesOverview from '../../components/leaves/overview';
 import styles from '../../components/theme';
@@ -7,45 +7,64 @@ import LeaveCard from '../../components/leaves/leaveCard';
 import datalayer from '../../../datalayer/datalayer';
 import Btn from '../../components/btn';
 import PlusIcon from '../../../assets/icons/plus.svg';
-import {router} from 'expo-router';
+import {router, useFocusEffect, useNavigation} from 'expo-router';
 
 const LeavesTab = () => {
   const [leaves, setLeaves] = useState([]);
   const [leavesTypes, setLeavesTypes] = useState([]);
   const [user, setUser] = useState();
 
-  useEffect(() => {
-    fetchAsync = async () => {
-      const lvs = (await datalayer.leavesLayer.getLeaves())?.['leaves'];
-      const lvsTypes = (
-        await datalayer.leavesLayer.getLeavesTypesAndAllowed()
-      )?.['leaveType'];
-      const lvsWithType = lvs.map(e => {
-        return {
-          ...e,
-          leave_type: lvsTypes?.filter(
-            f => f?.['id'] == e?.['leave_type_id'],
-          )?.[0]?.['title'],
-        };
-      });
+  const nav = useNavigation();
 
-      const lvsTypesWithUsed = lvsTypes.map(e => {
-        return {
-          ...e,
-          used: lvs.filter(f => f?.['leave_type_id'] == e?.['id'])?.length,
-        };
-      });
+  // Use useFocusEffect correctly
+  useFocusEffect(
+    useCallback(() => {
+      console.log('leaves is focused');
 
-      setUser(await datalayer.authLayer.getUserAsync());
-      setLeaves(lvsWithType);
-      setLeavesTypes(lvsTypesWithUsed);
-    };
-    fetchAsync().catch(console.error);
-  }, []);
+      // Async function to fetch data
+      const fetchAsync = async () => {
+        try {
+          const lvs = (await datalayer.leavesLayer.getLeaves())?.['leaves'];
+          const lvsTypes = (
+            await datalayer.leavesLayer.getLeavesTypesAndAllowed()
+          )?.['leaveType'];
+
+          const lvsWithType = lvs?.map(e => ({
+            ...e,
+            leave_type: lvsTypes?.find(f => f?.['id'] === e?.['leave_type_id'])?.['title'],
+          }));
+
+          const lvsTypesWithUsed = lvsTypes?.map(e => ({
+            ...e,
+            used: lvs.filter(f => f?.['leave_type_id'] === e?.['id'])?.length,
+          }));
+
+          setUser(await datalayer.authLayer.getUserAsync());
+          setLeaves(lvsWithType);
+          setLeavesTypes(lvsTypesWithUsed);
+        } catch (error) {
+          console.error(error);
+        }
+      };
+
+      fetchAsync();
+
+      // Cleanup function to clear the state (if needed)
+      return () => {
+        setLeaves([]);
+        setLeavesTypes([]);
+        setUser(null);
+      };
+    }, [nav]) // Dependency array includes nav
+  );
+
+  handleLeaveHistoryClick = () => {
+    router.navigate('/leaves/leave-history')
+  }
 
   handleAddNewLeave = () => {
     console.log('trying to navigate');
-    router.navigate('/leaves/request-leave');
+    router.navigate(`/leaves/${leaves}`);
   };
 
   return (
@@ -70,7 +89,11 @@ const LeavesTab = () => {
         ]}>
         <Text style={[styles.font(500), styles.size(20)]}>My Leaves</Text>
         {!!leaves && leavesTypes && (
-          <LeavesOverview leaves={leaves} leavesTypes={leavesTypes} />
+          <LeavesOverview
+            key={'090078601'}
+            leaves={leaves}
+            leavesTypes={leavesTypes}
+          />
         )}
         <View style={[styles.gap(10)]}>
           <View
@@ -92,6 +115,7 @@ const LeavesTab = () => {
               Approvals
             </Text>
             <Pressable
+              onPress={handleLeaveHistoryClick}
               style={[
                 styles.ph(16),
                 styles.pv(8),
@@ -102,9 +126,10 @@ const LeavesTab = () => {
               </Text>
             </Pressable>
           </View>
-          {leaves.map(e => {
+          {leaves?.map(e => {
             return (
               <LeaveCard
+                url={user?.['avatar']}
                 key={e?.['id']}
                 uName={user?.['name']}
                 data={[
@@ -141,11 +166,12 @@ const LeavesTab = () => {
         </View>
       </ScrollView>
       <Btn
-        handleClick={handleAddNewLeave}
+        handleClick={() => {
+          handleAddNewLeave();
+        }}
         leading={<PlusIcon />}
         gradientColors={['#167BC4', '#6E7072']}
         title={'Add New Leave'}
-        style={{position: 'absolute', bottom: 15, left: 0}}
       />
     </SafeAreaView>
   );

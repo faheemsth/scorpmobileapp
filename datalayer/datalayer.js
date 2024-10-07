@@ -84,6 +84,23 @@ const LocationLayer = (() => {
 })();
 
 const TasksLayer = (() => {
+  const markCompleted = async (id)=>{
+    const token = await getData(keys.token);
+    if (!!!token) {
+      console.error('no token');
+      return false;
+    }
+    const res = await fetch(`${base_url}TaskStatusChange`, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({id: id})
+    });
+    return (await res.json())?.["status"] == "success";
+  }
   const getTasks = async () => {
     const token = await getData(keys.token);
     if (!!!token) {
@@ -153,7 +170,7 @@ const TasksLayer = (() => {
       console.error('no token');
       return false;
     }
-    const res = await fetch(`${base_url}createtask`, {
+    const res = await fetch(`${base_url}getTaskDetails`, {
       method: 'POST',
       headers: {
         Accept: 'application/json',
@@ -162,18 +179,20 @@ const TasksLayer = (() => {
       },
       body: JSON.stringify({task_id}),
     });
-    return await res.json();
+    return (await res.json());
   };
   return {
-    createTask: createTask,
-    getTasks: getTasks,
-    getTaskDetails: getTaskDetails,
+    markCompleted,
+    createTask,
+    getTasks,
+    getTaskDetails,
   };
 })();
 
 const AuthLayer = (() => {
   const getById = async (type, id) => {
-    if (type !== "region" || type !== "branch" || type !== "user") throw "only region, branch or user is allowed as type"
+    console.log("trying to get ", type, id)
+    if (type != "region" && type != "branch" && type != "user") throw "only region, branch or user is allowed as type"
 
     const token = await getData(keys.token);
     if (!!!token) {
