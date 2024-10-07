@@ -51,7 +51,7 @@ const InputField = ({
               !!multiline
                 ? styles.textAlignTopVertical
                 : styles.textAlignCenterVertical,
-              style.fieldStyle,
+              style?.fieldStyle,
             ]}
             placeholder={placeholder}
             value={value}
