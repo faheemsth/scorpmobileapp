@@ -1,4 +1,11 @@
-import {StyleSheet, View, Image, Text, TouchableOpacity} from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Image,
+  Text,
+  TouchableOpacity,
+  Pressable,
+} from 'react-native';
 import UserIcon from '../../assets/icons/profile.svg';
 
 export function TaskListItem({
@@ -11,38 +18,44 @@ export function TaskListItem({
   onDetailClick,
 }) {
   return (
-    <>
-      <View
-        style={{
-          display: 'flex',
-          flexDirection: 'row',
-          alignItems: 'baseline',
-          width: '100%',
-        }}>
-        <View style={{flex: 1, flexDirection: 'row', alignItems: 'center'}}>
-          <View>
-            {imageUrl ? (
-              <Image
-                style={{
-                  height: 32,
-                  width: 32,
-                  marginLeft: 12,
-                  borderRadius: 20,
-                  borderWidth: 1,
-                  borderColor: 'black',
-                }}
-                source={{uri: imageUrl}}
-              />
-            ) : (
-              <UserIcon width={32} height={32} style={{color: '#D9D9D9'}} />
-            )}
+    <View
+      style={{
+        borderBottomWidth: 1,
+        paddingBottom: 10,
+        borderStyle: 'dashed',
+        flexDirection: 'row',
+        gap: 10,
+      }}>
+      {imageUrl ? (
+        <Image
+          style={{
+            height: 32,
+            width: 32,
+            marginLeft: 12,
+            borderRadius: 20,
+            borderWidth: 1,
+            borderColor: 'black',
+          }}
+          source={{uri: imageUrl}}
+        />
+      ) : (
+        <UserIcon width={32} height={32} style={{color: '#D9D9D9'}} />
+      )}
+      <View style={{flexDirection: 'column', flex: 1, gap: 10}}>
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            flex: 1,
+          }}>
+          <View style={{flexDirection: 'column'}}>
+            <Text numberOfLines={1} ellipsizeMode="tail" style={styles.texts}>
+              {description}
+            </Text>
+            <Text numberOfLines={1} ellipsizeMode="tail" style={styles.dates}>
+              {date}
+            </Text>
           </View>
-          <View style={{marginLeft: 8}}>
-            <Text style={styles.texts}>{description}</Text>
-            <Text style={styles.dates}>{date}</Text>
-          </View>
-        </View>
-        <View>
           <Text
             style={[
               styles.btnStatus,
@@ -59,49 +72,27 @@ export function TaskListItem({
             {status}
           </Text>
         </View>
-      </View>
-
-      <View
-        style={{
-          display: 'flex',
-          flexDirection: 'row',
-          alignItems: 'baseline',
-
-          marginLeft: 50,
-          marginRight: 15,
-          justifyContent: 'space-between',
-          marginBottom: 10,
-          justifyContent: 'space-between',
-        }}>
-        <View>
-          {!!description && (
-            <Text style={styles.description}>{name}</Text>
-          )}
-          {!!descriptionText && (
-            <Text style={styles.subdescription}>{descriptionText}</Text>
-          )}
+        <Text style={styles.description}>{name}</Text>
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            flex: 1,
+          }}>
+          <Text
+            numberOfLines={1}
+            ellipsizeMode="tail"
+            style={styles.subdescription}>
+            {descriptionText ?? "No Description"}
+          </Text>
+          <Pressable onPress={onDetailClick}>
+            <Text numberOfLines={1} ellipsizeMode="tail" style={styles.details}>
+              Show Details
+            </Text>
+          </Pressable>
         </View>
-        {!!onDetailClick && (
-          <TouchableOpacity
-            onPress={onDetailClick}
-            activeOpacity={0.7}
-            style={{alignSelf: 'flex-end'}}>
-            <Text style={styles.details}>Show Details</Text>
-          </TouchableOpacity>
-        )}
       </View>
-
-      <View
-        style={{
-          borderBottomWidth: 1,
-          borderBottomColor: 'rgba(0, 0, 0, 0.25)',
-          borderStyle: 'dashed',
-          width: '100%',
-          justifyContent: 'center',
-          alignSelf: 'center',
-        }}
-      />
-    </>
+    </View>
   );
 }
 
@@ -126,7 +117,6 @@ const styles = StyleSheet.create({
   },
   btnStatus: {
     alignSelf: 'flex-end',
-    marginRight: 13,
     backgroundColor: '#FDC933',
     borderRadius: 20,
     paddingHorizontal: 10,
@@ -135,8 +125,8 @@ const styles = StyleSheet.create({
   },
 
   description: {
-    fontFamily: "outfit-600",
-    color: "#6c6c6c88"
+    fontFamily: 'outfit-600',
+    color: '#6c6c6c88',
   },
 
   subdescription: {
@@ -159,6 +149,6 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-end',
   },
   texts: {
-    fontFamily: "outfit-600"
+    fontFamily: 'outfit-600',
   },
 });

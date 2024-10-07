@@ -30,7 +30,12 @@ const InputField = ({
             ref={ref}
             multiline={multiline ?? false}
             secureTextEntry={secureTextEntry}
-            style={styles.iconedTextField.inputField}
+            style={[
+              styles.iconedTextField.inputField,
+              !!multiline
+                ? styles.textAlignTopVertical
+                : styles.textAlignCenterVertical,
+            ]}
             placeholder={placeholder}
             value={value}
             onChangeText={onChange}
@@ -41,7 +46,13 @@ const InputField = ({
             ref={ref}
             multiline={multiline ?? false}
             secureTextEntry={secureTextEntry}
-            style={styles.iconedTextField.inputField}
+            style={[
+              styles.iconedTextField.inputField,
+              !!multiline
+                ? styles.textAlignTopVertical
+                : styles.textAlignCenterVertical,
+              style.fieldStyle,
+            ]}
             placeholder={placeholder}
             value={value}
             onChangeText={onChange}

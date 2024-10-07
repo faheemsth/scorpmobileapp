@@ -5,6 +5,7 @@ import styles from '../components/theme';
 import datalayer from '../../datalayer/datalayer';
 import InputField from '../components/input-field';
 import UserIcon from '../../assets/icons/profile.svg';
+import EmailIcon from "../../assets/icons/email.svg"
 
 const Profile = () => {
   const [user, setUser] = useState();
@@ -19,73 +20,76 @@ const Profile = () => {
   }, []);
 
   return (
-    <ScrollView contentContainerStyle={{flex: 1, gap: 10}}>
+    <ScrollView contentContainerStyle={{flex: 1, gap: 47+20}}>
       <LinearGradient
         colors={['#D4E5F2', '#167BC4']}
         style={{
           display: 'flex',
           flexDirection: 'column',
           width: '100%',
-          borderBottomLeftRadius: 10,
-          borderBottomRightRadius: 10,
           flexDirection: 'column',
           alignItems: 'center',
           alignContent: 'center',
           gap: 10,
+          height: 137,
         }}>
         <View style={{height: 35}} />
         <Text style={[styles.font(500), styles.size(24)]}>Profile</Text>
-        {!!user?.['avatar'] ? (
-          <Image
-            fadeDuration={1000}
-            source={{
-              height: 135,
-              width: 135,
-              uri: user?.['avatar'],
-            }}
-            style={{
-              borderRadius: 400,
-              borderColor: 'white',
-              borderWidth: 2,
-              marginTop: 12,
-            }}
-          />
-        ) : (
-          <UserIcon height={135} width={135} style={{color: '#D9D9D9'}} />
-        )}
+        <View style={{position: 'absolute', bottom: -46.5, backgroundColor: "white", borderRadius: 1000}}>
+          {!!user?.['avatar'] ? (
+            <Image
+              fadeDuration={1000}
+              source={{
+                height: 93,
+                width: 93,
+                uri: user?.['avatar'],
+              }}
+              style={{
+                borderRadius: 400,
+                borderColor: 'white',
+                borderWidth: 2,
+                marginTop: 12,
+                position: 'absolute',
+              }}
+            />
+          ) : (
+            <UserIcon height={93} width={93} style={{color: '#666'}} />
+          )}
+        </View>
         <View style={{height: 35}} />
       </LinearGradient>
-      <View style={{padding: 20}}>
-        <View>
-          <Text styles={[styles.font(400), {marginLeft: 10}]}>Name</Text>
+      <View style={{padding: 20, gap: 20}}>
+        <View style={{gap: 5}}>
+          <Text styles={[styles.font(600), {marginLeft: 10}]}>Name</Text>
           <InputField
-            style={{marginHorizontal: 0}}
+            style={{marginHorizontal: 0, backgroundColor: "#0000001A", fieldStyle: {color: "#00000080"}}}
             readonly={true}
             value={user?.['name']}
           />
         </View>
-        <View>
-          <Text styles={[styles.font(400), {marginLeft: 10}]}>Email</Text>
+        <View style={{gap: 5}}>
+          <Text styles={[styles.font(600), {marginLeft: 10}]}>Email</Text>
           <InputField
-            style={{marginHorizontal: 0}}
+            leading={<EmailIcon />}
+            style={{marginHorizontal: 0, backgroundColor: "#0000001A", fieldStyle: {color: "#00000080"}}}
             readonly={true}
             value={user?.['email']}
           />
         </View>
-        <View>
-          <Text styles={[styles.font(400), {marginLeft: 10}]}>
+        <View style={{gap: 5}}>
+          <Text styles={[styles.font(600), {marginLeft: 10}]}>
             Phone Number
           </Text>
           <InputField
-            style={{marginHorizontal: 0}}
+            style={{marginHorizontal: 0, backgroundColor: "#0000001A", fieldStyle: {color: "#00000080"}}}
             readonly={true}
             value={user?.['phone']}
           />
         </View>
-        <View>
-          <Text styles={[styles.font(400), {marginLeft: 10}]}>Designation</Text>
+        <View style={{gap: 5}}>
+          <Text styles={[styles.font(600), {marginLeft: 10}]}>Designation</Text>
           <InputField
-            style={{marginHorizontal: 0}}
+            style={{marginHorizontal: 0, backgroundColor: "#0000001A", fieldStyle: {color: "#00000080"}}}
             readonly={true}
             value={user?.['type']}
           />

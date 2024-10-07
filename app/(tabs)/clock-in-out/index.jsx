@@ -143,7 +143,7 @@ const ClockInOut = () => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.headerBg}>
           <View style={styles.header}>
@@ -333,7 +333,7 @@ const ClockInOut = () => {
           </View>
         </View>
       </Modal>
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -356,6 +356,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 227,
     flexDirection: 'column',
+    paddingVertical: 30,
     flexWrap: 'nowrap',
     alignItems: 'center',
   },
