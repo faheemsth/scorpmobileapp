@@ -1,4 +1,4 @@
-import {View, Text, Pressable} from 'react-native';
+import {View, Text, Pressable, Alert} from 'react-native';
 import React, {useEffect, useState, useCallback} from 'react';
 import {TaskListItem} from '../../components/task-list-item';
 import {SafeAreaView} from 'react-native-safe-area-context';
@@ -33,11 +33,11 @@ const AllTasks = () => {
           setTasks(data['tasks']);
           console.log('tasks are', data['tasks']);
         } catch (error) {
-          console.error(error);
+          Alert.alert("Error", error?.["message"]);
         }
       };
 
-      asyncCall().catch(console.error);
+      asyncCall().catch(e=>Alert.alert("Error", e?.["message"]));
 
       // Cleanup function (optional)
       return () => {
@@ -50,7 +50,7 @@ const AllTasks = () => {
   return (
     <SafeAreaView
       style={{position: 'relative', height: '100%', backgroundColor: 'EFF3F7'}}>
-      <ScrollView contentContainerStyle={{flex: 1, gap: 10, padding: 10}}>
+      <ScrollView contentContainerStyle={{gap: 10, padding: 10}}>
         <Text style={[styles.txt, {fontSize: 24, alignSelf: 'center'}]}>
           Tasks
         </Text>

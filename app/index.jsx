@@ -1,6 +1,6 @@
 import { router } from 'expo-router';
 import { useEffect } from 'react';
-import { StyleSheet, Text } from 'react-native';
+import { Alert, StyleSheet, Text } from 'react-native';
 import datalayer from '../datalayer/datalayer';
 import { useFonts } from 'expo-font';
 
@@ -27,7 +27,7 @@ export default function App() {
       }
     }
     if (loaded) {
-      authCheck().catch(console.error)
+      authCheck().catch(e=>Alert.alert("Error", e?.["message"]))
     } 
   }, [loaded])
   return (<Text>Loading Fonts</Text>);

@@ -1,4 +1,5 @@
 import {StyleSheet, View, Image, Text, TouchableOpacity} from 'react-native';
+import UserIcon from '../../assets/icons/profile.svg';
 
 export function TaskListItem({
   imageUrl,
@@ -20,20 +21,24 @@ export function TaskListItem({
         }}>
         <View style={{flex: 1, flexDirection: 'row', alignItems: 'center'}}>
           <View>
-            <Image
-              style={{
-                height: 32,
-                width: 32,
-                marginLeft: 12,
-                borderRadius: 20,
-                borderWidth: 1,
-                borderColor: 'black',
-              }}
-              source={{uri: imageUrl}}
-            />
+            {imageUrl ? (
+              <Image
+                style={{
+                  height: 32,
+                  width: 32,
+                  marginLeft: 12,
+                  borderRadius: 20,
+                  borderWidth: 1,
+                  borderColor: 'black',
+                }}
+                source={{uri: imageUrl}}
+              />
+            ) : (
+              <UserIcon width={32} height={32} style={{color: '#D9D9D9'}} />
+            )}
           </View>
           <View style={{marginLeft: 8}}>
-            <Text style={styles.texts}>{name}</Text>
+            <Text style={styles.texts}>{description}</Text>
             <Text style={styles.dates}>{date}</Text>
           </View>
         </View>
@@ -70,14 +75,17 @@ export function TaskListItem({
         }}>
         <View>
           {!!description && (
-            <Text style={styles.description}>{description}</Text>
+            <Text style={styles.description}>{name}</Text>
           )}
           {!!descriptionText && (
             <Text style={styles.subdescription}>{descriptionText}</Text>
           )}
         </View>
         {!!onDetailClick && (
-          <TouchableOpacity onPress={onDetailClick} activeOpacity={0.7} style={{alignSelf: 'flex-end'}}>
+          <TouchableOpacity
+            onPress={onDetailClick}
+            activeOpacity={0.7}
+            style={{alignSelf: 'flex-end'}}>
             <Text style={styles.details}>Show Details</Text>
           </TouchableOpacity>
         )}
@@ -108,7 +116,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#4884FB',
     width: 'auto',
     borderRadius: 20,
-
+    paddingHorizontal: 8,
     color: '#FFFFFF',
     fontSize: 11,
     marginTop: 3,
@@ -127,7 +135,8 @@ const styles = StyleSheet.create({
   },
 
   description: {
-    fontWeight: '600',
+    fontFamily: "outfit-600",
+    color: "#6c6c6c88"
   },
 
   subdescription: {
@@ -150,6 +159,6 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-end',
   },
   texts: {
-    fontWeight: '600',
+    fontFamily: "outfit-600"
   },
 });

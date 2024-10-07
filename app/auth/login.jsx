@@ -1,6 +1,6 @@
 import { LinearGradient } from 'expo-linear-gradient'
 import React, { useState, useEffect } from 'react'
-import { StyleSheet, Text, View, Image, ScrollView, TextInput, Pressable } from 'react-native'
+import { StyleSheet, Text, View, Image, ScrollView, TextInput, Pressable, Alert } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Email from "../../assets/icons/email.svg";
 import Lock from "../../assets/icons/lock.svg";
@@ -28,7 +28,7 @@ const Login = () => {
             const res = (await datalayer.authLayer.login(email, pswd))
             router.replace("../clock-in-out")
         } catch (e) {
-            console.error("error in login: ".e)
+            Alert.alert("Error", e?.["message"])
         }
     }
 

@@ -1,4 +1,4 @@
-import {View, Text, StyleSheet, Pressable, ScrollView} from 'react-native';
+import {View, Text, StyleSheet, Pressable, ScrollView, Alert} from 'react-native';
 import React, {useCallback, useEffect, useState} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import LeavesOverview from '../../components/leaves/overview';
@@ -43,7 +43,7 @@ const LeavesTab = () => {
           setLeaves(lvsWithType);
           setLeavesTypes(lvsTypesWithUsed);
         } catch (error) {
-          console.error(error);
+          Alert.alert("Error", error?.["message"]);
         }
       };
 
@@ -64,7 +64,7 @@ const LeavesTab = () => {
 
   handleAddNewLeave = () => {
     console.log('trying to navigate');
-    router.navigate(`/leaves/${leaves}`);
+    router.navigate(`/leaves/request-leave`);
   };
 
   return (

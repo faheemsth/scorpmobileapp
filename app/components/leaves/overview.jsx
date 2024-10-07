@@ -1,4 +1,4 @@
-import {View, Text, ScrollView} from 'react-native';
+import {View, Text, ScrollView, Alert} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import styles from '../theme';
 import CircularProgress from '../circular-progress';
@@ -17,7 +17,7 @@ const LeavesOverview = ({leaves, leavesTypes}) => {
       );
       setTotalLeavesCount(lvsTotalCount);
     };
-    fetchAsync().catch(console.error);
+    fetchAsync().catch(e=>Alert.alert("Error", e?.["message"]));
   }, [leavesTypes]);
 
   return (

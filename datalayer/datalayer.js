@@ -16,14 +16,14 @@ const storeData = async (key, data) => {
     console.log('storing ', key, typeof d, d);
     await AsyncStorage.setItem(key, d);
   } catch (error) {
-    throw error;
+    return Promise.reject(error);
   }
 };
 const getData = async key => {
   try {
     return await AsyncStorage.getItem(key);
   } catch (error) {
-    throw error;
+    return Promise.reject(error);
   }
 };
 
@@ -33,7 +33,7 @@ const isAtSite = async (userLatLng, branchLatLng) => {
     userLatLng.lng,
     branchLatLng.lat,
     branchLatLng.lng,
-  ).catch(console.error);
+  );
   console.info('distance', distance);
   return distance <= 100;
 };
@@ -50,8 +50,7 @@ const LocationLayer = (() => {
         timeout: 4500,
       });
       if (!!lnp.mocked) {
-        console.error('you are using mock location');
-        return;
+        return Promise.reject('you are using mock location');
       }
       return lnp;
     }
@@ -84,11 +83,10 @@ const LocationLayer = (() => {
 })();
 
 const TasksLayer = (() => {
-  const markCompleted = async (id)=>{
+  const markCompleted = async id => {
     const token = await getData(keys.token);
     if (!!!token) {
-      console.error('no token');
-      return false;
+      return Promise.reject('no token');
     }
     const res = await fetch(`${base_url}TaskStatusChange`, {
       method: 'POST',
@@ -97,15 +95,14 @@ const TasksLayer = (() => {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({id: id})
+      body: JSON.stringify({id: id}),
     });
-    return (await res.json())?.["status"] == "success";
-  }
+    return (await res.json())?.['status'] == 'success';
+  };
   const getTasks = async () => {
     const token = await getData(keys.token);
     if (!!!token) {
-      console.error('no token');
-      return false;
+      return Promise.reject('no token');
     }
     const res = await fetch(`${base_url}tasklist`, {
       method: 'POST',
@@ -130,13 +127,12 @@ const TasksLayer = (() => {
     related_type,
     remainder_date,
     description,
-    visibility="public",
+    visibility = 'public',
     remainder_time,
   }) => {
     const token = await getData(keys.token);
     if (!!!token) {
-      console.error('no token');
-      return false;
+      return Promise.reject('no token');
     }
     const res = await fetch(`${base_url}createtask`, {
       method: 'POST',
@@ -167,8 +163,7 @@ const TasksLayer = (() => {
   const getTaskDetails = async task_id => {
     const token = await getData(keys.token);
     if (!!!token) {
-      console.error('no token');
-      return false;
+      return Promise.reject('no token');
     }
     const res = await fetch(`${base_url}getTaskDetails`, {
       method: 'POST',
@@ -179,7 +174,7 @@ const TasksLayer = (() => {
       },
       body: JSON.stringify({task_id}),
     });
-    return (await res.json());
+    return await res.json();
   };
   return {
     markCompleted,
@@ -191,13 +186,13 @@ const TasksLayer = (() => {
 
 const AuthLayer = (() => {
   const getById = async (type, id) => {
-    console.log("trying to get ", type, id)
-    if (type != "region" && type != "branch" && type != "user") throw "only region, branch or user is allowed as type"
+    console.log('trying to get ', type, id);
+    if (type != 'region' && type != 'branch' && type != 'user')
+      return Promise.reject('only region, branch or user is allowed as type');
 
     const token = await getData(keys.token);
     if (!!!token) {
-      console.error('no token');
-      return false;
+      return Promise.reject('no token');
     }
     const res = await fetch(`${base_url}${type}Detail`, {
       method: 'POST',
@@ -206,16 +201,18 @@ const AuthLayer = (() => {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
-      body: `{"${type}ID",${id}}`
+      body: `{"${type}ID",${id}}`,
     });
     return await res.json();
-  }
+  };
   const login = async (email, password) => {
     console.log(`incomming info is :{email: ${email}, password: ${password}}`);
-    if (!!!email) throw 'email is undefined';
-    if (!!!password) throw 'password is undefined';
-    if (typeof email != 'string') throw 'email must be a string';
-    if (typeof password != 'string') throw 'password must be a string';
+    if (!!!email) return Promise.reject('email is undefined');
+    if (!!!password) return Promise.reject('password is undefined');
+    if (typeof email != 'string')
+      return Promise.reject('email must be a string');
+    if (typeof password != 'string')
+      return Promise.reject('password must be a string');
     const res = await fetch(`${base_url}login`, {
       method: 'POST',
       headers: {
@@ -236,13 +233,11 @@ const AuthLayer = (() => {
 
     return data;
   };
-  const getUserAsync = async () =>
-    JSON.parse(await getData(keys.user).catch(console.error));
+  const getUserAsync = async () => JSON.parse(await getData(keys.user));
   const getUserBranchAsync = async () => {
     const token = await getData(keys.token);
     if (!!!token) {
-      console.error('no token');
-      return false;
+      return Promise.reject('no token');
     }
     const res = await fetch(`${base_url}getUserBranch`, {
       method: 'GET',
@@ -262,9 +257,7 @@ const AttendanceLayer = (() => {
   const locLayer = LocationLayer;
 
   const clockIn = async () => {
-    const lnp = await locLayer
-      .requestPermissionAndLocation()
-      .catch(console.error);
+    const lnp = await locLayer.requestPermissionAndLocation();
 
     console.info('lat', lnp.coords.latitude, 'lng', lnp.coords.longitude);
 
@@ -279,13 +272,13 @@ const AttendanceLayer = (() => {
         branchLatLng,
       ))
     ) {
-      console.error('you are out of the 100 meters radius from your branch');
-      return;
+      return Promise.reject(
+        'you are out of the 100 meters radius from your branch',
+      );
     }
     const token = await getData(keys.token);
     if (!!!token) {
-      console.error('no token');
-      return false;
+      return Promise.reject('no token');
     }
     const res = await fetch(`${base_url}clockIn`, {
       method: 'POST',
@@ -303,8 +296,7 @@ const AttendanceLayer = (() => {
     const clockedIn = data['success'];
     console.log('clockin response ', data);
     if (!!!clockedIn) {
-      console.error(data['message']);
-      return data;
+      return Promise.reject(data);
     }
 
     storeData(keys.clockedIn, clockedIn);
@@ -312,6 +304,21 @@ const AttendanceLayer = (() => {
     storeData(keys.clockedOutTime, '');
 
     return data;
+  };
+  const countDutyTime = async () => {
+    const cit = JSON.parse(await getData(keys.clockedInTime));
+    const cot = JSON.parse(await getData(keys.clockedOutTime));
+
+    if (!!!cit) return {hours: 0, minutes: 0};
+    if (!!!cot) return {hours: 0, minutes: 0};
+
+    const diffMs = cot - cit;
+    const hours = Math.floor(diffMs / 3.6e6);
+    const minutes = Math.floor((diffMs / 60000) % 60);
+
+    console.log('cit', cit, 'cot', cot, 'cot-cit', 'hours', hours, 'minutes', minutes);
+
+    return {hours, minutes};
   };
   const hasCompletedHours = async totalDutyHoursPerDay => {
     const cit = JSON.parse(await getData(keys.clockedInTime));
@@ -325,9 +332,7 @@ const AttendanceLayer = (() => {
     return totalDutyHoursPerDay <= diffHrs;
   };
   const clockOut = async reason => {
-    const lnp = await locLayer
-      .requestPermissionAndLocation()
-      .catch(console.error);
+    const lnp = await locLayer.requestPermissionAndLocation();
 
     console.info('lat', lnp.coords.latitude, 'lng', lnp.coords.longitude);
 
@@ -342,14 +347,14 @@ const AttendanceLayer = (() => {
         branchLatLng,
       ))
     ) {
-      console.error('you are out of the 100 meters radius from your branch');
-      return;
+      return Promise.reject(
+        'you are out of the 100 meters radius from your branch',
+      );
     }
 
     const token = await getData(keys.token);
     if (!!!token) {
-      console.error('no token');
-      return false;
+      return Promise.reject('no token');
     }
     const res = await fetch(`${base_url}clockOut`, {
       method: 'POST',
@@ -367,8 +372,7 @@ const AttendanceLayer = (() => {
     const data = await res.json();
     const clockedOut = data['success'];
     if (!!!clockedOut) {
-      console.error(data['message']);
-      return data;
+      return Promise.reject(data);
     }
 
     storeData(keys.clockedIn, !clockedOut);
@@ -379,8 +383,7 @@ const AttendanceLayer = (() => {
   const getAttendanceViewData = async (startDate, endDate) => {
     const token = await getData(keys.token);
     if (!!!token) {
-      console.error('no token');
-      return false;
+      return Promise.reject('no token');
     }
     const res = await fetch(
       `${base_url}attendance/view?start_date=${startDate}&end_date=${endDate}`,
@@ -396,17 +399,17 @@ const AttendanceLayer = (() => {
     return res.json();
   };
   const clockInStatus = async () => {
-    return JSON.parse(await getData(keys.clockedIn).catch(console.error));
+    return JSON.parse(await getData(keys.clockedIn));
   };
   const getClockinTimeAsync = async () => {
-    const timeStr = await getData(keys.clockedInTime).catch(console.error);
+    const timeStr = await getData(keys.clockedInTime);
     if (!!!timeStr) return undefined;
     const time = new Date();
     time.setTime(JSON.parse(timeStr));
     return time;
   };
   const getClockoutTimeAsync = async () => {
-    const timeStr = await getData(keys.clockedOutTime).catch(console.error);
+    const timeStr = await getData(keys.clockedOutTime);
     if (!!!timeStr) return undefined;
     const time = new Date();
     time.setTime(JSON.parse(timeStr));
@@ -420,6 +423,7 @@ const AttendanceLayer = (() => {
     getClockinTimeAsync,
     getClockoutTimeAsync,
     hasCompletedHours,
+    countDutyTime,
   };
 })();
 
@@ -427,8 +431,7 @@ const LeavesLayer = (() => {
   const getLeaves = async () => {
     const token = await getData(keys.token);
     if (!!!token) {
-      console.error('no token');
-      return false;
+      return Promise.reject('no token');
     }
     const res = await fetch(`${base_url}getLeaves`, {
       method: 'GET',
@@ -443,8 +446,7 @@ const LeavesLayer = (() => {
   const getLeavesTypesAndAllowed = async () => {
     const token = await getData(keys.token);
     if (!!!token) {
-      console.error('no token');
-      return false;
+      return Promise.reject('no token');
     }
     const res = await fetch(`${base_url}LeaveTypeDetail`, {
       method: 'GET',
@@ -465,12 +467,11 @@ const LeavesLayer = (() => {
     leave_reason,
     start_date,
     end_date,
-    remark="no remarks",
+    remark = 'no remarks',
   }) => {
     const token = await getData(keys.token);
     if (!!!token) {
-      console.error('no token');
-      return false;
+      return Promise.reject('no token');
     }
     const res = await fetch(`${base_url}createLeave`, {
       method: 'POST',
@@ -487,12 +488,12 @@ const LeavesLayer = (() => {
         leave_reason,
         start_date,
         end_date,
-        remark
+        remark,
       }),
     });
-    console.log("submit leave request", await res.json())
-    const response = (await res.json())["success"];
-    return response == "Leave successfully created."
+    console.log('submit leave request', await res.json());
+    const response = (await res.json())['success'];
+    return response == 'Leave successfully created.';
   };
 
   return {getLeaves, getLeavesTypesAndAllowed, submitRequest};

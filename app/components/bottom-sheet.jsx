@@ -19,7 +19,6 @@ const Bottomsheet = forwardRef((props, ref) => {
         animateOnMount={true}
         style={props.sheetStyle}
         focusHook={focusHook}
-        snapPoints={["30%"]}
         keyboardBehavior='extend'
         android_keyboardInputMode='adjustPan'
         {...props}

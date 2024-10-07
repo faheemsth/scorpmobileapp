@@ -1,4 +1,4 @@
-import {View, Text, ScrollView, Pressable} from 'react-native';
+import {View, Text, ScrollView, Pressable, Alert} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import styles from '../../components/theme';
 import SearchableDropdown from '../../components/searchable-dropdown';
@@ -43,7 +43,7 @@ const RequestLeave = () => {
       setLeaveTypes(lt);
       setSelectedLeaveTypeId(lt?.[0]?.id);
     };
-    fetchAsync().catch(console.error);
+    fetchAsync().catch(e=>Alert.alert("Error", e?.["message"]));
   }, []);
 
   onLeaveTypeSelected = item => {

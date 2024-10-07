@@ -1,4 +1,4 @@
-import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
+import {BottomSheetTextInput} from '@gorhom/bottom-sheet';
 import React, {useRef} from 'react';
 import {
   StyleSheet,
@@ -20,7 +20,7 @@ const InputField = ({
   isBottomSheet,
   readonly = false,
 }) => {
-  const ref = useRef()
+  const ref = useRef();
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={[styles.iconedTextField, style]}>
@@ -60,7 +60,6 @@ const styles = StyleSheet.create({
       paddingHorizontal: 8,
       flexGrow: 1,
       height: '100%',
-      textAlignVertical: 'top',
     },
     overflow: 'scroll',
     display: 'flex',
@@ -72,6 +71,12 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     borderColor: '#167BC4',
     marginHorizontal: 10,
+  },
+  textAlignTopVertical: {
+    textAlignVertical: 'top',
+  },
+  textAlignCenterVertical: {
+    textAlignVertical: 'center',
   },
 });
 

@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   ScrollView,
   Pressable,
+  Alert,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {useNavigation} from 'expo-router';
@@ -178,7 +179,7 @@ const ViewAttendanceScreen = () => {
       setAttendanceData(data['data']);
       setAttendance(data['data']);
     };
-    asyncCall().catch(console.error);
+    asyncCall().catch(e=>Alert.alert("Error", e?.["message"]));
   }, [selectedMonth]);
 
   React.useEffect(() => {

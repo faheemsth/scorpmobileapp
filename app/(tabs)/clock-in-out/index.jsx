@@ -6,6 +6,8 @@ import {
   Text,
   Image,
   ScrollView,
+  Modal,
+  Alert,
 } from 'react-native';
 
 import {SafeAreaView} from 'react-native-safe-area-context';
@@ -21,6 +23,8 @@ import {router, useFocusEffect} from 'expo-router';
 import WriteEarlyCheckoutReason from './write-early-check-out-reason';
 import Btn from '../../components/btn';
 
+import UserIcon from '../../../assets/icons/profile.svg';
+
 const ClockInOut = () => {
   const [requestEarlyCheckoutReason, setRequestEarlyCheckoutReason] =
     useState(false);
@@ -32,6 +36,8 @@ const ClockInOut = () => {
   const [btnColor, setBtnColor] = useState('#167BC4');
   const [user, setUser] = useState();
 
+  const [loading, setLoading] = useState(false);
+
   const updateDataFromDatalayer = async () => {
     const cis = await datalayer.attendanceLayer.clockInStatus();
     const u = await datalayer.authLayer.getUserAsync();
@@ -39,14 +45,17 @@ const ClockInOut = () => {
 
     const cit = await datalayer.attendanceLayer
       .getClockinTimeAsync()
-      .catch(console.error);
+      .catch(e => Alert.alert('Error', e?.['message']));
     const cot = await datalayer.attendanceLayer
       .getClockoutTimeAsync()
-      .catch(console.error);
+      .catch(e => Alert.alert('Error', e?.['message']));
 
     setClockinTime(cit);
     setClockOutTime(cot);
-    setTotalHours(cot - cit);
+
+    const dt = await datalayer.attendanceLayer.countDutyTime();
+
+    if (!!cot) setTotalHours(dt);
 
     setIsClockedIn(cis);
     setUser(u);
@@ -58,43 +67,60 @@ const ClockInOut = () => {
         setTime(new Date());
       }, 1000);
     };
-    updateDataFromDatalayer().catch(console.error);
-    initializeClockinStateFromStorage().catch(console.error);
+    updateDataFromDatalayer().catch(e => Alert.alert('Error', e?.['message']));
+    initializeClockinStateFromStorage().catch(e =>
+      Alert.alert('Error', e?.['message']),
+    );
   }, []);
 
   useEffect(() => {
     const updateClockinUI = async () => {
       setBtnColor(isClockedIn ? '#D5213C' : '#167BC4');
     };
-    updateClockinUI().catch(console.error);
-    updateDataFromDatalayer().catch(console.error);
+    updateClockinUI().catch(e => Alert.alert('Error', e?.['message']));
+    updateDataFromDatalayer().catch(e => Alert.alert('Error', e?.['message']));
   }, [isClockedIn]);
+
+  useEffect(() => {
+    performAsync = async () => {
+      console.log('loading', loading);
+      if (loading)
+        await checkInOut().catch(e => Alert.alert('Error', e?.['message']));
+      setLoading(false);
+    };
+    performAsync().catch(e => Alert.alert('Error', e?.['message']));
+  }, [loading]);
 
   handleProfileClick = () => {
     console.log('profile clicked');
   };
-  handleCheckInOutClick = () => {
-    const updateClockin = async () => {
-      if (!!isClockedIn) {
-        const hasCompletedHours =
-          (await datalayer.attendanceLayer.hasCompletedHours(9)) == true;
-        console.log('hasCompletedHours', hasCompletedHours);
-        if (!hasCompletedHours) {
-          // show bottom-sheet and request reason
-          setRequestEarlyCheckoutReason(true);
-          return;
-        }
-        newValue = !(
-          await datalayer.attendanceLayer.clockOut().catch(console.error)
-        )['success'];
-      } else {
-        newValue = (
-          await datalayer.attendanceLayer.clockIn().catch(console.error)
-        )['success'];
+  checkInOut = async () => {
+    let newValue = false;
+    if (!!isClockedIn) {
+      const hasCompletedHours =
+        (await datalayer.attendanceLayer.hasCompletedHours(9)) == true;
+      console.log('hasCompletedHours', hasCompletedHours);
+      if (!hasCompletedHours) {
+        // show bottom-sheet and request reason
+        setRequestEarlyCheckoutReason(true);
+        return;
       }
-      setIsClockedIn(newValue);
-    };
-    updateClockin().catch(console.error);
+      const r = !(await datalayer.attendanceLayer
+        .clockOut()
+        .catch(e => Alert.alert('Error', e?.['message'])));
+      newValue = !!r?.['success'] && !r?.['success'];
+    } else {
+      const r = await datalayer.attendanceLayer
+        .clockIn()
+        .catch(e => Alert.alert('Error', e?.['message']));
+      console.log('r is', r);
+      newValue = !!r?.['success'] && r?.['success'];
+    }
+    setIsClockedIn(newValue);
+  };
+
+  handleCheckInOutClick = () => {
+    setLoading(true);
   };
 
   const handleViewAttendanceClicked = () => {
@@ -102,28 +128,46 @@ const ClockInOut = () => {
     router.navigate('../../attendance/view-attendance');
   };
 
+  const formatToHhMm = date => {
+    if (!!!date) return '00:00';
+    const d = new Date(date);
+    return `${d?.getHours() < 10 ? '0' : ''}${d?.getHours()}:${
+      d?.getMinutes() < 10 ? '0' : ''
+    }${d?.getMinutes()}`;
+  };
+
+  const formatTotalHours = ({hours = 0, minutes = 0}) => {
+    return `${hours < 10 ? '0' : ''}${hours}:${
+      minutes < 10 ? '0' : ''
+    }${minutes}`;
+  };
+
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.container} >
+      <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.headerBg}>
           <View style={styles.header}>
             <TouchableOpacity activeOpacity={0.8} oncPress={handleProfileClick}>
               <View>
-                <Image
-                  blurRadius={5}
-                  fadeDuration={1000}
-                  source={{
-                    height: 80,
-                    width: 80,
-                    uri: user?.['avatar'],
-                  }}
-                  style={{
-                    borderRadius: 400,
-                    borderColor: 'white',
-                    borderWidth: 2,
-                    marginTop: 12,
-                  }}
-                />
+                {user?.['avatar'] ? (
+                  <Image
+                    blurRadius={5}
+                    fadeDuration={1000}
+                    source={{
+                      height: 80,
+                      width: 80,
+                      uri: user?.['avatar'],
+                    }}
+                    style={{
+                      borderRadius: 400,
+                      borderColor: 'white',
+                      borderWidth: 2,
+                      marginTop: 12,
+                    }}
+                  />
+                ) : (
+                  <UserIcon width={80} height={80} style={{color: '#D9D9D9'}} />
+                )}
               </View>
             </TouchableOpacity>
             <View>
@@ -207,8 +251,7 @@ const ClockInOut = () => {
                   marginTop: 3,
                   color: 'rgba(108, 108, 108, 1)',
                 }}>
-                {clockinTime?.getHours() ?? '00'}:
-                {clockinTime?.getMinutes() ?? '00'}
+                {formatToHhMm(clockinTime)}
                 {'\n'}Clock in
               </Text>
             </View>
@@ -221,8 +264,7 @@ const ClockInOut = () => {
                   marginTop: 3,
                   color: 'rgba(108, 108, 108, 1)',
                 }}>
-                {clockOutTime?.getHours() ?? '00'}:
-                {clockOutTime?.getMinutes() ?? '00'}
+                {formatToHhMm(clockOutTime)}
                 {'\n'}Clock out
               </Text>
             </View>
@@ -235,7 +277,7 @@ const ClockInOut = () => {
                   marginTop: 4,
                   color: 'rgba(108, 108, 108, 1)',
                 }}>
-                {totalHours?.getHours ?? '00'}:{totalHours?.getMinutes ?? '00'}
+                {formatTotalHours(totalHours ?? {hours: 0, minutes: 0})}
                 {'\n'}Total hrs
               </Text>
             </View>
@@ -270,6 +312,27 @@ const ClockInOut = () => {
           />
         </View>
       )}
+      <Modal
+        style={{backgroundColor: '#fff0'}}
+        visible={loading}
+        transparent={true}
+        onDismiss={() => {
+          setLoading(false);
+        }}>
+        <View
+          style={{
+            display: 'flex',
+            backgroundColor: '#0003',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flex: 1,
+          }}>
+          <View
+            style={{backgroundColor: '#fff', padding: '50', borderRadius: 4}}>
+            <Text>Loading...</Text>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 };

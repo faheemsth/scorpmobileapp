@@ -1,16 +1,16 @@
-import { View, Text } from "react-native";
+import { View, Text, Alert } from "react-native";
 import React, { useState } from "react";
 import Bottomsheet from "../../components/bottom-sheet";
 import InputField from "../../components/input-field";
 import Btn from "../../components/btn";
 import datalayer from "../../../datalayer/datalayer";
-import { useBottomSheet } from "@gorhom/bottom-sheet";
 
 const WriteEarlyCheckoutReason = ({ onClose }) => {
   const [reason, setReason] = useState("")
   const clockOut = async () => {
-    const done = await datalayer.attendanceLayer.clockOut(reason).catch(console.error)
+    const done = await datalayer.attendanceLayer.clockOut(reason).catch(e=>Alert.alert("Error", e?.["message"]))
     console.log("clockout inside reason", done)
+    onClose?.()
   };
   return (
     <Bottomsheet

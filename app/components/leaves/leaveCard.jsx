@@ -1,6 +1,7 @@
 import {View, Text, Image, StyleSheet} from 'react-native';
 import React from 'react';
 import styles from '../theme';
+import UserIcon from '../../../assets/icons/profile.svg';
 
 const LeaveCard = ({
   uName = 'No Name...',
@@ -23,16 +24,20 @@ const LeaveCard = ({
         styles.gap(5),
       ]}>
       <View style={[styles.row, styles.gap(10), styles.alignItemsCenter]}>
-        <Image
-          style={{
-            width: 27,
-            height: 27,
-            borderRadius: 20,
-            borderWidth: 1,
-            borderColor: 'black',
-          }}
-          source={{uri: url}}
-        />
+        {!!url ? (
+          <Image
+            style={{
+              width: 27,
+              height: 27,
+              borderRadius: 20,
+              borderWidth: 1,
+              borderColor: 'black',
+            }}
+            source={{uri: url}}
+          />
+        ) : (
+          <UserIcon width={27} height={27} style={{color: '#D9D9D9'}} />
+        )}
         <Text style={[styles.font(400), styles.size(14)]}>{uName}</Text>
       </View>
       {data?.map(e => (

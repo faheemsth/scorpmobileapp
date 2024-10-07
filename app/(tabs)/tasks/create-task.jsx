@@ -1,4 +1,4 @@
-import {View, Text, ScrollView, Pressable} from 'react-native';
+import {View, Text, ScrollView, Pressable, Alert} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import Btn from '../../components/btn';
 import InputField from '../../components/input-field';
@@ -53,7 +53,7 @@ const TaskField = ({
 };
 
 const CreateTask = ({onClose}) => {
-  const [user, setUser] = useState()
+  const [user, setUser] = useState();
 
   const [taskName, setTaskName] = useState('');
   const [taskDescription, setTaskDescription] = useState('');
@@ -129,16 +129,14 @@ const CreateTask = ({onClose}) => {
     initializeUseDataAsync = async () => {
       const u = await datalayer.authLayer
         .getUserAsync()
-        .catch(console.error);
+        .catch(e => Alert.alert('Error', e?.["message"]));
 
-      const r = await datalayer.authLayer.getById(
-        'region',
-        u?.['region_id'],
-      )?.['region'];
-      const b = await datalayer.authLayer.getById(
-        'branch',
-        u?.['branch_id'],
-      )?.['branch'];
+      const r = await datalayer.authLayer.getById('region', u?.['region_id'])?.[
+        'region'
+      ];
+      const b = await datalayer.authLayer.getById('branch', u?.['branch_id'])?.[
+        'branch'
+      ];
       const brand = await datalayer.authLayer.getById(
         'user',
         u?.['brand_id'],
@@ -148,9 +146,9 @@ const CreateTask = ({onClose}) => {
       setBrands(brand?.['name']);
       setRegion(r?.['name']);
       setAssignTo(String(u?.['name']));
-      setUser(u)
+      setUser(u);
     };
-    initializeUseDataAsync().catch(console.error);
+    initializeUseDataAsync().catch(e=>Alert.alert("Error", e?.["message"]));
   }, []);
 
   const onCancel = () => {
@@ -160,8 +158,8 @@ const CreateTask = ({onClose}) => {
   const dateToHHMM = (date = new Date()) =>
     `${date.getHours()}:${date.getMinutes()}`;
 
-  const dateToYYYYMMDD = (date = new Date()) => 
-    `${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()}`
+  const dateToYYYYMMDD = (date = new Date()) =>
+    `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
 
   const create = async () => {
     const response = await datalayer.taskLayer.createTask({
@@ -175,12 +173,12 @@ const CreateTask = ({onClose}) => {
       start_date: dateToYYYYMMDD(startDate),
       remainder_date: dateToYYYYMMDD(remainderDate),
       remainder_time: dateToHHMM(remainderTime),
-      assign_type: "user"
+      assign_type: 'user',
     });
-    if (response?.["status"].toLowerCase() == "success") {
-      router.dismiss()
+    if (response?.['status'].toLowerCase() == 'success') {
+      router.dismiss();
     }
-    console.log("response", response)
+    console.log('response', response);
   };
 
   return (
@@ -248,9 +246,12 @@ const CreateTask = ({onClose}) => {
           label={'Task Status'}
           placeholder={'Task Status'}
           value={taskStatus}
-          onChange={(v)=>setSelectedTaskStatus(v.id)}
+          onChange={v => setSelectedTaskStatus(v.id)}
           isSearchable={true}
-          data={[{id: 0, name: "On Going"}, {id: 1, name: "Completed"}]}
+          data={[
+            {id: 0, name: 'On Going'},
+            {id: 1, name: 'Completed'},
+          ]}
         />
         <TaskField
           key={'Due Date'}

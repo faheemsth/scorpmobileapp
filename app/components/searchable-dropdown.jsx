@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, TextInput, FlatList, TouchableOpacity, Text, StyleSheet } from 'react-native';
 
 const SearchableDropdown = ({
@@ -11,6 +11,12 @@ const SearchableDropdown = ({
   const [filteredData, setFilteredData] = useState([]);
   const [dropdownVisible, setDropdownVisible] = useState(false);
 
+  useEffect(()=>{
+    console.log("setting default text")
+    setSearchText(data?.[0]?.name)
+    setFilteredData(data)
+  },[])
+
   // Filter data based on search text
   const filterData = (text) => {
     setSearchText(text);
@@ -19,7 +25,8 @@ const SearchableDropdown = ({
       setFilteredData(filtered);
       setDropdownVisible(true); // Show the dropdown when typing
     } else {
-      setDropdownVisible(false); // Hide dropdown if text is cleared
+      setDropdownVisible(true); // Hide dropdown if text is cleared
+      setFilteredData(data)
     }
   };
 
@@ -46,6 +53,8 @@ const SearchableDropdown = ({
         placeholder={placeholder}
         value={searchText}
         onChangeText={(text) => handleChangeText(text)}
+        onFocus={()=>setDropdownVisible(true)}
+        onBlur={()=>setDropdownVisible(false)}
       />
 
       {/* Dropdown list */}

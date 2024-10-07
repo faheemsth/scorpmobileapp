@@ -1,4 +1,4 @@
-import {View, Text, ScrollView} from 'react-native';
+import {View, Text, ScrollView, Alert} from 'react-native';
 import React, {useEffect, useRef, useState} from 'react';
 import datalayer from '../../../datalayer/datalayer';
 import styles from '../../components/theme';
@@ -19,7 +19,7 @@ const ViewTask = () => {
       const success = await datalayer.taskLayer.markCompleted(id)
       if (success) {router.dismiss()}
     }
-    fetchAsync().catch(console.error)
+    fetchAsync().catch(e=>Alert.alert("Error", e?.["message"]))
   }
 
   useEffect(() => {
@@ -30,7 +30,7 @@ const ViewTask = () => {
         .then(e => {
           return e?.['task'];
         })
-        .catch(console.error);
+        .catch(e=>Alert.alert("Error", e?.["message"]));
 
       const branch = (
         await datalayer.authLayer.getById('branch', tsk?.['branch_id'])
@@ -58,7 +58,7 @@ const ViewTask = () => {
       setTaskDetails(tskDtl);
       setAdditionalDetails(adDtl);
     };
-    fetchAsync().catch(console.error);
+    fetchAsync().catch(e=>Alert.alert("Error", e?.["message"]));
   }, [id]);
   return (
     <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={[styles.ph(10), styles.pv(80), styles.gap(10)]}>

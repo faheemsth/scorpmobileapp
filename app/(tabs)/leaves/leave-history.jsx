@@ -2,7 +2,7 @@ import React, {useState, useCallback} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import styles from '../../components/theme';
 import {useFocusEffect} from 'expo-router';
-import {ScrollView, Text} from 'react-native';
+import {Alert, ScrollView, Text} from 'react-native';
 import LeaveCard from '../../components/leaves/leaveCard';
 import datalayer from '../../../datalayer/datalayer';
 
@@ -33,7 +33,7 @@ const LeaveHistory = () => {
           setLeaves(lvsWithType);
           setLoading(false);
         } catch (error) {
-          console.error(error);
+          Alert.alert("Error", error?.["message"])
         }
       };
 

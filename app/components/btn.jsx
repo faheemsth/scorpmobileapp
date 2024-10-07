@@ -10,8 +10,9 @@ const Btn = ({
   trailing,
   gradientColors,
 }) => {
+
   return (
-    <Pressable onPress={handleClick}>
+    <Pressable onPress={handleClick} >
       <LinearGradient
         style={[styles.btn, style]}
         colors={gradientColors ?? ['#fff0', '#fff0']}>
