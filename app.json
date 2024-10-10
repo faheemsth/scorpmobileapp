@@ -2,6 +2,7 @@
   "expo": {
     "name": "scorp-mobile-app",
     "slug": "scorp-mobile-app",
+    "scheme": "scorp-mobile-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/logo.png",
@@ -19,9 +20,11 @@
           "fetch",
           "remote-notification"
         ]
-      }
+      },
+      "bundleIdentifier": "com.convosoft.crm"
     },
     "android": {
+      "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "foregroundImage": "./assets/logo.png",
         "backgroundColor": "#ffffff"
@@ -36,6 +39,9 @@
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
+      "@react-native-firebase/app",
+      "@react-native-firebase/auth",
+      "@react-native-google-signin/google-signin",
       "expo-router",
       [
         "expo-location",
@@ -60,6 +66,14 @@
             "./assets/fonts/outfit-800.otf",
             "./assets/fonts/outfit-900.otf"
           ]
+        }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "useFrameworks": "static"
+          }
         }
       ]
     ],

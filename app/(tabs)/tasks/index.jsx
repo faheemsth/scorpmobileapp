@@ -11,6 +11,7 @@ import {router, useFocusEffect} from 'expo-router';
 const AllTasks = () => {
   const [tasks, setTasks] = useState([]);
   const [user, setUser] = useState();
+  const [isLoading, setIsLoading] = useState(true);
 
   const addTaskBtnClick = async () => {
     router.push('/tasks/create-task');
@@ -21,8 +22,13 @@ const AllTasks = () => {
     router.navigate(`tasks/${task?.['id']}`);
   };
 
+  useEffect(() => {
+    setIsLoading(false);
+  }, [tasks]);
+
   useFocusEffect(
     useCallback(() => {
+      setIsLoading(true);
       // Fetch user and tasks data asynchronously
       const asyncCall = async () => {
         try {
@@ -33,11 +39,11 @@ const AllTasks = () => {
           setTasks(data['tasks']);
           console.log('tasks are', data['tasks']);
         } catch (error) {
-          Alert.alert("Error", error?.["message"]);
+          Alert.alert('Error', error?.['message']);
         }
       };
 
-      asyncCall().catch(e=>Alert.alert("Error", e?.["message"]));
+      asyncCall().catch(e => Alert.alert('Error', e?.['message']));
 
       // Cleanup function (optional)
       return () => {
@@ -49,13 +55,18 @@ const AllTasks = () => {
 
   return (
     <SafeAreaView
-      style={{position: 'relative', height: '100%', backgroundColor: 'EFF3F7'}}>
+      style={{position: 'relative', height: '100%', backgroundColor: '#fff'}}>
       <ScrollView contentContainerStyle={{gap: 10, padding: 10}}>
         <Text style={[styles.txt, {fontSize: 24, alignSelf: 'center'}]}>
           Tasks
         </Text>
-        {tasks?.length == 0 && <Text style={styles.txt}>No Record Found</Text>}
-        {tasks?.length > 0 && <Text style={styles.txt}>All Tasks</Text>}
+        <Text style={styles.txt}>
+          {isLoading
+            ? 'Loading...'
+            : !!!tasks
+            ? 'No Record Found'
+            : 'All Tasks'}
+        </Text>
         {tasks?.map(t => {
           let taskStatus;
           if (t['status'] == '1') {
@@ -106,6 +117,7 @@ const AllTasks = () => {
 const styles = StyleSheet.create({
   txt: {
     fontFamily: 'outfit-600',
+    paddingVertical: 4
   },
 });
 

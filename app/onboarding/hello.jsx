@@ -8,7 +8,7 @@ import Btn from '../components/btn'
 const Hello = () => {
     const navigation = useNavigation()
     useEffect(()=>{navigation.setOptions({headerShown: false})},[])
-    handleBtnClick = () => router.navigate("../auth/login")
+    handleBtnClick = () => router.replace("../auth/login")
     return (
         <View>
             <LinearGradient colors={["#DDDDDD", "#167BC4"]} style={styles.container}>

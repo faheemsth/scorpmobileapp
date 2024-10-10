@@ -1,5 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Location from 'expo-location';
+import {useCallback, useEffect, useMemo, useState} from 'react';
+import {Alert} from 'react-native';
+import { fetchText } from 'react-native-svg';
 
 const base_url = 'https://api.scorp.co/api/'; // Private variable
 const keys = {
@@ -43,14 +46,16 @@ const LocationLayer = (() => {
     const {status: foregroundStatus} =
       await Location.requestForegroundPermissionsAsync();
     if (foregroundStatus === 'granted') {
-      console.log('trying to get current location');
+      if (!!!(await Location.hasServicesEnabledAsync()))
+        return Promise.reject({message: 'Please turn on location'});
+
       let lnp = await Location.getCurrentPositionAsync({
         accuracy: Location.Accuracy.Highest,
         maximumAge: 5000,
         timeout: 4500,
       });
       if (!!lnp.mocked) {
-        return Promise.reject('you are using mock location');
+        return Promise.reject({message: 'you are using mock location'});
       }
       return lnp;
     }
@@ -86,7 +91,7 @@ const TasksLayer = (() => {
   const markCompleted = async id => {
     const token = await getData(keys.token);
     if (!!!token) {
-      return Promise.reject('no token');
+      return Promise.reject({message: 'no token'});
     }
     const res = await fetch(`${base_url}TaskStatusChange`, {
       method: 'POST',
@@ -102,7 +107,7 @@ const TasksLayer = (() => {
   const getTasks = async () => {
     const token = await getData(keys.token);
     if (!!!token) {
-      return Promise.reject('no token');
+      return Promise.reject({message: 'no token'});
     }
     const res = await fetch(`${base_url}tasklist`, {
       method: 'POST',
@@ -132,7 +137,7 @@ const TasksLayer = (() => {
   }) => {
     const token = await getData(keys.token);
     if (!!!token) {
-      return Promise.reject('no token');
+      return Promise.reject({message: 'no token'});
     }
     const res = await fetch(`${base_url}createtask`, {
       method: 'POST',
@@ -163,7 +168,7 @@ const TasksLayer = (() => {
   const getTaskDetails = async task_id => {
     const token = await getData(keys.token);
     if (!!!token) {
-      return Promise.reject('no token');
+      return Promise.reject({message: 'no token'});
     }
     const res = await fetch(`${base_url}getTaskDetails`, {
       method: 'POST',
@@ -185,15 +190,45 @@ const TasksLayer = (() => {
 })();
 
 const AuthLayer = (() => {
+  const logOut = async () => {
+    Object.values(keys).forEach(v => storeData(v, ''));
+  };
+
+  const postGoogleLoginReq = async email => {
+    const res = await fetch(`${base_url}googlelogin`, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({email: email}),
+    });
+    const response = await res.json();
+    const data = response['data'];
+    const token = data['token'];
+    const user = data['user'];
+    storeData(keys.token, token);
+    storeData(keys.user, user);
+    return data;
+  };
+
   const getById = async (type, id) => {
     console.log('trying to get ', type, id);
     if (type != 'region' && type != 'branch' && type != 'user')
-      return Promise.reject('only region, branch or user is allowed as type');
+      return Promise.reject({
+        message: 'only region, branch or user is allowed as type',
+      });
 
     const token = await getData(keys.token);
     if (!!!token) {
-      return Promise.reject('no token');
+      return Promise.reject({message: 'no token'});
     }
+    const body =
+      type == 'branch'
+        ? {branchID: id}
+        : type == 'region'
+        ? {regionID: id}
+        : {userID: id};
     const res = await fetch(`${base_url}${type}Detail`, {
       method: 'POST',
       headers: {
@@ -201,18 +236,18 @@ const AuthLayer = (() => {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
-      body: `{"${type}ID",${id}}`,
+      body: JSON.stringify(body),
     });
     return await res.json();
   };
   const login = async (email, password) => {
     console.log(`incomming info is :{email: ${email}, password: ${password}}`);
-    if (!!!email) return Promise.reject('email is undefined');
-    if (!!!password) return Promise.reject('password is undefined');
+    if (!!!email) return Promise.reject({message: 'email is undefined'});
+    if (!!!password) return Promise.reject({message: 'password is undefined'});
     if (typeof email != 'string')
-      return Promise.reject('email must be a string');
+      return Promise.reject({message: 'email must be a string'});
     if (typeof password != 'string')
-      return Promise.reject('password must be a string');
+      return Promise.reject({message: 'password must be a string'});
     const res = await fetch(`${base_url}login`, {
       method: 'POST',
       headers: {
@@ -237,7 +272,7 @@ const AuthLayer = (() => {
   const getUserBranchAsync = async () => {
     const token = await getData(keys.token);
     if (!!!token) {
-      return Promise.reject('no token');
+      return Promise.reject({message: 'no token'});
     }
     const res = await fetch(`${base_url}getUserBranch`, {
       method: 'GET',
@@ -249,7 +284,14 @@ const AuthLayer = (() => {
     });
     return await res.json();
   };
-  return {login, getUserAsync, getUserBranchAsync, getById};
+  return {
+    login,
+    getUserAsync,
+    getUserBranchAsync,
+    getById,
+    logOut,
+    postGoogleLoginReq,
+  };
 })();
 
 const AttendanceLayer = (() => {
@@ -259,7 +301,11 @@ const AttendanceLayer = (() => {
   const clockIn = async () => {
     const lnp = await locLayer.requestPermissionAndLocation();
 
-    console.info('lat', lnp.coords.latitude, 'lng', lnp.coords.longitude);
+    if (!!!lnp?.coords?.latitude || !!!lnp?.coords?.longitude)
+      return Promise.reject({message: 'Unable to find your location'});
+
+    if (!!!lnp?.coords?.accuracy > 100)
+      return Promise.reject({message: 'Location is very inacurate'});
 
     const branchRes = await authLayer.getUserBranchAsync();
     const branchLatLng = {
@@ -272,13 +318,13 @@ const AttendanceLayer = (() => {
         branchLatLng,
       ))
     ) {
-      return Promise.reject(
-        'you are out of the 100 meters radius from your branch',
-      );
+      return Promise.reject({
+        message: 'you are out of the 100 meters radius from your branch',
+      });
     }
     const token = await getData(keys.token);
     if (!!!token) {
-      return Promise.reject('no token');
+      return Promise.reject({message: 'no token'});
     }
     const res = await fetch(`${base_url}clockIn`, {
       method: 'POST',
@@ -316,7 +362,17 @@ const AttendanceLayer = (() => {
     const hours = Math.floor(diffMs / 3.6e6);
     const minutes = Math.floor((diffMs / 60000) % 60);
 
-    console.log('cit', cit, 'cot', cot, 'cot-cit', 'hours', hours, 'minutes', minutes);
+    console.log(
+      'cit',
+      cit,
+      'cot',
+      cot,
+      'cot-cit',
+      'hours',
+      hours,
+      'minutes',
+      minutes,
+    );
 
     return {hours, minutes};
   };
@@ -347,14 +403,14 @@ const AttendanceLayer = (() => {
         branchLatLng,
       ))
     ) {
-      return Promise.reject(
-        'you are out of the 100 meters radius from your branch',
-      );
+      return Promise.reject({
+        message: 'you are out of the 100 meters radius from your branch',
+      });
     }
 
     const token = await getData(keys.token);
     if (!!!token) {
-      return Promise.reject('no token');
+      return Promise.reject({message: 'no token'});
     }
     const res = await fetch(`${base_url}clockOut`, {
       method: 'POST',
@@ -383,7 +439,7 @@ const AttendanceLayer = (() => {
   const getAttendanceViewData = async (startDate, endDate) => {
     const token = await getData(keys.token);
     if (!!!token) {
-      return Promise.reject('no token');
+      return Promise.reject({message: 'no token'});
     }
     const res = await fetch(
       `${base_url}attendance/view?start_date=${startDate}&end_date=${endDate}`,
@@ -396,7 +452,8 @@ const AttendanceLayer = (() => {
         },
       },
     );
-    return res.json();
+    const data = await res.json();
+    return data;
   };
   const clockInStatus = async () => {
     return JSON.parse(await getData(keys.clockedIn));
@@ -431,7 +488,7 @@ const LeavesLayer = (() => {
   const getLeaves = async () => {
     const token = await getData(keys.token);
     if (!!!token) {
-      return Promise.reject('no token');
+      return Promise.reject({message: 'no token'});
     }
     const res = await fetch(`${base_url}getLeaves`, {
       method: 'GET',
@@ -446,7 +503,7 @@ const LeavesLayer = (() => {
   const getLeavesTypesAndAllowed = async () => {
     const token = await getData(keys.token);
     if (!!!token) {
-      return Promise.reject('no token');
+      return Promise.reject({message: 'no token'});
     }
     const res = await fetch(`${base_url}LeaveTypeDetail`, {
       method: 'GET',
@@ -471,7 +528,7 @@ const LeavesLayer = (() => {
   }) => {
     const token = await getData(keys.token);
     if (!!!token) {
-      return Promise.reject('no token');
+      return Promise.reject({message: 'no token'});
     }
     const res = await fetch(`${base_url}createLeave`, {
       method: 'POST',
@@ -491,8 +548,8 @@ const LeavesLayer = (() => {
         remark,
       }),
     });
-    console.log('submit leave request', await res.json());
     const response = (await res.json())['success'];
+    console.log('submit leave request', response);
     return response == 'Leave successfully created.';
   };
 
@@ -519,3 +576,138 @@ const datalayer = (() => {
 })();
 
 export default datalayer;
+
+export function useUser() {
+  const [user, setUser] = useState({});
+  const u = useCallback(()=>{
+    fetchUserAsync = async () => {
+      setUser(await datalayer.authLayer.getUserAsync());
+    };
+    fetchUserAsync()?.catch(e => Alert.alert(e.message));
+  }, [user])
+  useEffect(() => {
+    u()
+  }, []);
+  return user;
+}
+
+export function useLeaves() {
+  const [leaves, setLeaves] = useState([]);
+  const [leavesTypes, setLeavesTypes] = useState([]);
+
+  const fetchAsync = async () => {
+    try {
+      const lvs = (await datalayer.leavesLayer.getLeaves())?.['leaves'];
+      const lvsTypes = (
+        await datalayer.leavesLayer.getLeavesTypesAndAllowed()
+      )?.['leaveType'];
+
+      const lvsWithType = lvs?.map(e => ({
+        ...e,
+        leave_type: lvsTypes?.find(f => f?.['id'] === e?.['leave_type_id'])?.[
+          'title'
+        ],
+      }));
+
+      const lvsTypesWithUsed = lvsTypes?.map(e => ({
+        ...e,
+        used: lvs?.filter(f => f?.['leave_type_id'] === e?.['id'])?.length,
+      }));
+
+      setLeaves(lvsWithType);
+      setLeavesTypes(lvsTypesWithUsed);
+    } catch (error) {
+      Alert.alert('Error', error?.['message']);
+    }
+  };
+  useEffect(() => {
+    fetchAsync()?.catch(console.error);
+  }, []);
+  return [[leaves, leavesTypes], fetchAsync];
+}
+
+export function useAttendance() {
+  const [attendance, setAttendance] = useState([]);
+
+  const fetchAsync = async (selectedMonth=new Date()) => {
+    const firstDate = new Date(
+      selectedMonth.getFullYear(),
+      selectedMonth.getMonth(),
+      1,
+    );
+    const lastDate = new Date(
+      selectedMonth.getFullYear(),
+      selectedMonth.getMonth() + 1,
+      0,
+    );
+
+    const startDate = `1-${
+      firstDate.getMonth() + 1
+    }-${firstDate.getFullYear()}`;
+    const endDate = `${lastDate.getDate()}-${
+      lastDate.getMonth() + 1
+    }-${lastDate.getFullYear()}`;
+    const data = (
+      await datalayer.attendanceLayer.getAttendanceViewData(startDate, endDate)
+    )?.['data']?.map(d => {
+      return {
+        ...d,
+        status:
+          d?.status?.toLowerCase?.() == 'early punch out'
+            ? 'Early Leave'
+            : d?.status?.toLowerCase?.() == 'present'
+            ? 'Full Day'
+            : d?.status,
+      };
+    });
+    setAttendance(data);
+  };
+
+  useEffect(() => {
+    fetchAsync()?.catch(e => Alert.alert(e.message));
+  }, []);
+  return [attendance, fetchAsync];
+}
+
+export function useTasks() {
+  const [tasks, setTasks] = useState([]);
+  fetchAsync = async () => {
+    const data = await datalayer.taskLayer.getTasks();
+    setTasks(data['tasks']);
+  };
+  useEffect(() => {
+    fetchAsync()?.catch(e => Alert.alert(e.message));
+  }, []);
+  return [tasks, fetchText]
+}
+
+export function useClockinStatus() {
+  const [clockinStatus, setClockinStatus] = useState(false)
+  const [attendance, fetchAttendance] = useAttendance()
+  const [clockinTime, setClockinTime] = useState(undefined)
+  const [clockoutTime, setClockoutTime] = useState(undefined)
+  const [totalHours, setTotalHours] = useState(undefined)
+
+  const fetchAsync = async ()=>{
+    await fetchAttendance(new Date())
+  }
+  useEffect(()=>{
+    const cit = attendance?.[attendance?.length - 1]?.["clock_in"]
+    const cot = attendance?.[attendance?.length - 1]?.["clock_out"]
+
+    const clockedIn = !!cit && cit != "00:00:00"
+    const clockedOut = !!cot && cot != "00:00:00"
+    const state = clockedIn && !clockedOut
+    
+    const citd = clockedIn ? (new Date(cot)) : undefined
+    const cotd = clockedOut ? (new Date(cot)) : undefined
+    
+    setClockinTime(citd)
+    setClockoutTime(cotd)
+    
+    if (clockedOut && clockedIn) setTotalHours(cotd - citd)
+
+    setClockinStatus(state)
+  },[attendance])
+  return [{clockinStatus, clockoutTime, clockinTime, totalHours}, fetchAsync]
+}

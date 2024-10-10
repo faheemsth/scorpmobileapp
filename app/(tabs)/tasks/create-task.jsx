@@ -3,11 +3,12 @@ import React, {useEffect, useState} from 'react';
 import Btn from '../../components/btn';
 import InputField from '../../components/input-field';
 import {router, useNavigation} from 'expo-router';
-import datalayer from '../../../datalayer/datalayer';
+import datalayer, {useUser} from '../../../datalayer/datalayer';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import DateIcon from '../../../assets/icons/calendar.svg';
 import ClockIcon from '../../../assets/icons/timer.svg';
 import SearchableDropdown from '../../components/searchable-dropdown';
+import {Picker} from '@react-native-picker/picker';
 
 const TaskField = ({
   label,
@@ -18,7 +19,6 @@ const TaskField = ({
   trailing,
   isSearchable = false,
   data = [],
-  restrictToList = true,
 }) => {
   return (
     <View
@@ -31,12 +31,18 @@ const TaskField = ({
       }}>
       <Text style={{flex: 0.5}}>{label}</Text>
       {isSearchable ? (
-        <SearchableDropdown
-          data={data}
-          placeholder={placeholder}
-          restrictToList={restrictToList}
-          onItemSelected={onChange}
-        />
+        <Picker
+          onValueChange={(val, index) => {
+            console.log('selected value is', data?.[index]);
+            onChange(data?.[index]);
+          }}
+          selectedValue={value}
+          mode="dropdown"
+          style={{flex: 1}}>
+          {data?.map(i => (
+            <Picker.Item label={i?.['name']} value={i?.['id']} />
+          ))}
+        </Picker>
       ) : (
         <InputField
           style={{flex: 1, backgroundColor: '#0002', marginEnd: 0}}
@@ -53,7 +59,7 @@ const TaskField = ({
 };
 
 const CreateTask = ({onClose}) => {
-  const [user, setUser] = useState();
+  const user = useUser();
 
   const [taskName, setTaskName] = useState('');
   const [taskDescription, setTaskDescription] = useState('');
@@ -75,6 +81,15 @@ const CreateTask = ({onClose}) => {
   const [showStartDate, setShowStartDate] = useState(false);
   const [showRemainderDate, setShowRemainderDate] = useState(false);
   const [showRemainderTime, setShowRemainderTime] = useState(false);
+
+  useEffect(() => {
+    console.log(
+      showDueDate,
+      showStartDate,
+      showRemainderDate,
+      showRemainderTime,
+    );
+  }, [showDueDate, showStartDate, showRemainderDate, showRemainderTime]);
 
   handleDueDateClick = async () => {
     setShowDueDate(true);
@@ -127,29 +142,25 @@ const CreateTask = ({onClose}) => {
 
   useEffect(() => {
     initializeUseDataAsync = async () => {
-      const u = await datalayer.authLayer
-        .getUserAsync()
-        .catch(e => Alert.alert('Error', e?.["message"]));
-
-      const r = await datalayer.authLayer.getById('region', u?.['region_id'])?.[
-        'region'
-      ];
-      const b = await datalayer.authLayer.getById('branch', u?.['branch_id'])?.[
-        'branch'
-      ];
-      const brand = await datalayer.authLayer.getById(
-        'user',
-        u?.['brand_id'],
+      const r = (
+        await datalayer.authLayer.getById('region', user?.['region_id'])
+      )?.['region'];
+      const b = (
+        await datalayer.authLayer.getById('branch', user?.['branch_id'])
+      )?.['branch'];
+      const brand = (
+        await datalayer.authLayer.getById('user', user?.['brand_id'])
       )?.['user'];
+
+      console.log('user name is', user?.['name']);
 
       setBranch(b?.['name']);
       setBrands(brand?.['name']);
       setRegion(r?.['name']);
-      setAssignTo(String(u?.['name']));
-      setUser(u);
+      setAssignTo(String(user?.['name']));
     };
-    initializeUseDataAsync().catch(e=>Alert.alert("Error", e?.["message"]));
-  }, []);
+    initializeUseDataAsync().catch(e => Alert.alert('Error', e?.['message']));
+  }, [user]);
 
   const onCancel = () => {
     if (router.canGoBack()) router.back();
@@ -162,23 +173,34 @@ const CreateTask = ({onClose}) => {
     `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
 
   const create = async () => {
-    const response = await datalayer.taskLayer.createTask({
-      task_name: taskName,
-      brand_id: user?.['brand_id'],
-      branch_id: user?.['branch_id'],
-      region_id: user?.['region_id'],
-      assigned_to: user?.['id'],
-      description: taskDescription,
-      due_date: dateToYYYYMMDD(dueDate),
-      start_date: dateToYYYYMMDD(startDate),
-      remainder_date: dateToYYYYMMDD(remainderDate),
-      remainder_time: dateToHHMM(remainderTime),
-      assign_type: 'user',
-    });
+    const msg = '';
+    // if (!!!taskName) msg += 'Task Name must be defined\n';
+    // if (!!!user?.['brand_id']) msg += 'Brand must be defined \n';
+    // if (!!!user?.['branch_id']) msg += 'Branch must be defined \n';
+    // if (!!!user?.['region_id']) msg += 'Region must be defined \n';
+    // if (!!!user?.['id']) msg += 'Task must be assigned \n';
+
+    console.log('trying to create');
+    const response = await datalayer.taskLayer
+      .createTask({
+        task_name: taskName,
+        brand_id: user?.['brand_id'],
+        branch_id: user?.['branch_id'],
+        region_id: user?.['region_id'],
+        assigned_to: user?.['id'],
+        description: taskDescription,
+        due_date: dateToYYYYMMDD(dueDate),
+        start_date: dateToYYYYMMDD(startDate),
+        remainder_date: dateToYYYYMMDD(remainderDate),
+        remainder_time: dateToHHMM(remainderTime),
+        assign_type: 'user',
+      })
+      .catch(e => Alert.alert('Error', e?.['message']));
     if (response?.['status'].toLowerCase() == 'success') {
       router.dismiss();
+    } else {
+      Alert.alert('Error', response?.['message'])
     }
-    console.log('response', response);
   };
 
   return (
@@ -245,8 +267,11 @@ const CreateTask = ({onClose}) => {
           key={'Task Status'}
           label={'Task Status'}
           placeholder={'Task Status'}
-          value={taskStatus}
-          onChange={v => setSelectedTaskStatus(v.id)}
+          value={selectedTaskStatus}
+          onChange={v => {
+            console.log('value is', v);
+            setSelectedTaskStatus(v.id);
+          }}
           isSearchable={true}
           data={[
             {id: 0, name: 'On Going'},
@@ -259,11 +284,8 @@ const CreateTask = ({onClose}) => {
           placeholder={'Due Date'}
           value={dueDate?.toDateString()}
           readonly={true}
-          trailing={
-            <Pressable onPress={handleDueDateClick}>
-              <DateIcon />
-            </Pressable>
-          }
+          onChange={handleDueDateClick}
+          trailing={<DateIcon style={{color: '#333'}} />}
         />
       </View>
       <Text
@@ -288,33 +310,24 @@ const CreateTask = ({onClose}) => {
           placeholder={'Start Date'}
           value={startDate?.toDateString()}
           readonly={true}
-          trailing={
-            <Pressable onPress={handleStartDateClick}>
-              <DateIcon />
-            </Pressable>
-          }
+          onChange={handleStartDateClick}
+          trailing={<DateIcon style={{color: '#333'}} />}
         />
         <TaskField
           label={'Remainder Date'}
           placeholder={'Remainder Date'}
           value={remainderDate?.toDateString()}
           readonly={true}
-          trailing={
-            <Pressable onPress={handleRemainderDateClick}>
-              <DateIcon />
-            </Pressable>
-          }
+          onChange={handleRemainderDateClick}
+          trailing={<DateIcon style={{color: '#333'}} />}
         />
         <TaskField
           label={'Remainder Time'}
           placeholder={'Remainder Time'}
           value={dateToHHMM(remainderTime)}
           readonly={true}
-          trailing={
-            <Pressable onPress={handleRemainderTimeClick}>
-              <ClockIcon />
-            </Pressable>
-          }
+          onChange={handleRemainderTimeClick}
+          trailing={<ClockIcon />}
         />
       </View>
       <View

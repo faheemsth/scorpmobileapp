@@ -112,9 +112,9 @@ const ViewTask = () => {
             </View>
           ))}
           <Btn
-            style={{alignSelf: 'center'}}
-            title="Completed"
-            gradientColors={['#167BC4', '#6E7072']}
+            disabled={task?.['status']==1}
+            style={{alignSelf: 'center', backgroundColor: "#1A2"}}
+            title="Mark as Completed"
             leading={<TickIcon />}
             handleClick={onTaskComplete}
           />

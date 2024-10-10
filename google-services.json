@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "1055777588098",
+    "project_id": "convosoft-mobile-app",
+    "storage_bucket": "convosoft-mobile-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1055777588098:android:68660b2fb8280fc0d8059b",
+        "android_client_info": {
+          "package_name": "com.convosoft.crm"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1055777588098-c1nbbmeqt0cfl2b3e4a0161ovglj46bb.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.convosoft.crm",
+            "certificate_hash": "5b4ec64234c7fd0294575dd0ffe440ebde8a86c4"
+          }
+        },
+        {
+          "client_id": "1055777588098-74j3eta2a1lkdogvpipgggrd2g9lkgin.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDjYxhxUs9gopXfx6fR55_VSepbZ7DAJus"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1055777588098-74j3eta2a1lkdogvpipgggrd2g9lkgin.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

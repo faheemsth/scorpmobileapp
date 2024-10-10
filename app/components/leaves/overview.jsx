@@ -11,10 +11,6 @@ const LeavesOverview = ({leaves, leavesTypes}) => {
       const lvsTotalCount = leavesTypes
         ?.map(e => e?.['days'])
         ?.reduce((previous, current) => previous + current, 0);
-      console.log(
-        'leavesPercent',
-        leaves.length / (totalLeavesCount > 0 ? totalLeavesCount : 1),
-      );
       setTotalLeavesCount(lvsTotalCount);
     };
     fetchAsync().catch(e=>Alert.alert("Error", e?.["message"]));
@@ -57,7 +53,7 @@ const LeavesOverview = ({leaves, leavesTypes}) => {
             styles.justifyContentCenter,
             styles.gap(10),
           ]}>
-          <View style={[styles.flex, styles.row, styles.gap(5)]}>
+          <View style={[styles.flex, styles.row, styles.justifyContentCenter, styles.gap(5)]}>
             <View
               style={{
                 backgroundColor: '#D9D9D9',
@@ -71,7 +67,7 @@ const LeavesOverview = ({leaves, leavesTypes}) => {
               <Text style={[styles.font(400), styles.size(13)]}>
                 Total Leaves
               </Text>
-              <Text style={[styles.font(500)]}>{3}</Text>
+              <Text style={[styles.font(500)]}>{totalLeavesCount}</Text>
             </View>
           </View>
           <View style={[styles.flex, styles.row, styles.gap(5)]}>
@@ -88,7 +84,7 @@ const LeavesOverview = ({leaves, leavesTypes}) => {
               <Text style={[styles.font(400), styles.size(13)]}>
                 Used Leaves
               </Text>
-              <Text style={[styles.font(500)]}>2</Text>
+              <Text style={[styles.font(500)]}>{leaves?.length}</Text>
             </View>
           </View>
         </View>

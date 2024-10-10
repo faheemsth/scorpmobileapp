@@ -1,6 +1,6 @@
 import {View, Text} from 'react-native';
 import React from 'react';
-import Bottomsheet from '../components/bottom-sheet';
+import Bottomsheet from '../../components/bottom-sheet';
 
 const ReasonView = ({onClose, reason}) => {
   return (

@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
   View,
   StyleSheet,
@@ -10,15 +10,13 @@ import {
   Alert,
 } from 'react-native';
 
-import {SafeAreaView} from 'react-native-safe-area-context';
-
 import Clock from '../../../assets/icons/clock.svg';
 import Clockin from '../../../assets/icons/clockin.svg';
 import Clockout from '../../../assets/icons/clockout.svg';
 import Clockmarked from '../../../assets/icons/clockmarked.svg';
 
 import {LinearGradient} from 'expo-linear-gradient';
-import datalayer from '../../../datalayer/datalayer';
+import datalayer, {useClockinStatus} from '../../../datalayer/datalayer';
 import {router, useFocusEffect} from 'expo-router';
 import WriteEarlyCheckoutReason from './write-early-check-out-reason';
 import Btn from '../../components/btn';
@@ -33,7 +31,8 @@ const ClockInOut = () => {
   const [clockOutTime, setClockOutTime] = useState();
   const [totalHours, setTotalHours] = useState();
   const [time, setTime] = useState(new Date());
-  const [btnColor, setBtnColor] = useState('#167BC4');
+  const [btnColor, setBtnColor] = useState('#11A120');
+  const [clockinState, fetchClockinAsync] = useClockinStatus();
   const [user, setUser] = useState();
 
   const [loading, setLoading] = useState(false);
@@ -57,9 +56,18 @@ const ClockInOut = () => {
 
     if (!!cot) setTotalHours(dt);
 
-    setIsClockedIn(cis);
     setUser(u);
   };
+
+  useEffect(()=>{
+    setIsClockedIn(clockinState)
+  },[clockinState])
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchClockinAsync()?.catch(e => Alert.alert('Error', e.message));
+    }, []),
+  );
 
   useEffect(() => {
     const initializeClockinStateFromStorage = async () => {
@@ -75,8 +83,9 @@ const ClockInOut = () => {
 
   useEffect(() => {
     const updateClockinUI = async () => {
-      setBtnColor(isClockedIn ? '#D5213C' : '#167BC4');
+      setBtnColor(isClockedIn ? '#D5213C' : '#11A120');
     };
+    console.log("isClockedIn", btnColor)
     updateClockinUI().catch(e => Alert.alert('Error', e?.['message']));
     updateDataFromDatalayer().catch(e => Alert.alert('Error', e?.['message']));
   }, [isClockedIn]);
@@ -105,16 +114,16 @@ const ClockInOut = () => {
         setRequestEarlyCheckoutReason(true);
         return;
       }
-      const r = !(await datalayer.attendanceLayer
+      const r = await datalayer.attendanceLayer
         .clockOut()
-        .catch(e => Alert.alert('Error', e?.['message'])));
-      newValue = !!r?.['success'] && !r?.['success'];
+        .catch(e => Alert.alert('Error', e?.['message']));
+      newValue = !r?.['success'];
     } else {
       const r = await datalayer.attendanceLayer
         .clockIn()
         .catch(e => Alert.alert('Error', e?.['message']));
       console.log('r is', r);
-      newValue = !!r?.['success'] && r?.['success'];
+      newValue = r?.['success'];
     }
     setIsClockedIn(newValue);
   };
@@ -124,8 +133,7 @@ const ClockInOut = () => {
   };
 
   const handleViewAttendanceClicked = () => {
-    console.log('handleViewAttendanceClicked');
-    router.navigate('../../attendance/view-attendance');
+    router.navigate('../attendance');
   };
 
   const formatToHhMm = date => {
@@ -166,7 +174,11 @@ const ClockInOut = () => {
                     }}
                   />
                 ) : (
-                  <UserIcon width={80} height={80} style={{color: '#D9D9D9'}} />
+                  <UserIcon
+                    width={80}
+                    height={80}
+                    style={{color: '#D9D9D9', marginTop: 12}}
+                  />
                 )}
               </View>
             </TouchableOpacity>
@@ -202,17 +214,23 @@ const ClockInOut = () => {
               activeOpacity={0.9}
               onPress={handleCheckInOutClick}>
               <LinearGradient
-                colors={['#6C6C6C', btnColor]}
+                colors={[btnColor, btnColor]}
                 style={{
                   width: 125,
                   height: 125,
                   borderRadius: 63,
                   display: 'flex',
                   alignItems: 'center',
+                  justifyContent: 'center',
                 }}>
                 <Clock width={42} height={42} style={{marginTop: 19}} />
-
-                <Text style={{color: 'white', fontWeight: '500', marginTop: 5}}>
+                <Text
+                  style={{
+                    color: 'white',
+                    fontWeight: '500',
+                    marginTop: 5,
+                    marginBottom: 10,
+                  }}>
                   CLOCK-{`${isClockedIn ? 'OUT' : 'IN'}`}
                 </Text>
               </LinearGradient>
@@ -293,7 +311,6 @@ const ClockInOut = () => {
             borderRadius: 10,
           }}
           title={'View Your Attendance'}
-          gradientColors={['#167BC4', '#6E7072']}
         />
       </ScrollView>
       {requestEarlyCheckoutReason && (
@@ -342,7 +359,7 @@ const styles = StyleSheet.create({
     flex: 1,
     position: 'relative',
     backgroundColor: 'white',
-    justifyContent: 'space-between',
+    gap: 25,
   },
   header: {
     width: 328,

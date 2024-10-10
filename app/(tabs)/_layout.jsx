@@ -3,6 +3,8 @@ import Dashboard from '../../assets/icons/dashboard.svg';
 import ListTask from '../../assets/icons/listtask.svg';
 import LeaveIcon from '../../assets/icons/leaves.svg';
 import PofileIcon from '../../assets/icons/profile.svg';
+import HomeIcon from '../../assets/icons/home.svg';
+import CalendarIcon from '../../assets/icons/calendar.svg'
 
 export default function TabLayout() {
   return (
@@ -23,9 +25,9 @@ export default function TabLayout() {
       <Tabs.Screen
         name="clock-in-out"
         options={{
-          title: 'Dashboard',
+          title: 'Home',
           tabBarIcon: ({color}) => (
-            <Dashboard width={22} height={22} style={{color: color}} />
+            <HomeIcon width={22} height={22} style={{color: color}} />
           ),
         }}
       />
@@ -37,6 +39,10 @@ export default function TabLayout() {
             <ListTask width={22} height={22} style={{color: color}} />
           ),
         }}
+      />
+      <Tabs.Screen
+        name="attendance"
+        options={{title: 'Attendance', tabBarIcon: ({color})=><CalendarIcon style={{color: color}} />}}
       />
       <Tabs.Screen
         name="leaves"

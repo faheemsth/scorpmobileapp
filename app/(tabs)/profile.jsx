@@ -1,11 +1,13 @@
-import {View, Text, ScrollView, Image, Alert} from 'react-native';
+import {View, Text, ScrollView, Image, Alert, Pressable} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {LinearGradient} from 'expo-linear-gradient';
 import styles from '../components/theme';
 import datalayer from '../../datalayer/datalayer';
 import InputField from '../components/input-field';
 import UserIcon from '../../assets/icons/profile.svg';
-import EmailIcon from "../../assets/icons/email.svg"
+import EmailIcon from '../../assets/icons/email.svg';
+import PowerIcon from '../../assets/icons/power.svg';
+import { router } from 'expo-router';
 
 const Profile = () => {
   const [user, setUser] = useState();
@@ -19,8 +21,13 @@ const Profile = () => {
     fetchAsync().catch(e => Alert.alert('Error', e?.['message']));
   }, []);
 
+  logoutPressed = ()=>{
+    datalayer.authLayer.logOut().catch(console.error)
+    router.replace("/onboarding/hello")
+  }
+
   return (
-    <ScrollView contentContainerStyle={{flex: 1, gap: 47+20}}>
+    <ScrollView contentContainerStyle={{flex: 1, gap: 47 + 20}}>
       <LinearGradient
         colors={['#D4E5F2', '#167BC4']}
         style={{
@@ -34,8 +41,24 @@ const Profile = () => {
           height: 137,
         }}>
         <View style={{height: 35}} />
-        <Text style={[styles.font(500), styles.size(24)]}>Profile</Text>
-        <View style={{position: 'absolute', bottom: -46.5, backgroundColor: "white", borderRadius: 1000}}>
+        <View
+          style={{
+            width: '100%',
+            flexDirection: 'row',
+            justifyContent: 'center',
+          }}>
+          <Text style={[styles.font(500), styles.size(24)]}>Profile</Text>
+          <Pressable onPress={logoutPressed} style={{position: 'absolute', right: 15, top: -19.5}}>
+            <PowerIcon width={32} />
+          </Pressable>
+        </View>
+        <View
+          style={{
+            position: 'absolute',
+            bottom: -46.5,
+            backgroundColor: 'white',
+            borderRadius: 1000,
+          }}>
           {!!user?.['avatar'] ? (
             <Image
               fadeDuration={1000}
@@ -62,7 +85,11 @@ const Profile = () => {
         <View style={{gap: 5}}>
           <Text styles={[styles.font(600), {marginLeft: 10}]}>Name</Text>
           <InputField
-            style={{marginHorizontal: 0, backgroundColor: "#0000001A", fieldStyle: {color: "#00000080"}}}
+            style={{
+              marginHorizontal: 0,
+              backgroundColor: '#0000001A',
+              fieldStyle: {color: '#00000080'},
+            }}
             readonly={true}
             value={user?.['name']}
           />
@@ -71,7 +98,11 @@ const Profile = () => {
           <Text styles={[styles.font(600), {marginLeft: 10}]}>Email</Text>
           <InputField
             leading={<EmailIcon />}
-            style={{marginHorizontal: 0, backgroundColor: "#0000001A", fieldStyle: {color: "#00000080"}}}
+            style={{
+              marginHorizontal: 0,
+              backgroundColor: '#0000001A',
+              fieldStyle: {color: '#00000080'},
+            }}
             readonly={true}
             value={user?.['email']}
           />
@@ -81,7 +112,11 @@ const Profile = () => {
             Phone Number
           </Text>
           <InputField
-            style={{marginHorizontal: 0, backgroundColor: "#0000001A", fieldStyle: {color: "#00000080"}}}
+            style={{
+              marginHorizontal: 0,
+              backgroundColor: '#0000001A',
+              fieldStyle: {color: '#00000080'},
+            }}
             readonly={true}
             value={user?.['phone']}
           />
@@ -89,7 +124,11 @@ const Profile = () => {
         <View style={{gap: 5}}>
           <Text styles={[styles.font(600), {marginLeft: 10}]}>Designation</Text>
           <InputField
-            style={{marginHorizontal: 0, backgroundColor: "#0000001A", fieldStyle: {color: "#00000080"}}}
+            style={{
+              marginHorizontal: 0,
+              backgroundColor: '#0000001A',
+              fieldStyle: {color: '#00000080'},
+            }}
             readonly={true}
             value={user?.['type']}
           />

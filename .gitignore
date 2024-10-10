@@ -2,6 +2,7 @@
 
 # android and ios generated code
 android/
+*.apk
 ios/
 
 # dependencies

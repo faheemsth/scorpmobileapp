@@ -1,69 +1,46 @@
-import {View, Text, StyleSheet, Pressable, ScrollView, Alert} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Pressable,
+  ScrollView,
+  Alert,
+} from 'react-native';
 import React, {useCallback, useEffect, useState} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import LeavesOverview from '../../components/leaves/overview';
 import styles from '../../components/theme';
 import LeaveCard from '../../components/leaves/leaveCard';
-import datalayer from '../../../datalayer/datalayer';
+import datalayer, { useLeaves, useUser } from '../../../datalayer/datalayer';
 import Btn from '../../components/btn';
 import PlusIcon from '../../../assets/icons/plus.svg';
 import {router, useFocusEffect, useNavigation} from 'expo-router';
 
 const LeavesTab = () => {
-  const [leaves, setLeaves] = useState([]);
-  const [leavesTypes, setLeavesTypes] = useState([]);
-  const [user, setUser] = useState();
+  const [[leaves, leavesTypes], fetchLeavesAsync] = useLeaves()
+  const user = useUser()
+  const [loading, setLoading] = useState(false);
 
   const nav = useNavigation();
+
+  useEffect(() => {
+    setLoading(false);
+  }, [leaves, leavesTypes]);
 
   // Use useFocusEffect correctly
   useFocusEffect(
     useCallback(() => {
-      console.log('leaves is focused');
+      setLoading(true);
+      fetchLeavesAsync()?.catch(e=>Alert.alert("Error", e?.["message"]))
 
-      // Async function to fetch data
-      const fetchAsync = async () => {
-        try {
-          const lvs = (await datalayer.leavesLayer.getLeaves())?.['leaves'];
-          const lvsTypes = (
-            await datalayer.leavesLayer.getLeavesTypesAndAllowed()
-          )?.['leaveType'];
-
-          const lvsWithType = lvs?.map(e => ({
-            ...e,
-            leave_type: lvsTypes?.find(f => f?.['id'] === e?.['leave_type_id'])?.['title'],
-          }));
-
-          const lvsTypesWithUsed = lvsTypes?.map(e => ({
-            ...e,
-            used: lvs.filter(f => f?.['leave_type_id'] === e?.['id'])?.length,
-          }));
-
-          setUser(await datalayer.authLayer.getUserAsync());
-          setLeaves(lvsWithType);
-          setLeavesTypes(lvsTypesWithUsed);
-        } catch (error) {
-          Alert.alert("Error", error?.["message"]);
-        }
-      };
-
-      fetchAsync();
-
-      // Cleanup function to clear the state (if needed)
-      return () => {
-        setLeaves([]);
-        setLeavesTypes([]);
-        setUser(null);
-      };
-    }, [nav]) // Dependency array includes nav
+    }, [nav]), // Dependency array includes nav
   );
 
   handleLeaveHistoryClick = () => {
-    router.navigate('/leaves/leave-history')
-  }
+    router.navigate('/leaves/leave-history');
+  };
 
   handleAddNewLeave = () => {
-    console.log('trying to navigate');
     router.navigate(`/leaves/request-leave`);
   };
 
@@ -87,7 +64,7 @@ const LeavesTab = () => {
           styles.gap(18),
           {width: '100%'},
         ]}>
-        <Text style={[styles.font(500), styles.size(20)]}>My Leaves</Text>
+        <Text style={[styles.font(600), styles.size(24)]}>My Leaves</Text>
         {!!leaves && leavesTypes && (
           <LeavesOverview
             key={'090078601'}
@@ -126,6 +103,8 @@ const LeavesTab = () => {
               </Text>
             </Pressable>
           </View>
+
+          {loading ? <Text>Loading...</Text> : null}
           {leaves?.map(e => {
             return (
               <LeaveCard
@@ -165,14 +144,20 @@ const LeavesTab = () => {
           })}
         </View>
       </ScrollView>
-      <Btn
-        handleClick={() => {
-          handleAddNewLeave();
-        }}
-        leading={<PlusIcon />}
-        gradientColors={['#167BC4', '#6E7072']}
-        title={'Add New Leave'}
-      />
+      <Pressable
+        onPress={handleAddNewLeave}
+        style={{
+          position: 'absolute',
+          bottom: 29,
+          right: 13,
+          padding: 16,
+          backgroundColor: '#167BC4',
+          borderRadius: 5,
+          elevation: 4,
+          zIndex: 1,
+        }}>
+        <PlusIcon />
+      </Pressable>
     </SafeAreaView>
   );
 };

@@ -6,6 +6,8 @@ import {
   TextInput,
   TouchableWithoutFeedback,
   Keyboard,
+  Text,
+  Pressable,
 } from 'react-native';
 
 const InputField = ({
@@ -41,6 +43,18 @@ const InputField = ({
             onChangeText={onChange}
             readOnly={readonly}
           />
+        ) : readonly ? (
+          <Pressable
+            onPress={()=>onChange?.()}
+            style={[
+              styles.iconedTextField.inputField,
+              !!multiline
+                ? styles.textAlignTopVertical
+                : styles.textAlignCenterVertical,
+              style?.fieldStyle,
+            ]}>
+            <Text>{value}</Text>
+          </Pressable>
         ) : (
           <TextInput
             ref={ref}
