@@ -1,11 +1,11 @@
 import { StyleSheet } from "react-native";
 
 const styles = StyleSheet.create({
-  bg: (color="#EFF3F7")=>{return{backgroundColor: color}},
+  bg: (color="#fffff")=>{return{backgroundColor: color}},
   ph: (px=4)=>{return{paddingHorizontal: px}},
   pv: (px=4)=>{return{paddingVertical: px}},
   screenBg: {
-    backgroundColor: '#EFF3F7',
+    backgroundColor: '#ffffff',
   },
   transparentBg: {
     backgroundColor: '#fff0',

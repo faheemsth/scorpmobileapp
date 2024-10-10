@@ -1,8 +1,9 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import * as Location from 'expo-location';
 import {useCallback, useEffect, useMemo, useState} from 'react';
 import {Alert} from 'react-native';
-import { fetchText } from 'react-native-svg';
+import {fetchText} from 'react-native-svg';
 
 const base_url = 'https://api.scorp.co/api/'; // Private variable
 const keys = {
@@ -192,6 +193,7 @@ const TasksLayer = (() => {
 const AuthLayer = (() => {
   const logOut = async () => {
     Object.values(keys).forEach(v => storeData(v, ''));
+    GoogleSignin.signOut()
   };
 
   const postGoogleLoginReq = async email => {
@@ -361,19 +363,6 @@ const AttendanceLayer = (() => {
     const diffMs = cot - cit;
     const hours = Math.floor(diffMs / 3.6e6);
     const minutes = Math.floor((diffMs / 60000) % 60);
-
-    console.log(
-      'cit',
-      cit,
-      'cot',
-      cot,
-      'cot-cit',
-      'hours',
-      hours,
-      'minutes',
-      minutes,
-    );
-
     return {hours, minutes};
   };
   const hasCompletedHours = async totalDutyHoursPerDay => {
@@ -577,16 +566,37 @@ const datalayer = (() => {
 
 export default datalayer;
 
+export const adjustToLocalTimezone = (date) => {
+  // Step 1: Convert the date to UTC (offset 0)
+  const utcDate = new Date(
+    date.getUTCFullYear(),
+    date.getUTCMonth(),
+    date.getUTCDate(),
+    date.getUTCHours(),
+    date.getUTCMinutes(),
+    date.getUTCSeconds()
+  );
+
+  // Step 2: Get the phone's local timezone offset in minutes
+  const timezoneOffset = new Date().getTimezoneOffset(); // Local offset in minutes
+
+  // Step 3: Adjust the UTC date by the local timezone offset
+  // Timezone offset is in minutes, so we convert it to milliseconds and adjust
+  const localDate = new Date(utcDate.getTime() - timezoneOffset * 60 * 1000);
+
+  return localDate;
+};
+
 export function useUser() {
   const [user, setUser] = useState({});
-  const u = useCallback(()=>{
+  const u = useCallback(() => {
     fetchUserAsync = async () => {
       setUser(await datalayer.authLayer.getUserAsync());
     };
     fetchUserAsync()?.catch(e => Alert.alert(e.message));
-  }, [user])
+  }, [user]);
   useEffect(() => {
-    u()
+    u();
   }, []);
   return user;
 }
@@ -629,7 +639,7 @@ export function useLeaves() {
 export function useAttendance() {
   const [attendance, setAttendance] = useState([]);
 
-  const fetchAsync = async (selectedMonth=new Date()) => {
+  const fetchAsync = async (selectedMonth = new Date()) => {
     const firstDate = new Date(
       selectedMonth.getFullYear(),
       selectedMonth.getMonth(),
@@ -678,36 +688,66 @@ export function useTasks() {
   useEffect(() => {
     fetchAsync()?.catch(e => Alert.alert(e.message));
   }, []);
-  return [tasks, fetchText]
+  return [tasks, fetchText];
 }
 
 export function useClockinStatus() {
-  const [clockinStatus, setClockinStatus] = useState(false)
-  const [attendance, fetchAttendance] = useAttendance()
-  const [clockinTime, setClockinTime] = useState(undefined)
-  const [clockoutTime, setClockoutTime] = useState(undefined)
-  const [totalHours, setTotalHours] = useState(undefined)
+  const [clockinStatus, setClockinStatus] = useState(false);
+  const [attendance, fetchAttendance] = useAttendance();
+  const [clockinTime, setClockinTime] = useState(undefined);
+  const [clockoutTime, setClockoutTime] = useState(undefined);
+  const [totalHours, setTotalHours] = useState({hours: 0, minutes: 0});
 
-  const fetchAsync = async ()=>{
-    await fetchAttendance(new Date())
-  }
-  useEffect(()=>{
-    const cit = attendance?.[attendance?.length - 1]?.["clock_in"]
-    const cot = attendance?.[attendance?.length - 1]?.["clock_out"]
+  const fetchAsync = async () => {
+    await fetchAttendance(new Date());
+  };
+  const memoizedData = useCallback(() => {
+    const cit = attendance?.[attendance?.length - 1]?.['clock_in'];
+    const cot = attendance?.[attendance?.length - 1]?.['clock_out'];
 
-    const clockedIn = !!cit && cit != "00:00:00"
-    const clockedOut = !!cot && cot != "00:00:00"
-    const state = clockedIn && !clockedOut
-    
-    const citd = clockedIn ? (new Date(cot)) : undefined
-    const cotd = clockedOut ? (new Date(cot)) : undefined
-    
-    setClockinTime(citd)
-    setClockoutTime(cotd)
-    
-    if (clockedOut && clockedIn) setTotalHours(cotd - citd)
+    const clockedIn = !!cit && cit != '00:00:00';
+    const clockedOut = !!cot && cot != '00:00:00';
+    const state = clockedIn && !clockedOut;
 
-    setClockinStatus(state)
-  },[attendance])
-  return [{clockinStatus, clockoutTime, clockinTime, totalHours}, fetchAsync]
+    const today = new Date()
+    console.log("today in utc", today.toUTCString())
+    const citd = clockedIn ? new Date(today.toUTCString()) : undefined;
+    const cotd = clockedOut ? new Date(today.toUTCString()) : undefined;
+
+    if (!!citd) {
+      
+      const [h, m, s] = cit?.split(':');
+      citd.setHours(+h);
+      citd.setMinutes(m);
+      citd.setSeconds(s);
+    }
+    if (!!cotd) {
+      const [h, m, s] = cot?.split(':');
+      cotd.setHours(+h);
+      cotd.setMinutes(m);
+      cotd.setSeconds(s);
+      console.log('clockout-hms', h, m, s);
+    }
+
+    console.log('clockin-time', cit, citd);
+    console.log('clockout-time', cot, cotd);
+
+    storeData(keys.clockedInTime, citd?.getTime() ?? '');
+    storeData(keys.clockedOutTime, cotd?.getTime() ?? '');
+    storeData(keys.clockedIn, state ?? false);
+
+    datalayer.attendanceLayer
+      .countDutyTime()
+      .then(e => setTotalHours(e ?? {hours: 0, minutes: 0}));
+
+    setClockinTime(citd);
+    setClockoutTime(cotd);
+    setClockinStatus(state);
+  }, [attendance]);
+
+  useEffect(() => {
+    memoizedData();
+  }, [attendance]);
+
+  return [{clockinStatus, clockoutTime, clockinTime, totalHours}, fetchAsync];
 }

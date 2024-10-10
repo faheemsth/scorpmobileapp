@@ -62,6 +62,7 @@ const colors = {
   green: '#1a2',
   red: '#d23',
   yellow: '#fd3',
+  bg: '#fff',
 };
 
 export function AttendanceRowNew({
@@ -176,7 +177,6 @@ export function AttendanceRowNew({
   );
 }
 
-
 const ViewAttendanceScreen = () => {
   const navigation = useNavigation();
   chips = ['All', 'Full Day', 'Early Leave', 'Absent'];
@@ -262,7 +262,10 @@ const ViewAttendanceScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={{fontFamily: 'outfit-600', fontSize: 24, textAlign: "center"}}>Attendance</Text>
+      <Text
+        style={{fontFamily: 'outfit-600', fontSize: 24, textAlign: 'center'}}>
+        Attendance
+      </Text>
       {/* Selected date view start */}
       <CalendarList
         style={{backgroundColor: 'transparent'}}
@@ -322,7 +325,9 @@ const ViewAttendanceScreen = () => {
           padding: 10,
         }}>
         {!!isLoading ? (
-          <Text>Loading...</Text>
+          <Text style={{fontFamily: 'outfit-400'}}>Loading...</Text>
+        ) : attendance?.length < 1 ? (
+          <Text style={{fontFamily: 'outfit-400'}}>No Data...</Text>
         ) : (
           attendance?.map((e, index) => {
             if (e?.['status']?.toLowerCase() == 'holiday') {
@@ -333,14 +338,16 @@ const ViewAttendanceScreen = () => {
                   style={{alignItems: 'center', marginTop: 17}}>
                   <View
                     style={{
-                      backgroundColor: '#167BC44A',
+                      backgroundColor: colors.yellow + '1',
+                      borderWidth: 1,
+                      borderColor: colors.yellow + '2',
                       width: 330,
                       justifyContent: 'center',
                       alignItems: 'center',
                       borderRadius: 10,
                       padding: 10,
                     }}>
-                    <Text style={{color: '#167BC4'}}>
+                    <Text style={{color: colors.black}}>
                       Weekend Off: {e?.['date']}
                     </Text>
                   </View>
@@ -391,7 +398,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: '#EFF3F7',
+    backgroundColor: colors.bg,
     gap: 17,
     position: 'relative',
   },

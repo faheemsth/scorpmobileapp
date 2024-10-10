@@ -51,9 +51,11 @@ const LeaveCard = ({
             {e.heading}
           </Text>
           <View style={{flex: 1}}>
-            <Text style={[styles.font(400), styles.size(10), e.style]}>
-              {e.value}
-            </Text>
+            <View style={[styles.row, styles.alignItemsCenter, {flex: 1}]}>
+              <Text style={[styles.font(400), styles.size(10), e.style]}>
+                {e.value}
+              </Text>
+            </View>
           </View>
         </View>
       ))}

@@ -13,7 +13,7 @@ const LeavesOverview = ({leaves, leavesTypes}) => {
         ?.reduce((previous, current) => previous + current, 0);
       setTotalLeavesCount(lvsTotalCount);
     };
-    fetchAsync().catch(e=>Alert.alert("Error", e?.["message"]));
+    fetchAsync().catch(e => Alert.alert('Error', e?.['message']));
   }, [leavesTypes]);
 
   return (
@@ -26,6 +26,7 @@ const LeavesOverview = ({leaves, leavesTypes}) => {
             borderRadius: 20,
             paddingLeft: 23,
             paddingVertical: 13,
+            elevation: 8,
           },
           styles.whiteBg,
           styles.flex,
@@ -53,7 +54,13 @@ const LeavesOverview = ({leaves, leavesTypes}) => {
             styles.justifyContentCenter,
             styles.gap(10),
           ]}>
-          <View style={[styles.flex, styles.row, styles.justifyContentCenter, styles.gap(5)]}>
+          <View
+            style={[
+              styles.flex,
+              styles.row,
+              styles.justifyContentCenter,
+              styles.gap(5),
+            ]}>
             <View
               style={{
                 backgroundColor: '#D9D9D9',
@@ -91,13 +98,16 @@ const LeavesOverview = ({leaves, leavesTypes}) => {
         <ScrollView
           horizontal={true}
           contentContainerStyle={[
+            {flex: 1},
             styles.row,
             styles.justifyEvenly,
             styles.gap(25),
+            styles.alignItemsCenter,
+            styles.justifyContentCenter,
           ]}>
           {leavesTypes?.map(e => (
             <View
-              style={[styles.column, styles.gap(5), {alignItems: 'center'}]}>
+              style={[styles.column, styles.gap(5), styles.alignItemsCenter]}>
               <CircularProgress
                 progress={e?.['used'] / e?.['days']}
                 strokeWidth={5}
@@ -107,7 +117,14 @@ const LeavesOverview = ({leaves, leavesTypes}) => {
                   {e?.['days'] - e?.['used']}
                 </Text>
               </CircularProgress>
-              <Text style={[styles.font(400), styles.size(13)]}>
+              <Text
+                style={[
+                  styles.font(400),
+                  styles.size(13),
+                  {width: 80, textAlign: 'center'},
+                ]}
+                ellipsizeMode="tail"
+                numberOfLines={2}>
                 {e?.['title']}
               </Text>
             </View>

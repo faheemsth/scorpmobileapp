@@ -1,4 +1,12 @@
-import {View, Text, ScrollView, Image, Alert, Pressable} from 'react-native';
+import {
+  View,
+  Text,
+  ScrollView,
+  Image,
+  Alert,
+  Pressable,
+  AlertButton,
+} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {LinearGradient} from 'expo-linear-gradient';
 import styles from '../components/theme';
@@ -7,7 +15,7 @@ import InputField from '../components/input-field';
 import UserIcon from '../../assets/icons/profile.svg';
 import EmailIcon from '../../assets/icons/email.svg';
 import PowerIcon from '../../assets/icons/power.svg';
-import { router } from 'expo-router';
+import {router} from 'expo-router';
 
 const Profile = () => {
   const [user, setUser] = useState();
@@ -21,10 +29,15 @@ const Profile = () => {
     fetchAsync().catch(e => Alert.alert('Error', e?.['message']));
   }, []);
 
-  logoutPressed = ()=>{
-    datalayer.authLayer.logOut().catch(console.error)
-    router.replace("/onboarding/hello")
-  }
+  logoutPressed = () => {
+    Alert.alert('Warning', 'Are you sure you want to logout?', [
+      {text: 'No', style: 'cancel'},
+      {text: "Yes", onPress: () => {
+        datalayer.authLayer.logOut().catch(console.error);
+        router.replace('/onboarding/hello');
+      }}
+    ]);
+  };
 
   return (
     <ScrollView contentContainerStyle={{flex: 1, gap: 47 + 20}}>
@@ -48,7 +61,9 @@ const Profile = () => {
             justifyContent: 'center',
           }}>
           <Text style={[styles.font(500), styles.size(24)]}>Profile</Text>
-          <Pressable onPress={logoutPressed} style={{position: 'absolute', right: 15, top: -19.5}}>
+          <Pressable
+            onPress={logoutPressed}
+            style={{position: 'absolute', right: 15, top: -19.5}}>
             <PowerIcon width={32} />
           </Pressable>
         </View>

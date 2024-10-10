@@ -16,7 +16,10 @@ import Clockout from '../../../assets/icons/clockout.svg';
 import Clockmarked from '../../../assets/icons/clockmarked.svg';
 
 import {LinearGradient} from 'expo-linear-gradient';
-import datalayer, {useClockinStatus} from '../../../datalayer/datalayer';
+import datalayer, {
+  useClockinStatus,
+  useUser,
+} from '../../../datalayer/datalayer';
 import {router, useFocusEffect} from 'expo-router';
 import WriteEarlyCheckoutReason from './write-early-check-out-reason';
 import Btn from '../../components/btn';
@@ -26,69 +29,43 @@ import UserIcon from '../../../assets/icons/profile.svg';
 const ClockInOut = () => {
   const [requestEarlyCheckoutReason, setRequestEarlyCheckoutReason] =
     useState(false);
-  const [isClockedIn, setIsClockedIn] = useState(false);
-  const [clockinTime, setClockinTime] = useState();
-  const [clockOutTime, setClockOutTime] = useState();
-  const [totalHours, setTotalHours] = useState();
   const [time, setTime] = useState(new Date());
   const [btnColor, setBtnColor] = useState('#11A120');
-  const [clockinState, fetchClockinAsync] = useClockinStatus();
-  const [user, setUser] = useState();
+  const [
+    {clockinStatus, clockoutTime, clockinTime, totalHours},
+    fetchClockinAsync,
+  ] = useClockinStatus();
+  const user = useUser();
 
   const [loading, setLoading] = useState(false);
 
   const updateDataFromDatalayer = async () => {
-    const cis = await datalayer.attendanceLayer.clockInStatus();
-    const u = await datalayer.authLayer.getUserAsync();
-    if (!!!u) router.replace('/onboarding/hello');
-
-    const cit = await datalayer.attendanceLayer
-      .getClockinTimeAsync()
-      .catch(e => Alert.alert('Error', e?.['message']));
-    const cot = await datalayer.attendanceLayer
-      .getClockoutTimeAsync()
-      .catch(e => Alert.alert('Error', e?.['message']));
-
-    setClockinTime(cit);
-    setClockOutTime(cot);
-
-    const dt = await datalayer.attendanceLayer.countDutyTime();
-
-    if (!!cot) setTotalHours(dt);
-
-    setUser(u);
+    fetchClockinAsync()?.catch(e => Alert.alert(e?.['message']));
   };
-
-  useEffect(()=>{
-    setIsClockedIn(clockinState)
-  },[clockinState])
-
   useFocusEffect(
     useCallback(() => {
+      updateDataFromDatalayer().catch(e =>
+        Alert.alert('Error', e?.['message']),
+      );
+      console.log(
+        'clockin-statuses are',
+        clockinStatus,
+        clockoutTime,
+        clockinTime,
+        totalHours,
+      );
+      setBtnColor(clockinStatus ? '#D5213C' : '#11A120');
       fetchClockinAsync()?.catch(e => Alert.alert('Error', e.message));
-    }, []),
+    }, [clockinStatus, user]),
   );
-
   useEffect(() => {
-    const initializeClockinStateFromStorage = async () => {
+    const runClock = async () => {
       setInterval(() => {
         setTime(new Date());
       }, 1000);
     };
-    updateDataFromDatalayer().catch(e => Alert.alert('Error', e?.['message']));
-    initializeClockinStateFromStorage().catch(e =>
-      Alert.alert('Error', e?.['message']),
-    );
+    runClock().catch(e => Alert.alert('Error', e?.['message']));
   }, []);
-
-  useEffect(() => {
-    const updateClockinUI = async () => {
-      setBtnColor(isClockedIn ? '#D5213C' : '#11A120');
-    };
-    console.log("isClockedIn", btnColor)
-    updateClockinUI().catch(e => Alert.alert('Error', e?.['message']));
-    updateDataFromDatalayer().catch(e => Alert.alert('Error', e?.['message']));
-  }, [isClockedIn]);
 
   useEffect(() => {
     performAsync = async () => {
@@ -105,7 +82,7 @@ const ClockInOut = () => {
   };
   checkInOut = async () => {
     let newValue = false;
-    if (!!isClockedIn) {
+    if (!!clockinStatus) {
       const hasCompletedHours =
         (await datalayer.attendanceLayer.hasCompletedHours(9)) == true;
       console.log('hasCompletedHours', hasCompletedHours);
@@ -125,7 +102,7 @@ const ClockInOut = () => {
       console.log('r is', r);
       newValue = r?.['success'];
     }
-    setIsClockedIn(newValue);
+    fetchClockinAsync()?.catch(e => Alert.alert());
   };
 
   handleCheckInOutClick = () => {
@@ -136,13 +113,14 @@ const ClockInOut = () => {
     router.navigate('../attendance');
   };
 
-  const formatToHhMm = date => {
+  const formatToHhMm = useCallback(date => {
     if (!!!date) return '00:00';
+    console.log('formating ', date);
     const d = new Date(date);
     return `${d?.getHours() < 10 ? '0' : ''}${d?.getHours()}:${
       d?.getMinutes() < 10 ? '0' : ''
     }${d?.getMinutes()}`;
-  };
+  });
 
   const formatTotalHours = ({hours = 0, minutes = 0}) => {
     return `${hours < 10 ? '0' : ''}${hours}:${
@@ -231,7 +209,7 @@ const ClockInOut = () => {
                     marginTop: 5,
                     marginBottom: 10,
                   }}>
-                  CLOCK-{`${isClockedIn ? 'OUT' : 'IN'}`}
+                  CLOCK-{`${clockinStatus ? 'OUT' : 'IN'}`}
                 </Text>
               </LinearGradient>
             </TouchableOpacity>
@@ -282,7 +260,7 @@ const ClockInOut = () => {
                   marginTop: 3,
                   color: 'rgba(108, 108, 108, 1)',
                 }}>
-                {formatToHhMm(clockOutTime)}
+                {formatToHhMm(clockoutTime)}
                 {'\n'}Clock out
               </Text>
             </View>
@@ -325,7 +303,10 @@ const ClockInOut = () => {
             zIndex: 1,
           }}>
           <WriteEarlyCheckoutReason
-            onClose={() => setRequestEarlyCheckoutReason(false)}
+            onClose={() => {
+              fetchClockinAsync();
+              setRequestEarlyCheckoutReason(false);
+            }}
           />
         </View>
       )}

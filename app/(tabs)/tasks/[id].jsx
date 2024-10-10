@@ -4,7 +4,7 @@ import datalayer from '../../../datalayer/datalayer';
 import styles from '../../components/theme';
 import Btn from '../../components/btn';
 import TickIcon from '../../../assets/icons/tick.svg';
-import { router, useLocalSearchParams, useNavigation } from 'expo-router';
+import {router, useLocalSearchParams, useNavigation} from 'expo-router';
 
 const ViewTask = () => {
   const {id} = useLocalSearchParams();
@@ -14,23 +14,32 @@ const ViewTask = () => {
 
   const nav = useNavigation();
 
-  onTaskComplete = ()=>{
-    fetchAsync = async ()=>{
-      const success = await datalayer.taskLayer.markCompleted(id)
-      if (success) {router.dismiss()}
-    }
-    fetchAsync().catch(e=>Alert.alert("Error", e?.["message"]))
-  }
+  onTaskComplete = () => {
+    fetchAsync = async () => {
+      if (task?.['status'] == 0) {
+        if (router.canDismiss()) {
+          router.dismiss();
+        }
+      }
+      const success = await datalayer.taskLayer.markCompleted(id);
+      if (success) {
+        if (router.canDismiss()) {
+          router.dismiss();
+        }
+      }
+    };
+    fetchAsync().catch(e => Alert.alert('Error', e?.['message']));
+  };
 
   useEffect(() => {
-    nav.setOptions({headerTitle: "Task Details",headerTransparent: true, })
+    nav.setOptions({headerTitle: 'Task Details', headerTransparent: true});
     fetchAsync = async () => {
       const tsk = await datalayer.taskLayer
         .getTaskDetails(id)
         .then(e => {
           return e?.['task'];
         })
-        .catch(e=>Alert.alert("Error", e?.["message"]));
+        .catch(e => Alert.alert('Error', e?.['message']));
 
       const branch = (
         await datalayer.authLayer.getById('branch', tsk?.['branch_id'])
@@ -58,10 +67,12 @@ const ViewTask = () => {
       setTaskDetails(tskDtl);
       setAdditionalDetails(adDtl);
     };
-    fetchAsync().catch(e=>Alert.alert("Error", e?.["message"]));
+    fetchAsync().catch(e => Alert.alert('Error', e?.['message']));
   }, [id]);
   return (
-    <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={[styles.ph(10), styles.pv(80), styles.gap(10)]}>
+    <ScrollView
+      showsVerticalScrollIndicator={false}
+      contentContainerStyle={[styles.ph(10), styles.pv(80), styles.gap(10)]}>
       {!!!task ? (
         <Text>Loading...</Text>
       ) : (
@@ -112,9 +123,13 @@ const ViewTask = () => {
             </View>
           ))}
           <Btn
-            disabled={task?.['status']==1}
-            style={{alignSelf: 'center', backgroundColor: "#1A2"}}
-            title="Mark as Completed"
+            style={{
+              alignSelf: 'center',
+              backgroundColor: task?.['status'] == 1 ? '#167BC4' : '#1A2',
+            }}
+            title={
+              task?.['status'] == 1 ? 'Already Completed' : 'Mark as Completed'
+            }
             leading={<TickIcon />}
             handleClick={onTaskComplete}
           />

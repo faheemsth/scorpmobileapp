@@ -1,4 +1,11 @@
-import {View, Text, ScrollView, Pressable, Alert} from 'react-native';
+import {
+  View,
+  Text,
+  ScrollView,
+  Pressable,
+  Alert,
+  StyleSheet,
+} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import Btn from '../../components/btn';
 import InputField from '../../components/input-field';
@@ -9,6 +16,7 @@ import DateIcon from '../../../assets/icons/calendar.svg';
 import ClockIcon from '../../../assets/icons/timer.svg';
 import SearchableDropdown from '../../components/searchable-dropdown';
 import {Picker} from '@react-native-picker/picker';
+import {SafeAreaView} from 'react-native-safe-area-context';
 
 const TaskField = ({
   label,
@@ -19,6 +27,7 @@ const TaskField = ({
   trailing,
   isSearchable = false,
   data = [],
+  style = StyleSheet.create({style: {}}).style,
 }) => {
   return (
     <View
@@ -31,21 +40,36 @@ const TaskField = ({
       }}>
       <Text style={{flex: 0.5}}>{label}</Text>
       {isSearchable ? (
-        <Picker
-          onValueChange={(val, index) => {
-            console.log('selected value is', data?.[index]);
-            onChange(data?.[index]);
-          }}
-          selectedValue={value}
-          mode="dropdown"
-          style={{flex: 1}}>
-          {data?.map(i => (
-            <Picker.Item label={i?.['name']} value={i?.['id']} />
-          ))}
-        </Picker>
+        <View
+          style={{
+            borderRadius: 4,
+            borderWidth: 1,
+            borderColor: '#167BC4',
+            flex: 1,
+          }}>
+          <Picker
+            onValueChange={(val, index) => {
+              console.log('selected value is', data?.[index]);
+              onChange(data?.[index]);
+            }}
+            selectedValue={value}
+            mode="dropdown"
+            style={{flex: 1}}>
+            {data?.map(i => (
+              <Picker.Item label={i?.['name']} value={i?.['id']} />
+            ))}
+          </Picker>
+        </View>
       ) : (
         <InputField
-          style={{flex: 1, backgroundColor: '#0002', marginEnd: 0}}
+          style={[
+            {
+              flex: 1,
+              backgroundColor: !readonly ? '#fff' : '#0002',
+              marginEnd: 0,
+            },
+            style,
+          ]}
           value={value}
           onChange={onChange}
           placeholder={placeholder}
@@ -58,7 +82,7 @@ const TaskField = ({
   );
 };
 
-const CreateTask = ({onClose}) => {
+const CreateTask = () => {
   const user = useUser();
 
   const [taskName, setTaskName] = useState('');
@@ -67,7 +91,6 @@ const CreateTask = ({onClose}) => {
   const [region, setRegion] = useState('');
   const [branch, setBranch] = useState('');
   const [assignTo, setAssignTo] = useState('');
-  const [taskStatus, setTaskStatus] = useState([0, 1]);
   const [selectedTaskStatus, setSelectedTaskStatus] = useState(0);
 
   const [now] = useState(new Date());
@@ -173,14 +196,6 @@ const CreateTask = ({onClose}) => {
     `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
 
   const create = async () => {
-    const msg = '';
-    // if (!!!taskName) msg += 'Task Name must be defined\n';
-    // if (!!!user?.['brand_id']) msg += 'Brand must be defined \n';
-    // if (!!!user?.['branch_id']) msg += 'Branch must be defined \n';
-    // if (!!!user?.['region_id']) msg += 'Region must be defined \n';
-    // if (!!!user?.['id']) msg += 'Task must be assigned \n';
-
-    console.log('trying to create');
     const response = await datalayer.taskLayer
       .createTask({
         task_name: taskName,
@@ -199,187 +214,187 @@ const CreateTask = ({onClose}) => {
     if (response?.['status'].toLowerCase() == 'success') {
       router.dismiss();
     } else {
-      Alert.alert('Error', response?.['message'])
+      Alert.alert('Error', response?.['message']);
     }
   };
 
   return (
-    <ScrollView style={{marginTop: 80, paddingHorizontal: 20}}>
-      <Text
-        key={'Task Details'}
-        style={{
-          fontFamily: 'outfit-400',
-          fontSize: 15,
-          paddingVertical: 10,
-          width: '100%',
-          borderBottomWidth: 1,
-          borderStyle: 'dashed',
-          borderColor: '#0006',
-        }}>
-        Task Details
-      </Text>
+    <SafeAreaView>
+      <ScrollView style={{marginTop:40, padding: 20}} contentContainerStyle={{gap: 10}}>
+        <Text
+          key={'Task Details'}
+          style={{
+            fontFamily: 'outfit-400',
+            fontSize: 15,
+            paddingVertical: 10,
+            width: '100%',
+            borderBottomWidth: 1,
+            borderStyle: 'dashed',
+            borderColor: '#0006',
+          }}>
+          Task Details
+        </Text>
 
-      <View
-        key={'TaskDetailsInputs'}
-        style={{
-          marginVertical: 16,
-        }}>
-        <TaskField
-          key={'Task Name'}
-          label={'Task Name'}
-          placeholder={'Task Name'}
-          value={taskName}
-          onChange={setTaskName}
-        />
-        <TaskField
-          key={'Brand'}
-          label={'Brand'}
-          placeholder={'Brand'}
-          value={brands}
-          onChange={setBrands}
-          readonly={true}
-        />
-        <TaskField
-          key={'Branch'}
-          label={'Branch'}
-          placeholder={'Branch'}
-          value={branch}
-          onChange={setBranch}
-          readonly={true}
-        />
-        <TaskField
-          key={'Region'}
-          label={'Region'}
-          placeholder={'Region'}
-          value={region}
-          onChange={setRegion}
-          readonly={true}
-        />
-        <TaskField
-          key={'Assigned To'}
-          label={'Assigned To'}
-          placeholder={'Assigned To'}
-          value={assignTo}
-          onChange={setAssignTo}
-          readonly={true}
-        />
-        <TaskField
-          key={'Task Status'}
-          label={'Task Status'}
-          placeholder={'Task Status'}
-          value={selectedTaskStatus}
-          onChange={v => {
-            console.log('value is', v);
-            setSelectedTaskStatus(v.id);
-          }}
-          isSearchable={true}
-          data={[
-            {id: 0, name: 'On Going'},
-            {id: 1, name: 'Completed'},
-          ]}
-        />
-        <TaskField
-          key={'Due Date'}
-          label={'Due Date'}
-          placeholder={'Due Date'}
-          value={dueDate?.toDateString()}
-          readonly={true}
-          onChange={handleDueDateClick}
-          trailing={<DateIcon style={{color: '#333'}} />}
-        />
-      </View>
-      <Text
-        key={'Additional Task Details'}
-        style={{
-          fontFamily: 'outfit-400',
-          fontSize: 15,
-          paddingVertical: 10,
-          width: '100%',
-          borderBottomWidth: 1,
-          borderStyle: 'dashed',
-          borderColor: '#0006',
-        }}>
-        Additional Information
-      </Text>
-      <View
-        style={{
-          marginVertical: 16,
-        }}>
-        <TaskField
-          label={'Start Date'}
-          placeholder={'Start Date'}
-          value={startDate?.toDateString()}
-          readonly={true}
-          onChange={handleStartDateClick}
-          trailing={<DateIcon style={{color: '#333'}} />}
-        />
-        <TaskField
-          label={'Remainder Date'}
-          placeholder={'Remainder Date'}
-          value={remainderDate?.toDateString()}
-          readonly={true}
-          onChange={handleRemainderDateClick}
-          trailing={<DateIcon style={{color: '#333'}} />}
-        />
-        <TaskField
-          label={'Remainder Time'}
-          placeholder={'Remainder Time'}
-          value={dateToHHMM(remainderTime)}
-          readonly={true}
-          onChange={handleRemainderTimeClick}
-          trailing={<ClockIcon />}
-        />
-      </View>
-      <View
-        key={'footer'}
-        style={{
-          display: 'flex',
-          flexDirection: 'row',
-          flexWrap: 'nowrap',
-          alignItems: 'end',
-          alignContent: 'end',
-          justifyContent: 'flex-end',
-          gap: 10,
-          width: '100%',
-          position: 'static',
-          bottom: 0,
-          right: 0,
-        }}>
-        <Btn
-          handleClick={onCancel}
-          title="Cancel"
-          style={{backgroundColor: '#0001', color: 'black', elevation: 0}}
-        />
-        <Btn title="Create" handleClick={create} style={{elevation: 0}} />
-      </View>
+        <View
+          key={'TaskDetailsInputs'}
+          style={{
+            marginVertical: 6,
+          }}>
+          <TaskField
+            key={'Task Name'}
+            label={'Task Name'}
+            placeholder={'Task Name'}
+            value={taskName}
+            onChange={setTaskName}
+          />
+          <TaskField
+            key={'Brand'}
+            label={'Brand'}
+            placeholder={'Brand'}
+            value={brands}
+            readonly={true}
+          />
+          <TaskField
+            key={'Branch'}
+            label={'Branch'}
+            placeholder={'Branch'}
+            value={branch}
+            readonly={true}
+          />
+          <TaskField
+            key={'Region'}
+            label={'Region'}
+            placeholder={'Region'}
+            value={region}
+            readonly={true}
+          />
+          <TaskField
+            key={'Assigned To'}
+            label={'Assigned To'}
+            placeholder={'Assigned To'}
+            value={assignTo}
+            readonly={true}
+          />
+          <TaskField
+            key={'Task Status'}
+            label={'Task Status'}
+            placeholder={'Task Status'}
+            value={selectedTaskStatus}
+            onChange={v => {
+              console.log('value is', v);
+              setSelectedTaskStatus(v.id);
+            }}
+            isSearchable={true}
+            data={[
+              {id: 0, name: 'On Going'},
+              {id: 1, name: 'Completed'},
+            ]}
+          />
+          <TaskField
+            key={'Due Date'}
+            label={'Due Date'}
+            placeholder={'Due Date'}
+            value={dueDate?.toDateString()}
+            readonly={true}
+            style={{backgroundColor: '#fff'}}
+            onChange={handleDueDateClick}
+            trailing={<DateIcon style={{color: '#333'}} />}
+          />
+        </View>
+        <Text
+          key={'Additional Task Details'}
+          style={{
+            fontFamily: 'outfit-400',
+            fontSize: 15,
+            width: '100%',
+            borderBottomWidth: 1,
+            borderStyle: 'dashed',
+            borderColor: '#0006',
+            paddingBottom: 10
+          }}>
+          Additional Information
+        </Text>
+        <View
+          style={{
+            marginVertical: 6,
+          }}>
+          <TaskField
+            label={'Start Date'}
+            placeholder={'Start Date'}
+            value={startDate?.toDateString()}
+            readonly={true}
+            onChange={handleStartDateClick}
+            style={{backgroundColor: '#fff'}}
+            trailing={<DateIcon style={{color: '#333'}} />}
+          />
+          <TaskField
+            label={'Remainder Date'}
+            placeholder={'Remainder Date'}
+            value={remainderDate?.toDateString()}
+            readonly={true}
+            onChange={handleRemainderDateClick}
+            style={{backgroundColor: '#fff'}}
+            trailing={<DateIcon style={{color: '#333'}} />}
+          />
+          <TaskField
+            label={'Remainder Time'}
+            placeholder={'Remainder Time'}
+            value={dateToHHMM(remainderTime)}
+            readonly={true}
+            onChange={handleRemainderTimeClick}
+            style={{backgroundColor: '#fff'}}
+            trailing={<ClockIcon />}
+          />
+        </View>
+        <View
+          key={'footer'}
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            flexWrap: 'nowrap',
+            alignItems: 'end',
+            alignContent: 'end',
+            justifyContent: 'flex-end',
+            gap: 10,
+            flex: 1,
+            marginBottom: 30
+          }}>
+          <Btn
+            handleClick={onCancel}
+            title="Cancel"
+            style={{backgroundColor: '#0001', color: 'black', elevation: 0}}
+          />
+          <Btn title="Create" handleClick={create} style={{elevation: 0}} />
+        </View>
 
-      {(!!showDueDate ||
-        !!showStartDate ||
-        !!showRemainderDate ||
-        !!showRemainderTime) && (
-        <DateTimePicker
-          value={
-            !!showDueDate
-              ? dueDate
-              : !!showStartDate
-              ? startDate
-              : !!showRemainderTime
-              ? remainderTime
-              : remainderDate
-          }
-          mode={!!showRemainderTime ? 'time' : 'date'}
-          is24Hour={true}
-          onChange={change => {
-            let type;
-            if (!!showDueDate) type = 'due_date';
-            else if (!!showStartDate) type = 'start_date';
-            else if (!!showRemainderDate) type = 'remainder_date';
-            else if (!!showRemainderTime) type = 'remainder_time';
-            setDate(new Date(change.nativeEvent.timestamp), type);
-          }}
-        />
-      )}
-    </ScrollView>
+        {(!!showDueDate ||
+          !!showStartDate ||
+          !!showRemainderDate ||
+          !!showRemainderTime) && (
+          <DateTimePicker
+            value={
+              !!showDueDate
+                ? dueDate
+                : !!showStartDate
+                ? startDate
+                : !!showRemainderTime
+                ? remainderTime
+                : remainderDate
+            }
+            mode={!!showRemainderTime ? 'time' : 'date'}
+            is24Hour={true}
+            onChange={change => {
+              let type;
+              if (!!showDueDate) type = 'due_date';
+              else if (!!showStartDate) type = 'start_date';
+              else if (!!showRemainderDate) type = 'remainder_date';
+              else if (!!showRemainderTime) type = 'remainder_time';
+              setDate(new Date(change.nativeEvent.timestamp), type);
+            }}
+          />
+        )}
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 

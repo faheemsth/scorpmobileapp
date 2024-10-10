@@ -24,13 +24,18 @@ const RequestLeave = () => {
     setIsModalVisible(false);
   };
 
+  dateToDdMmYyyy = (date = new Date()) =>
+    `${(date.getDate() < 10 ? '0' : '') + date.getDate()}/${
+      (date.getMonth() < 9 ? '0' : '') + String(date.getMonth() + 1)
+    }/${date.getFullYear()}`;
+
   onDateRangeModalSubmit = ({startDate, endDate}) => {
-    const now = new Date()
-    console.log("start date is", startDate, now)
-    if (startDate<now) {
-      Alert.alert("Error", "Requesting leave in previous dates is not allowed")
-      return
+    const now = new Date();
+    if (startDate < now) {
+      Alert.alert('Error', 'Requesting leave in previous dates is not allowed');
+      return;
     }
+    if (!!!endDate) endDate = startDate;
     setStartDate(startDate);
     setEndDate(endDate);
     onDateRangeModalClose();
@@ -101,25 +106,27 @@ const RequestLeave = () => {
           ]}>
           <View style={{width: 280, height: 70}}>
             <Text style={{paddingLeft: 10}}>Leave Type</Text>
-            <Picker
-              onValueChange={(val, index) => {
-                console.log("selected value is", val)
-                setSelectedLeaveTypeId(val);
-              }}
-              selectedValue={selectedLeaveTypeId}
-              mode='dropdown'
-              >
-              {leaveTypes?.map(lt => {
-                console.log('leaveTypes is', lt);
-                return (
-                  <Picker.Item
-                    key={lt?.['id']}
-                    label={lt?.['name']}
-                    value={lt?.['id']}
-                  />
-                );
-              })}
-            </Picker>
+            <View
+              style={{borderRadius: 4, borderWidth: 1, borderColor: '#167BC4', margin: 10}}>
+              <Picker
+                onValueChange={(val, index) => {
+                  console.log('selected value is', val);
+                  setSelectedLeaveTypeId(val);
+                }}
+                selectedValue={selectedLeaveTypeId}
+                mode="dropdown">
+                {leaveTypes?.map(lt => {
+                  console.log('leaveTypes is', lt);
+                  return (
+                    <Picker.Item
+                      key={lt?.['id']}
+                      label={lt?.['name']}
+                      value={lt?.['id']}
+                    />
+                  );
+                })}
+              </Picker>
+            </View>
           </View>
 
           <View style={{width: 280}}>
@@ -138,9 +145,7 @@ const RequestLeave = () => {
               }}
               onPress={() => setIsModalVisible(true)}>
               <Text>
-                {startDate?.toDateString()?.substring(8) +
-                  ' - ' +
-                  endDate?.toDateString()?.substring(8)}
+                {dateToDdMmYyyy(startDate) + ' - ' + dateToDdMmYyyy(endDate)}
               </Text>
               <CalendarIcon style={{color: '#000'}} />
             </Pressable>
@@ -148,6 +153,7 @@ const RequestLeave = () => {
               isVisible={isModalVisible}
               onClose={onDateRangeModalClose}
               onSelectDateRange={onDateRangeModalSubmit}
+              onSelectSingleDate={onDateRangeModalSubmit}
             />
           </View>
 
