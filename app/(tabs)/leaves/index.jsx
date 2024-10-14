@@ -11,14 +11,14 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import LeavesOverview from '../../components/leaves/overview';
 import styles from '../../components/theme';
 import LeaveCard from '../../components/leaves/leaveCard';
-import datalayer, { useLeaves, useUser } from '../../../datalayer/datalayer';
+import datalayer, {useLeaves, useUser} from '../../../datalayer/datalayer';
 import Btn from '../../components/btn';
 import PlusIcon from '../../../assets/icons/plus.svg';
 import {router, useFocusEffect, useNavigation} from 'expo-router';
 
 const LeavesTab = () => {
-  const [[leaves, leavesTypes], fetchLeavesAsync] = useLeaves()
-  const user = useUser()
+  const [[leaves, leavesTypes], fetchLeavesAsync] = useLeaves();
+  const user = useUser();
   const [loading, setLoading] = useState(false);
 
   const nav = useNavigation();
@@ -31,8 +31,7 @@ const LeavesTab = () => {
   useFocusEffect(
     useCallback(() => {
       setLoading(true);
-      fetchLeavesAsync()?.catch(e=>Alert.alert("Error", e?.["message"]))
-
+      fetchLeavesAsync()?.catch(e => Alert.alert('Error', e?.['message']));
     }, [nav]), // Dependency array includes nav
   );
 
@@ -52,7 +51,7 @@ const LeavesTab = () => {
         styles.alignItemsCenter,
         styles.screenBg,
         styles.gap(18),
-        {width: '100%', height: '100%', position: 'relative'},
+        {flex: 1},
       ]}>
       <ScrollView
         showsVerticalScrollIndicator={false}
@@ -62,15 +61,16 @@ const LeavesTab = () => {
           styles.alignItemsCenter,
           styles.screenBg,
           styles.gap(18),
-          {width: '100%'},
         ]}>
         <Text style={[styles.font(600), styles.size(24)]}>My Leaves</Text>
-        {!!leaves && leavesTypes && (
+        {leavesTypes ? (
           <LeavesOverview
             key={'090078601'}
             leaves={leaves}
             leavesTypes={leavesTypes}
           />
+        ) : (
+          <Text>Loading...</Text>
         )}
         <View style={[styles.gap(10)]}>
           <View
@@ -103,8 +103,11 @@ const LeavesTab = () => {
               </Text>
             </Pressable>
           </View>
-
-          {loading ? <Text>Loading...</Text> : null}
+          {loading ? (
+            <Text style={[styles.font(400), styles.size(14)]}>Loading...</Text>
+          ) : leaves.length < 0 ? (
+            <Text style={[styles.font(400), styles.size(14)]}>No Data</Text>
+          ) : null}
           {leaves?.map(e => {
             return (
               <LeaveCard

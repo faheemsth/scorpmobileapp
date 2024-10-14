@@ -63,7 +63,7 @@ const AllTasks = () => {
         <Text style={styles.txt}>
           {isLoading
             ? 'Loading...'
-            : !!!tasks
+            : tasks.length < 1
             ? 'No Record Found'
             : 'All Tasks'}
         </Text>

@@ -64,6 +64,8 @@ const RequestLeave = () => {
   };
 
   submitRequest = async () => {
+    console.log("submitLeaveRequest", "yoyooyooy")
+    if (!!!reason) Alert.alert("Error", "reason must be provided")
     const req = await datalayer.leavesLayer.submitRequest({
       brand_id: user?.['brand_id'],
       region_id: user?.['region_id'],
@@ -72,7 +74,7 @@ const RequestLeave = () => {
       leave_reason: reason,
       start_date: `${startDate.getFullYear()}-${startDate.getMonth()}-${startDate.getDate()}`,
       end_date: `${endDate.getFullYear()}-${endDate.getMonth()}-${endDate.getDate()}`,
-    });
+    }).catch(e=>Alert.alert("Error", e?.["message"]));
     console.log('req', req);
     if (req) router.dismiss();
   };

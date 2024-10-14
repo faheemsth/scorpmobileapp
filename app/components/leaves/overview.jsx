@@ -24,14 +24,14 @@ const LeavesOverview = ({leaves, leavesTypes}) => {
           {
             width: 346,
             borderRadius: 20,
-            paddingLeft: 23,
-            paddingVertical: 13,
-            elevation: 8,
+            margin: 5,
+            padding: 15,
+            elevation: 4,
           },
           styles.whiteBg,
           styles.flex,
           styles.column,
-          styles.gap(5),
+          styles.gap(10),
         ]}>
         <Text style={[styles.font(500), styles.size(16)]}>Leaves Overview</Text>
 

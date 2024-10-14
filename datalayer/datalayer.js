@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import * as Location from 'expo-location';
 import {useCallback, useEffect, useMemo, useState} from 'react';
 import {Alert} from 'react-native';
@@ -193,7 +193,7 @@ const TasksLayer = (() => {
 const AuthLayer = (() => {
   const logOut = async () => {
     Object.values(keys).forEach(v => storeData(v, ''));
-    GoogleSignin.signOut()
+    GoogleSignin.signOut();
   };
 
   const postGoogleLoginReq = async email => {
@@ -261,6 +261,7 @@ const AuthLayer = (() => {
         password: password,
       }),
     });
+    if (!!!res.ok || !!!res.status < 400) return Promise.reject({message: "Authentication error"})
     const response = await res.json();
     const data = response['data'];
     const token = data['token'];
@@ -301,24 +302,45 @@ const AttendanceLayer = (() => {
   const locLayer = LocationLayer;
 
   const clockIn = async () => {
+    const user = await authLayer.getUserAsync();
+
     const lnp = await locLayer.requestPermissionAndLocation();
 
     if (!!!lnp?.coords?.latitude || !!!lnp?.coords?.longitude)
-      return Promise.reject({message: 'Unable to find your location'});
-
-    if (!!!lnp?.coords?.accuracy > 100)
-      return Promise.reject({message: 'Location is very inacurate'});
+      return Promise.reject({message: 'unable to locate you'});
 
     const branchRes = await authLayer.getUserBranchAsync();
+
+    if (
+      user?.['isloginrestrickted'] == 1 &&
+      (!!!branchRes?.['branch']?.['latitude'] ||
+        !!!branchRes?.['branch']?.['longitude'])
+    )
+      return Promise.reject({message: 'branch location info is missing'});
+
     const branchLatLng = {
-      lat: branchRes['branch']['latitude'],
-      lng: branchRes['branch']['longitude'],
+      lat: branchRes?.['branch']?.['latitude'],
+      lng: branchRes?.['branch']?.['longitude'],
     };
+
+    const userLatLng = {
+      lat: user?.['latitude'],
+      lng: user?.['longitude'],
+    };
+    if (
+      user?.['isloginrestrickted'] == 2 &&
+      (!!!userLatLng?.lat || !!!userLatLng?.lng)
+    )
+      return Promise.reject({
+        message: 'user allowed clocking location is missing',
+      });
+
     if (
       !!!(await isAtSite(
         {lat: lnp.coords.latitude, lng: lnp.coords.longitude},
-        branchLatLng,
-      ))
+        user?.['isloginrestrickted'] == 1 ? branchLatLng : userLatLng,
+      )) &&
+      user?.['isloginanywhere'] == 0
     ) {
       return Promise.reject({
         message: 'you are out of the 100 meters radius from your branch',
@@ -377,20 +399,45 @@ const AttendanceLayer = (() => {
     return totalDutyHoursPerDay <= diffHrs;
   };
   const clockOut = async reason => {
+    const user = await authLayer.getUserAsync();
+
     const lnp = await locLayer.requestPermissionAndLocation();
 
-    console.info('lat', lnp.coords.latitude, 'lng', lnp.coords.longitude);
+    if (!!!lnp?.coords?.latitude || !!!lnp?.coords?.longitude)
+      return Promise.reject({message: 'unable to locate you'});
 
     const branchRes = await authLayer.getUserBranchAsync();
+
+    if (
+      user?.['isloginrestrickted'] == 1 &&
+      (!!!branchRes?.['branch']?.['latitude'] ||
+        !!!branchRes?.['branch']?.['longitude'])
+    )
+      return Promise.reject({message: 'branch location info is missing'});
+
     const branchLatLng = {
-      lat: branchRes['branch']['latitude'],
-      lng: branchRes['branch']['longitude'],
+      lat: branchRes?.['branch']?.['latitude'],
+      lng: branchRes?.['branch']?.['longitude'],
     };
+
+    const userLatLng = {
+      lat: user?.['latitude'],
+      lng: user?.['longitude'],
+    };
+    if (
+      user?.['isloginrestrickted'] == 2 &&
+      (!!!userLatLng?.lat || !!!userLatLng?.lng)
+    )
+      return Promise.reject({
+        message: 'user allowed clocking location is missing',
+      });
+
     if (
       !!!(await isAtSite(
         {lat: lnp.coords.latitude, lng: lnp.coords.longitude},
-        branchLatLng,
-      ))
+        user?.['isloginrestrickted'] == 1 ? branchLatLng : userLatLng,
+      )) &&
+      user?.['isloginanywhere'] == 0
     ) {
       return Promise.reject({
         message: 'you are out of the 100 meters radius from your branch',
@@ -538,7 +585,6 @@ const LeavesLayer = (() => {
       }),
     });
     const response = (await res.json())['success'];
-    console.log('submit leave request', response);
     return response == 'Leave successfully created.';
   };
 
@@ -566,7 +612,7 @@ const datalayer = (() => {
 
 export default datalayer;
 
-export const adjustToLocalTimezone = (date) => {
+export const adjustToLocalTimezone = date => {
   // Step 1: Convert the date to UTC (offset 0)
   const utcDate = new Date(
     date.getUTCFullYear(),
@@ -574,7 +620,7 @@ export const adjustToLocalTimezone = (date) => {
     date.getUTCDate(),
     date.getUTCHours(),
     date.getUTCMinutes(),
-    date.getUTCSeconds()
+    date.getUTCSeconds(),
   );
 
   // Step 2: Get the phone's local timezone offset in minutes
@@ -612,6 +658,7 @@ export function useLeaves() {
         await datalayer.leavesLayer.getLeavesTypesAndAllowed()
       )?.['leaveType'];
 
+      
       const lvsWithType = lvs?.map(e => ({
         ...e,
         leave_type: lvsTypes?.find(f => f?.['id'] === e?.['leave_type_id'])?.[
@@ -621,11 +668,14 @@ export function useLeaves() {
 
       const lvsTypesWithUsed = lvsTypes?.map(e => ({
         ...e,
-        used: lvs?.filter(f => f?.['leave_type_id'] === e?.['id'])?.length,
+        used: lvs?.filter(f => f?.['leave_type_id'] === e?.['id'])?.length ?? 0,
       }));
+      
+      console.log("useLeaves", lvs, lvsTypes.length, lvsTypesWithUsed.length)
 
-      setLeaves(lvsWithType);
-      setLeavesTypes(lvsTypesWithUsed);
+
+      setLeaves(lvsWithType ?? []);
+      setLeavesTypes(lvsTypesWithUsed ?? []);
     } catch (error) {
       Alert.alert('Error', error?.['message']);
     }
@@ -709,13 +759,12 @@ export function useClockinStatus() {
     const clockedOut = !!cot && cot != '00:00:00';
     const state = clockedIn && !clockedOut;
 
-    const today = new Date()
-    console.log("today in utc", today.toUTCString())
+    const today = new Date();
+    console.log('today in utc', today.toUTCString());
     const citd = clockedIn ? new Date(today.toUTCString()) : undefined;
     const cotd = clockedOut ? new Date(today.toUTCString()) : undefined;
 
     if (!!citd) {
-      
       const [h, m, s] = cit?.split(':');
       citd.setHours(+h);
       citd.setMinutes(m);
@@ -726,7 +775,6 @@ export function useClockinStatus() {
       cotd.setHours(+h);
       cotd.setMinutes(m);
       cotd.setSeconds(s);
-      console.log('clockout-hms', h, m, s);
     }
 
     console.log('clockin-time', cit, citd);
