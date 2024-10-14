@@ -261,7 +261,8 @@ const AuthLayer = (() => {
         password: password,
       }),
     });
-    if (!!!res.ok || !!!res.status < 400) return Promise.reject({message: "Authentication error"})
+    if (!!!res.ok || !!!res.status < 400)
+      return Promise.reject({message: 'Authentication error'});
     const response = await res.json();
     const data = response['data'];
     const token = data['token'];
@@ -300,6 +301,11 @@ const AuthLayer = (() => {
 const AttendanceLayer = (() => {
   const authLayer = AuthLayer;
   const locLayer = LocationLayer;
+  const status = {
+    LOGIN_FROM_ANYWHERE: 3,
+    LOGIN_FROM_SPECIFIC_LOCATION: 2,
+    LOGIN_FROM_BRANCH: 1,
+  };
 
   const clockIn = async () => {
     const user = await authLayer.getUserAsync();
@@ -312,7 +318,8 @@ const AttendanceLayer = (() => {
     const branchRes = await authLayer.getUserBranchAsync();
 
     if (
-      user?.['isloginrestrickted'] == 1 && user?.['isloginanywhere'] == 0 &&
+      user?.['isloginrestrickted'] == 1 &&
+      user?.['isloginanywhere'] == 0 &&
       (!!!branchRes?.['branch']?.['latitude'] ||
         !!!branchRes?.['branch']?.['longitude'])
     )
@@ -334,6 +341,18 @@ const AttendanceLayer = (() => {
       return Promise.reject({
         message: 'user allowed clocking location is missing',
       });
+
+    let clockInStatus = -1;
+    if (user?.['isloginanywhere'] == 1) {
+      clockInStatus = status.LOGIN_FROM_ANYWHERE;
+    } else if (
+      user?.['isloginanywhere'] == 0 &&
+      user?.['isloginrestrickted'] == 2
+    ) {
+      clockInStatus = status.LOGIN_FROM_SPECIFIC_LOCATION;
+    } else {
+      clockInStatus = status.LOGIN_FROM_BRANCH;
+    }
 
     if (
       !!!(await isAtSite(
@@ -360,6 +379,7 @@ const AttendanceLayer = (() => {
       body: JSON.stringify({
         latitude: lnp.coords.longitude,
         longitude: lnp.coords.longitude,
+        clockInStatus: clockInStatus,
       }),
     });
     const data = await res.json();
@@ -409,7 +429,8 @@ const AttendanceLayer = (() => {
     const branchRes = await authLayer.getUserBranchAsync();
 
     if (
-      user?.['isloginrestrickted'] == 1 && user?.['isloginanywhere'] == 0 &&
+      user?.['isloginrestrickted'] == 1 &&
+      user?.['isloginanywhere'] == 0 &&
       (!!!branchRes?.['branch']?.['latitude'] ||
         !!!branchRes?.['branch']?.['longitude'])
     )
@@ -448,6 +469,19 @@ const AttendanceLayer = (() => {
     if (!!!token) {
       return Promise.reject({message: 'no token'});
     }
+
+    let clockOutStatus = -1;
+    if (user?.['isloginanywhere'] == 1) {
+      clockOutStatus = status.LOGIN_FROM_ANYWHERE;
+    } else if (
+      user?.['isloginanywhere'] == 0 &&
+      user?.['isloginrestrickted'] == 2
+    ) {
+      clockOutStatus = status.LOGIN_FROM_SPECIFIC_LOCATION;
+    } else {
+      clockOutStatus = status.LOGIN_FROM_BRANCH;
+    }
+
     const res = await fetch(`${base_url}clockOut`, {
       method: 'POST',
       headers: {
@@ -459,6 +493,7 @@ const AttendanceLayer = (() => {
         latitude: lnp.coords.latitude,
         longitude: lnp.coords.longitude,
         earlyCheckOutReason: reason ?? null,
+        clockOutStatus: clockOutStatus,
       }),
     });
     const data = await res.json();
@@ -658,7 +693,6 @@ export function useLeaves() {
         await datalayer.leavesLayer.getLeavesTypesAndAllowed()
       )?.['leaveType'];
 
-      
       const lvsWithType = lvs?.map(e => ({
         ...e,
         leave_type: lvsTypes?.find(f => f?.['id'] === e?.['leave_type_id'])?.[
@@ -670,9 +704,8 @@ export function useLeaves() {
         ...e,
         used: lvs?.filter(f => f?.['leave_type_id'] === e?.['id'])?.length ?? 0,
       }));
-      
-      console.log("useLeaves", lvs, lvsTypes.length, lvsTypesWithUsed.length)
 
+      console.log('useLeaves', lvs, lvsTypes.length, lvsTypesWithUsed.length);
 
       setLeaves(lvsWithType ?? []);
       setLeavesTypes(lvsTypesWithUsed ?? []);
