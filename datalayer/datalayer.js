@@ -312,7 +312,7 @@ const AttendanceLayer = (() => {
     const branchRes = await authLayer.getUserBranchAsync();
 
     if (
-      user?.['isloginrestrickted'] == 1 &&
+      user?.['isloginrestrickted'] == 1 && user?.['isloginanywhere'] == 0 &&
       (!!!branchRes?.['branch']?.['latitude'] ||
         !!!branchRes?.['branch']?.['longitude'])
     )
@@ -409,7 +409,7 @@ const AttendanceLayer = (() => {
     const branchRes = await authLayer.getUserBranchAsync();
 
     if (
-      user?.['isloginrestrickted'] == 1 &&
+      user?.['isloginrestrickted'] == 1 && user?.['isloginanywhere'] == 0 &&
       (!!!branchRes?.['branch']?.['latitude'] ||
         !!!branchRes?.['branch']?.['longitude'])
     )
