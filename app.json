@@ -1,4 +1,86 @@
 {
-  "name": "scorpmobile",
-  "displayName": "ScorpMobile"
+  "expo": {
+    "name": "Convosoft Mobile App",
+    "slug": "scorp-mobile-app",
+    "scheme": "scorp-mobile-app",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/logo.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "infoPlist": {
+        "UIBackgroundModes": [
+          "location",
+          "fetch",
+          "remote-notification"
+        ]
+      },
+      "bundleIdentifier": "com.convosoft.crm"
+    },
+    "android": {
+      "googleServicesFile": "./google-services.json",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "permissions": [
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION"
+      ],
+      "package": "com.convosoft.crm"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "@react-native-firebase/app",
+      "@react-native-firebase/auth",
+      "@react-native-google-signin/google-signin",
+      "expo-router",
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location.",
+          "isAndroidBackgroundLocationEnabled": false,
+          "isIosBackgroundLocationEnabled": false,
+          "isAndroidForegroundServiceEnabled": false
+        }
+      ],
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "./assets/fonts/outfit-100.otf",
+            "./assets/fonts/outfit-200.otf",
+            "./assets/fonts/outfit-300.otf",
+            "./assets/fonts/outfit-400.otf",
+            "./assets/fonts/outfit-500.otf",
+            "./assets/fonts/outfit-600.otf",
+            "./assets/fonts/outfit-700.otf",
+            "./assets/fonts/outfit-800.otf",
+            "./assets/fonts/outfit-900.otf"
+          ]
+        }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "useFrameworks": "static"
+          }
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "50635b65-0d90-4b69-b526-ed2f743ea123"
+      }
+    }
+  }
 }
