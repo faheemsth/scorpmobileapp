@@ -261,10 +261,10 @@ const AuthLayer = (() => {
         password: password,
       }),
     });
-    if (!!!res.ok || !!!res.status < 400)
-      return Promise.reject({message: 'Authentication error'});
     const response = await res.json();
     const data = response['data'];
+    if (!!!data?.['token'])
+      return Promise.reject({message: 'Authentication error'});
     const token = data['token'];
     const user = data['user'];
     storeData(keys.token, token);
