@@ -5,7 +5,7 @@ import {useCallback, useEffect, useMemo, useState} from 'react';
 import {Alert} from 'react-native';
 import {fetchText} from 'react-native-svg';
 
-const base_url = 'https://api.scorp.co/api/'; // Private variable
+const base_url = 'https://api.convosoftserver.com/api/'; // Private variable
 const keys = {
   token: 'TOKEN',
   user: 'USER',
@@ -207,6 +207,8 @@ const AuthLayer = (() => {
     });
     const response = await res.json();
     const data = response['data'];
+    if (!!!data || !!!data?.['token'])
+      return Promise.reject({message: 'Authentication error'});
     const token = data['token'];
     const user = data['user'];
     storeData(keys.token, token);
@@ -263,9 +265,9 @@ const AuthLayer = (() => {
     });
     const response = await res.json();
     const data = response['data'];
-    if (!!!data?.['token'])
+    if (!!!data || !!!data?.['token'])
       return Promise.reject({message: 'Authentication error'});
-    const token = data['token'];
+    const token = data?.['token'];
     const user = data['user'];
     storeData(keys.token, token);
     storeData(keys.user, user);
@@ -619,8 +621,9 @@ const LeavesLayer = (() => {
         remark,
       }),
     });
-    const response = (await res.json())['success'];
-    return response == 'Leave successfully created.';
+    const response = (await res.json());
+    console.log("leave request response", JSON.stringify(response))
+    return response?.['success'] == 'Leave successfully created.';
   };
 
   return {getLeaves, getLeavesTypesAndAllowed, submitRequest};

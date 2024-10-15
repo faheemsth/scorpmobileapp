@@ -79,11 +79,12 @@ const Login = () => {
         msg = 'Play services not available';
       } else {
         if (isErrorWithCode(error)) {
-          msg = 'an error with code:' + error;
+          msg = 'an error with code:' + JSON.stringify(error);
         } else {
-          msg = 'Some other error' + error;
+          msg = 'Some other error' + JSON.stringify(error?.['message'] ?? error);
         }
       }
+      console.error("Error", msg);
       Alert.alert('Error', msg);
     }
   };

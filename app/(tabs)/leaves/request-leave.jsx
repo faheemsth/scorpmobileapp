@@ -64,7 +64,6 @@ const RequestLeave = () => {
   };
 
   submitRequest = async () => {
-    console.log("submitLeaveRequest", "yoyooyooy")
     if (!!!reason) Alert.alert("Error", "reason must be provided")
     const req = await datalayer.leavesLayer.submitRequest({
       brand_id: user?.['brand_id'],
