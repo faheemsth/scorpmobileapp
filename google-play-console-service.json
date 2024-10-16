@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "convosoft-mobile-app",
+  "private_key_id": "dbaae04e7ab488823679a305f3394abb4c598531",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDNDRNTFOCYPOTk\nsP7gDw54bsQVbszCzwwNCYcMXXRIxk/j/Twiwm/7Da3Mty/hLqCGxh26Ms5i+9Iy\nCYp/qNYF/ZSvZ3LYUhBI9vimKUxPO5WSiMjP2IzlVaCksNNmLaoEWRrskaFlR5c0\nPW4RFzZ+EFXiWpjLsmcrE4bQImJYjkSPfWLhyqfAsaWhic9ajDtS/FiX4nX0+IHP\niOnJl5r0CDGrG8otpFjv1y66k2M1YEePnKdb82PJjqWfW20W2xTXnvCGJE7Tu/+p\nKCIPLiTpCV7Z+mR1/6V/EcWf6P61RsZWUI7zzgd7zEZYvDPxWcT3srDwCCINDV9k\nKuMBVHfDAgMBAAECggEAVvdSOFz06qx8+d91oerQ3NRBtsNg9cihmE/vppdmT81I\nKe6H2Eg1/TjuexJArNU9QRv6lLOipAmguxcf1gfyCeVkb8ZEx6l6fa+9gp+mXT5s\nsBLydHCoRUX9VYwnhMEeSCzQhgA3/wAPiZj6OyZotqvP+Soqfs4iAnuMJG9I3bxp\n6CV5BldP8GuXT9/0tSsOoh/7yHJr6XGv1sh3FJTbUhYC6OGGoycKMmh7l5gHIZcw\nSUMAV0g58ref0YKIwUm6YQJMNWN/y8vKqdOGnRPisRkmlNlIsmezm8j7+c+Hi0ZC\ni3XiHFcBhKpb9ySgfddTI9mryidyA9OGHISjP+/2TQKBgQD8VDCE4zN33Tm3bVwH\nvFHSK3ADVU40tySpYEYDTYUmtLFScNJKV9LGhxlm5TM+h2kO6aYvyijCeKInepsG\nwXNAIZVc7LqfNh5soCJ9Sn1GcvpOKXP6tng95uVLYstjD2LxGSrESsgroc4q5EJ5\nFxgUXERb5fzWxGspB5skEeLHjwKBgQDQCMwzPZImsdgT0qjZal49bq52Rj9aRXGB\nn/ddYLIRAkTASFxbXuaGvYq5ahJoYv4K4jZ2cXj68xX2BEX+qCnO8q4KLFzxLNwa\nLc0J7BLJ3hMoTed/H4SMpZnrQz2G6vaN4HUlOdeAPdAkljh2C0UckjtX+Wm/N+Ae\nZ9ih3hOSjQKBgQDMquUoBLnska6ND9FEHQYo+T7EFV939s1v7T0c1LYZ7Rqfig+o\naY/3pAGAqoxkPaWDiRVZUhq5kuvEJfi1BBidfiAO3Z2KInWPGlyfT9pJWF2bJJiE\nVZk2bKC0AxCB6ysP8J/108qFSZtWwwr/+TF44lY4TFZHRc692wOFwFQ4FQKBgD/T\nYysZady7VasHR8ykqNM6QQaCmO9OPPvjI1af0yIKyyMfUE6sOBgA0S3/0DP8oyqd\nqs3+FHsR15wKRZtS5rjalfEDGWTZOZJCmRTBPCZ5HvGPrUXAWr94E1gt4hOhxRFU\nWzyXmXl7/X8sI5h77rFMYC6mk/4Z24YYoEtRQjoFAoGBALbpAfb9VNBDZmCRd5kB\nMFqDZfrxLrqPA1bB4k0LpTYTWPm0XvBCdd9I/mAWRkcyem76WgUMRfQpTiCq1ELS\n9gX5EyYCZZdCuTai+K6HvaRt4VQB49ZNad3lu2YRhH8RCaknck21T7US+c5luZ5X\nkHoKfPxZdL0hab6/66Q5i7sF\n-----END PRIVATE KEY-----\n",
+  "client_email": "play-console-access@convosoft-mobile-app.iam.gserviceaccount.com",
+  "client_id": "105326616150145285152",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/play-console-access%40convosoft-mobile-app.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
