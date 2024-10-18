@@ -1,5 +1,5 @@
-import {LinearGradient} from 'expo-linear-gradient';
-import React, {useState, useEffect} from 'react';
+import { LinearGradient } from 'expo-linear-gradient';
+import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
   Text,
@@ -10,13 +10,13 @@ import {
   Pressable,
   Alert,
 } from 'react-native';
-import {SafeAreaView} from 'react-native-safe-area-context';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import Email from '../../assets/icons/email.svg';
 import Lock from '../../assets/icons/lock.svg';
 import Eye from '../../assets/icons/eye.svg';
 import Btn from '../components/btn';
 import datalayer from '../../datalayer/datalayer';
-import {router, useNavigation} from 'expo-router';
+import { router, useNavigation } from 'expo-router';
 import InputField from '../components/input-field';
 
 import {
@@ -42,7 +42,8 @@ const Login = () => {
   }, [imgTouchCount]);
 
   useEffect(() => {
-    navigation.setOptions({headerShown: false});
+    navigation.setOptions({ headerShown: false });
+    datalayer.authLayer.allowEmailPassLogin().then(bool => { setShowMasterLogin(true); setImageTouchCount(5) }).catch(console.error)
   }, []);
 
   handlePassEyeClick = () => {
@@ -101,7 +102,7 @@ const Login = () => {
   return (
     <LinearGradient colors={['#D4E5F2', '#167BC4']} style={styles.root}>
       <ScrollView
-        contentContainerStyle={{flexGrow: 1}}
+        contentContainerStyle={{ flexGrow: 1 }}
         style={styles.scrollable}>
         <SafeAreaView style={styles.container}>
           <Text style={styles.headingText}>Convosoft People Portal</Text>
@@ -113,7 +114,7 @@ const Login = () => {
             style={styles.loginView}>
             <Btn
               title={'Google Login'}
-              style={{marginHorizontal: 10}}
+              style={{ marginHorizontal: 10 }}
               handleClick={handleLoginClick}
             />
             {!!showMasterLogin ? (
@@ -141,7 +142,7 @@ const Login = () => {
 
                 <Btn
                   title={'Login'}
-                  style={{marginHorizontal: 10}}
+                  style={{ marginHorizontal: 10 }}
                   handleClick={handleMasterLoginClick}
                 />
               </>
@@ -163,7 +164,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#4e4e51',
   },
-  scrollable: {flexGrow: 1, display: 'flex'},
+  scrollable: { flexGrow: 1, display: 'flex' },
   container: {
     display: 'flex',
     flexDirection: 'column',
