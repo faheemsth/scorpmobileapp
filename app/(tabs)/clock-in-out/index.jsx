@@ -177,11 +177,11 @@ const ClockInOut = () => {
               marginTop: 15,
             }}>
             <LinearGradient
-              colors={['rgba(255, 255, 255, 1)', 'rgba(163, 192, 221, 1)']}
+              colors={['#E2E6EA', '#E2E6EA']}
               style={{
                 position: 'absolute',
-                width: 135,
-                height: 135,
+                width: 145,
+                height: 145,
                 borderRadius: 75,
                 opacity: 1.5,
                 bottom: -10,
@@ -283,9 +283,14 @@ const ClockInOut = () => {
           handleClick={handleViewAttendanceClicked}
           style={{
             width: 328,
+            borderColor: '#7647EB',
+            borderWidth: 1,
+            elevation: 0,
             alignSelf: 'center',
             marginVertical: 20,
             borderRadius: 10,
+            color: '#7647EB',
+            backgroundColor: '#fff',
           }}
           title={'View Your Attendance'}
         />
@@ -349,7 +354,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   headerBg: {
-    backgroundColor: 'rgba(22, 123, 196, 1)',
+    backgroundColor: '#7647EB',
     width: '100%',
     height: 227,
     flexDirection: 'column',

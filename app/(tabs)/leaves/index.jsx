@@ -84,7 +84,7 @@ const LeavesTab = () => {
               style={[
                 styles.font(400),
                 styles.size(17),
-                styles.bg('#167BC4'),
+                styles.bg('#7647EB'),
                 styles.ph(16),
                 styles.pv(8),
                 {color: '#fff', borderRadius: 2000},
@@ -154,7 +154,7 @@ const LeavesTab = () => {
           bottom: 29,
           right: 13,
           padding: 16,
-          backgroundColor: '#167BC4',
+          backgroundColor: '#7647EB',
           borderRadius: 5,
           elevation: 4,
           zIndex: 1,

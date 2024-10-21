@@ -44,7 +44,7 @@ const TaskField = ({
           style={{
             borderRadius: 4,
             borderWidth: 1,
-            borderColor: '#167BC4',
+            borderColor: '#7647EB',
             flex: 1,
           }}>
           <Picker

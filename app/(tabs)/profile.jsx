@@ -42,7 +42,7 @@ const Profile = () => {
   return (
     <ScrollView contentContainerStyle={{flex: 1, gap: 47 + 20}}>
       <LinearGradient
-        colors={['#D4E5F2', '#167BC4']}
+        colors={['#D4E5F2', '#7647EB']}
         style={{
           display: 'flex',
           flexDirection: 'column',

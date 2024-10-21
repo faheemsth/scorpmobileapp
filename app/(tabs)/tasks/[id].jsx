@@ -125,7 +125,7 @@ const ViewTask = () => {
           <Btn
             style={{
               alignSelf: 'center',
-              backgroundColor: task?.['status'] == 1 ? '#167BC4' : '#1A2',
+              backgroundColor: task?.['status'] == 1 ? '#7647EB' : '#1A2',
             }}
             title={
               task?.['status'] == 1 ? 'Already Completed' : 'Mark as Completed'

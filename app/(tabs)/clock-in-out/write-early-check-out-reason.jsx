@@ -19,7 +19,7 @@ const WriteEarlyCheckoutReason = ({ onClose }) => {
           style={{
             padding: 15,
             width: "100%",
-            backgroundColor: "#167BC4",
+            backgroundColor: "#7647EB",
             color: "#fff",
             borderTopLeftRadius: 15,
             borderTopRightRadius: 15,

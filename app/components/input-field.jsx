@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
     padding: 8,
     borderWidth: 1,
     borderRadius: 5,
-    borderColor: '#167BC4',
+    borderColor: '#7647EB',
     marginHorizontal: 10,
   },
   textAlignTopVertical: {

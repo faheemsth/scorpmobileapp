@@ -100,7 +100,7 @@ const Login = () => {
   };
 
   return (
-    <LinearGradient colors={['#D4E5F2', '#167BC4']} style={styles.root}>
+    <View style={styles.root}>
       <ScrollView
         contentContainerStyle={{ flexGrow: 1 }}
         style={styles.scrollable}>
@@ -109,8 +109,7 @@ const Login = () => {
           <Pressable onPress={handleImagePressed}>
             <Image source={require('../../assets/welcome_icon.png')} />
           </Pressable>
-          <LinearGradient
-            colors={['#D4E5F2', '#167BC4']}
+          <View
             style={styles.loginView}>
             <Btn
               title={'Google Login'}
@@ -147,10 +146,10 @@ const Login = () => {
                 />
               </>
             ) : null}
-          </LinearGradient>
+          </View>
         </SafeAreaView>
       </ScrollView>
-    </LinearGradient>
+    </View>
   );
 };
 
@@ -162,7 +161,7 @@ const styles = StyleSheet.create({
   headingText: {
     fontSize: 20,
     fontWeight: '700',
-    color: '#4e4e51',
+    color: '#7647EB',
   },
   scrollable: { flexGrow: 1, display: 'flex' },
   container: {
@@ -196,7 +195,7 @@ const styles = StyleSheet.create({
     padding: 8,
     borderWidth: 1,
     borderRadius: 5,
-    borderColor: '#167BC4',
+    borderColor: '#7647EB',
     marginHorizontal: 10,
   },
 });

@@ -292,7 +292,7 @@ const AuthLayer = (() => {
 
     return data;
   };
-  const getUserAsync = async () => awaigetUserProfile();
+  const getUserAsync = async () => await getUserProfile();
   const getUserBranchAsync = async () => {
     const token = await getData(keys.token);
     if (!!!token) {

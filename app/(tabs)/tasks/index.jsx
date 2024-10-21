@@ -103,7 +103,7 @@ const AllTasks = () => {
           bottom: 29,
           right: 13,
           padding: 16,
-          backgroundColor: '#167BC4',
+          backgroundColor: '#7647EB',
           borderRadius: 5,
           elevation: 4,
           zIndex: 1,

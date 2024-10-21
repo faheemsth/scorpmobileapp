@@ -10,13 +10,13 @@ const Hello = () => {
     useEffect(()=>{navigation.setOptions({headerShown: false})},[])
     handleBtnClick = () => router.replace("../auth/login")
     return (
-        <View>
-            <LinearGradient colors={["#DDDDDD", "#167BC4"]} style={styles.container}>
+        <View style={styles.container}>
                 <Text style={styles.hello}>Hello</Text>
                 <Image source={require("../../assets/welcome_icon.png")} />
                 <Text style={styles.message}>Streamline and Access Your Entire Business, Right from the Palm of Your Hand. Comprehensive Management from Operations to Analytics, All in One Place.</Text>
                 <Btn title={"Login to your Account"} handleClick={handleBtnClick} style={{paddingHorizontal: 50}} trailing={<><ArrowRight style={{color: "#fff"}} /></>} />
-            </LinearGradient>
+            {/* <LinearGradient colors={["#DDDDDD", "#7647EB"]} style={styles.container}>
+            </LinearGradient> */}
         </View>
     )
 }
@@ -33,13 +33,14 @@ const styles = StyleSheet.create({
         height: "100%",
     },
     hello: {
+        fontFamily:"outfit-700",
         fontSize: 32,
-        color: "#4E4F51",
+        color: "#7647EB",
         margin: 39,
     },
     message: {
         fontSize: 15,
-        color: "white",
+        color: "#A0A0A0",
         textAlign: "justify",
         width: "auto",
         margin: 39,
