@@ -58,11 +58,11 @@ getDay = (date = new Date()) => {
 
 const colors = {
   black: '#555',
-  blue: '#08f',
-  green: '#1a2',
-  red: '#d23',
-  yellow: '#fd3',
-  bg: '#fff',
+  blue: '#7647EB',
+  green: '#33CC32',
+  red: '#000',
+  yellow: '#f93',
+  bg: '#FFFFFF',
 };
 
 export function AttendanceRowNew({
@@ -79,8 +79,11 @@ export function AttendanceRowNew({
       style={{
         flexDirection: 'row',
         alignItems: 'center',
-        borderBottomWidth: 1,
-        borderBottomColor: '#6661',
+        borderWidth: 1,
+        width:362,
+        height:73,
+        borderColor: '#00000026',
+        borderRadius:6,
         margin: 10,
         justifyContent: 'space-between',
       }}>
@@ -91,14 +94,18 @@ export function AttendanceRowNew({
           justifyContent: 'center',
           margin: 2,
           padding: 2,
+          width:53,
+          height:53,
           paddingHorizontal: 4,
-          borderWidth: 1,
-          borderRadius: 2,
-          borderColor: colors.black,
+          
+          borderRadius: 6,
+          backgroundColor: "#7647EB",
+          
+          
         }}>
         <Text
           style={{
-            color: colors.black,
+            color:"#FFFFFF",
             textAlign: 'center',
             fontFamily: 'outfit-900',
             fontSize: 12,
@@ -108,7 +115,7 @@ export function AttendanceRowNew({
         </Text>
         <Text
           style={{
-            color: colors.black,
+            color: "#FFFFFF",
             textAlign: 'center',
             fontFamily: 'outfit-600',
             fontSize: 9,
@@ -120,10 +127,11 @@ export function AttendanceRowNew({
         <ArrowIcon width={10} height={10} style={{color: colors.blue}} />
         <Text
           style={{
-            color: !!clockInTime ? colors.black : colors.red,
+            color: !!clockInTime ? colors.blue : colors.red,
             textAlign: 'center',
             fontFamily: 'outfit-400',
             fontSize: 12,
+            
           }}>
           {clockInTime ?? '00:00'}
         </Text>
@@ -146,6 +154,7 @@ export function AttendanceRowNew({
             textAlign: 'center',
             fontFamily: 'outfit-400',
             fontSize: 12,
+            
           }}>
           {clockOutTime ?? '00:00'}
         </Text>
@@ -399,7 +408,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.bg,
-    gap: 17,
+    gap: 10,
     position: 'relative',
   },
   button: {
