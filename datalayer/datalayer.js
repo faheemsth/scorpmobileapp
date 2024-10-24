@@ -196,6 +196,24 @@ const AuthLayer = (() => {
     GoogleSignin.signOut();
   };
 
+  const getUserProfile = async ()=>{
+    const token = await getData(keys.token);
+    if (!!!token) {
+      return Promise.reject({message: 'no token'});
+    }
+    const res = await fetch(`${base_url}getUserProfile`, {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    const data = await res.json()
+    return data?.["profileData"]
+
+  }
+
   const postGoogleLoginReq = async email => {
     const res = await fetch(`${base_url}googlelogin`, {
       method: 'POST',
@@ -274,7 +292,7 @@ const AuthLayer = (() => {
 
     return data;
   };
-  const getUserAsync = async () => JSON.parse(await getData(keys.user));
+  const getUserAsync = async () => await getUserProfile();
   const getUserBranchAsync = async () => {
     const token = await getData(keys.token);
     if (!!!token) {
@@ -290,6 +308,19 @@ const AuthLayer = (() => {
     });
     return await res.json();
   };
+  const getMeta = async () => {
+    const res = await fetch(`${base_url}appMeta`, {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+    });
+    const data = await res.json()
+    return data?.["metaData"]
+  }
+  const allowEmailPassLogin = async () => (await getMeta())?.["isLoginForm"] == 1
+
   return {
     login,
     getUserAsync,
@@ -297,6 +328,9 @@ const AuthLayer = (() => {
     getById,
     logOut,
     postGoogleLoginReq,
+    getUserProfile,
+    getMeta,
+    allowEmailPassLogin,
   };
 })();
 
@@ -310,7 +344,7 @@ const AttendanceLayer = (() => {
   };
 
   const clockIn = async () => {
-    const user = await authLayer.getUserAsync();
+    const user = await authLayer.getUserProfile();
 
     const lnp = await locLayer.requestPermissionAndLocation();
 
@@ -421,7 +455,7 @@ const AttendanceLayer = (() => {
     return totalDutyHoursPerDay <= diffHrs;
   };
   const clockOut = async reason => {
-    const user = await authLayer.getUserAsync();
+    const user = await authLayer.getUserProfile();
 
     const lnp = await locLayer.requestPermissionAndLocation();
 
@@ -650,32 +684,11 @@ const datalayer = (() => {
 
 export default datalayer;
 
-export const adjustToLocalTimezone = date => {
-  // Step 1: Convert the date to UTC (offset 0)
-  const utcDate = new Date(
-    date.getUTCFullYear(),
-    date.getUTCMonth(),
-    date.getUTCDate(),
-    date.getUTCHours(),
-    date.getUTCMinutes(),
-    date.getUTCSeconds(),
-  );
-
-  // Step 2: Get the phone's local timezone offset in minutes
-  const timezoneOffset = new Date().getTimezoneOffset(); // Local offset in minutes
-
-  // Step 3: Adjust the UTC date by the local timezone offset
-  // Timezone offset is in minutes, so we convert it to milliseconds and adjust
-  const localDate = new Date(utcDate.getTime() - timezoneOffset * 60 * 1000);
-
-  return localDate;
-};
-
 export function useUser() {
   const [user, setUser] = useState({});
   const u = useCallback(() => {
     fetchUserAsync = async () => {
-      setUser(await datalayer.authLayer.getUserAsync());
+      setUser(await datalayer.authLayer.getUserProfile());
     };
     fetchUserAsync()?.catch(e => Alert.alert(e.message));
   }, [user]);

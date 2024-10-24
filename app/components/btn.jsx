@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     flexWrap: 'nowrap',
-    backgroundColor: '#167BC4',
+    backgroundColor: '#7647EB',
     borderRadius: 5,
     padding: 8,
     elevation: 4,

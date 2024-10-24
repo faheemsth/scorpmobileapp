@@ -46,7 +46,7 @@ const DateRangePicker = ({
     if (isRangeMode && selectedRange.startDate) {
       markedDates[selectedRange.startDate] = {
         startingDay: true,
-        color: '#167BC4',
+        color: '#7647EB',
         textColor: 'white',
         borderRadius: 1000,
       };
@@ -60,7 +60,7 @@ const DateRangePicker = ({
           markedDates[dateString] = {
             ...(currentDate === new Date(selectedRange.startDate)
               ? {}
-              : {color: '#167BC4', textColor: 'white'}),
+              : {color: '#7647EB', textColor: 'white'}),
             ...(dateString === selectedRange.endDate ? {endingDay: true} : {}),
           };
           currentDate.setDate(currentDate.getDate() + 1);
@@ -69,7 +69,7 @@ const DateRangePicker = ({
     } else if (!isRangeMode && singleDate) {
       markedDates[singleDate] = {
         selected: true,
-        selectedColor: '#167BC4',
+        selectedColor: '#7647EB',
         textColor: 'white',
       };
     }
@@ -113,8 +113,8 @@ const DateRangePicker = ({
             <Switch
               value={isRangeMode}
               onValueChange={changeMode}
-              thumbColor="#167BC4"
-              trackColor="#167BC4"
+              thumbColor="#7647EB"
+              trackColor="#7647EB"
             />
           </View>
           <Calendar

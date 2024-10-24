@@ -4,7 +4,9 @@ import ListTask from '../../assets/icons/listtask.svg';
 import LeaveIcon from '../../assets/icons/leaves.svg';
 import PofileIcon from '../../assets/icons/profile.svg';
 import HomeIcon from '../../assets/icons/home.svg';
-import CalendarIcon from '../../assets/icons/calendar.svg'
+import CalendarIcon from '../../assets/icons/calendar.svg';
+import {Dimensions, View} from 'react-native';
+import {Screen} from 'react-native-screens';
 
 export default function TabLayout() {
   return (
@@ -12,22 +14,38 @@ export default function TabLayout() {
       screenOptions={{
         tabBarStyle: {
           borderCurve: 'circular',
-          borderTopLeftRadius: 5,
-          borderTopRightRadius: 5,
+          elevation:16,
           overflow: 'hidden',
         },
-        tabBarActiveTintColor: '#FDC933',
-        tabBarActiveBackgroundColor: '#167BC4',
+        tabBarActiveTintColor: '#7647EB',
+        tabBarActiveBackgroundColor: '#FFFFFF',
         headerShown: false,
-        tabBarInactiveBackgroundColor: '#167BC4',
-        tabBarInactiveTintColor: 'white',
+        tabBarInactiveBackgroundColor: '#FFFFFF',
+        tabBarInactiveTintColor: '#A0A0A0',
       }}>
       <Tabs.Screen
         name="clock-in-out"
         options={{
           title: 'Home',
           tabBarIcon: ({color}) => (
-            <HomeIcon width={22} height={22} style={{color: color}} />
+            <View
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 4,
+                flex: 1,
+                alignItems: 'center',
+              }}>
+              <View
+                style={{
+                  height: 5,
+                  width: Dimensions.get('window').width / 5,
+                  flex: 1,
+                  backgroundColor: color == '#7647EB' ? color : '#0000',
+                }}
+              />
+              <HomeIcon width={22} height={22} style={{color: color}} />
+            </View>
           ),
         }}
       />
@@ -36,20 +54,77 @@ export default function TabLayout() {
         options={{
           title: 'Tasks',
           tabBarIcon: ({color}) => (
-            <ListTask width={22} height={22} style={{color: color}} />
+            <View
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 4,
+                flex: 1,
+                alignItems: 'center',
+              }}>
+              <View
+                style={{
+                  height: 5,
+                  width: Dimensions.get('window').width / 5,
+                  flex: 1,
+                  backgroundColor: color == '#7647EB' ? color : '#0000',
+                }}
+              />
+
+              <ListTask width={22} height={22} style={{color: color}} />
+            </View>
           ),
         }}
       />
       <Tabs.Screen
         name="attendance"
-        options={{title: 'Attendance', tabBarIcon: ({color})=><CalendarIcon style={{color: color}} />}}
+        options={{
+          title: 'Attendance',
+          tabBarIcon: ({color}) => (
+            <View
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 4,
+                flex: 1,
+                alignItems: 'center',
+              }}>
+              <View
+                style={{
+                  height: 5,
+                  width: Dimensions.get('window').width / 5,
+                  flex: 1,
+                  backgroundColor: color == '#7647EB' ? color : '#0000',
+                }}
+              />
+              <CalendarIcon height={22} style={{color: color}} />
+            </View>
+          ),
+        }}
       />
       <Tabs.Screen
         name="leaves"
         options={{
           title: 'Leaves',
           tabBarIcon: ({color}) => (
-            <LeaveIcon width={22} height={22} style={{color}} />
+            <View
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 4,
+                flex: 1,
+                alignItems: 'center',
+              }}>
+              <View
+                style={{
+                  height: 5,
+                  width: Dimensions.get('window').width / 5,
+                  flex: 1,
+                  backgroundColor: color == '#7647EB' ? color : '#0000',
+                }}
+              />
+              <LeaveIcon width={22} height={22} style={{color}} />
+            </View>
           ),
         }}
       />
@@ -58,7 +133,25 @@ export default function TabLayout() {
         options={{
           title: 'Profile',
           tabBarIcon: ({color}) => (
-            <PofileIcon width={22} height={22} style={{color}} />
+            <View
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 4,
+                flex: 1,
+                alignItems: 'center',
+              }}>
+              <View
+                style={{
+                  height: 5,
+                  width: Dimensions.get('window').width / 5,
+                  flex: 1,
+                  backgroundColor: color == '#7647EB' ? color : '#0000',
+                }}
+              />
+
+              <PofileIcon width={22} height={22} style={{color}} />
+            </View>
           ),
         }}
       />

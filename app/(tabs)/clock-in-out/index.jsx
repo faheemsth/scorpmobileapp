@@ -30,7 +30,7 @@ const ClockInOut = () => {
   const [requestEarlyCheckoutReason, setRequestEarlyCheckoutReason] =
     useState(false);
   const [time, setTime] = useState(new Date());
-  const [btnColor, setBtnColor] = useState('#11A120');
+  const [btnColor, setBtnColor] = useState('');
   const [
     {clockinStatus, clockoutTime, clockinTime, totalHours},
     fetchClockinAsync,
@@ -114,7 +114,7 @@ const ClockInOut = () => {
   };
 
   const formatToHhMm = useCallback(date => {
-    if (!!!date) return '00:00';
+    if (!!!date) return '00:00 AM';
     const d = new Date(date);
     return `${d?.getHours() < 10 ? '0' : ''}${d?.getHours()}:${
       d?.getMinutes() < 10 ? '0' : ''
@@ -166,7 +166,7 @@ const ClockInOut = () => {
           </View>
         </View>
         <View style={styles.indexCard}>
-          <Text style={{marginTop: 59, fontWeight: 600, fontSize: 32}}>
+          <Text style={{marginTop: 27, fontWeight: 600, fontSize: 32}}>
             {time.toTimeString().substring(0, 5)}
           </Text>
           <Text style={{color: '#6C6C6C'}}>{time.toDateString()}</Text>
@@ -175,42 +175,37 @@ const ClockInOut = () => {
               alignItems: 'center',
               justifyContent: 'center',
               marginTop: 15,
+              padding: 15,
+              backgroundColor: '#E2E6EA',
+              borderRadius: 1000,
             }}>
-            <LinearGradient
-              colors={['rgba(255, 255, 255, 1)', 'rgba(163, 192, 221, 1)']}
-              style={{
-                position: 'absolute',
-                width: 135,
-                height: 135,
-                borderRadius: 75,
-                opacity: 1.5,
-                bottom: -10,
-              }}
-            />
             <TouchableOpacity
               activeOpacity={0.9}
               onPress={handleCheckInOutClick}>
-              <LinearGradient
-                colors={[btnColor, btnColor]}
+              <View
                 style={{
-                  width: 125,
-                  height: 125,
-                  borderRadius: 63,
+                  backgroundColor: btnColor,
+                  width: 97,
+                  height: 97,
+                  borderRadius: 1000,
+                  borderWidth: 6.73,
+                  borderColor:"#fff",
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
+                  overflow: 'hidden',
                 }}>
-                <Clock width={42} height={42} style={{marginTop: 19}} />
                 <Text
                   style={{
                     color: 'white',
                     fontWeight: '500',
                     marginTop: 5,
                     marginBottom: 10,
+                    textAlign: 'center',
                   }}>
-                  CLOCK-{`${clockinStatus ? 'OUT' : 'IN'}`}
+                  CLOCK{`${clockinStatus ? '\nOUT' : '\nIN'}`}
                 </Text>
-              </LinearGradient>
+              </View>
             </TouchableOpacity>
           </View>
 
@@ -244,7 +239,7 @@ const ClockInOut = () => {
                 style={{
                   textAlign: 'center',
                   marginTop: 3,
-                  color: 'rgba(108, 108, 108, 1)',
+                  color: '#A0A0A0',
                 }}>
                 {formatToHhMm(clockinTime)}
                 {'\n'}Clock in
@@ -257,7 +252,7 @@ const ClockInOut = () => {
                 style={{
                   textAlign: 'center',
                   marginTop: 3,
-                  color: 'rgba(108, 108, 108, 1)',
+                  color: '#A0A0A0',
                 }}>
                 {formatToHhMm(clockoutTime)}
                 {'\n'}Clock out
@@ -270,7 +265,7 @@ const ClockInOut = () => {
                 style={{
                   textAlign: 'center',
                   marginTop: 4,
-                  color: 'rgba(108, 108, 108, 1)',
+                  color: '#A0A0A0',
                 }}>
                 {formatTotalHours(totalHours ?? {hours: 0, minutes: 0})}
                 {'\n'}Total hrs
@@ -283,9 +278,15 @@ const ClockInOut = () => {
           handleClick={handleViewAttendanceClicked}
           style={{
             width: 328,
+            borderColor: '#7647EB',
+            borderWidth: 1,
+
+            elevation: 0,
             alignSelf: 'center',
             marginVertical: 20,
             borderRadius: 10,
+            color: '#7647EB',
+            backgroundColor: '#fff',
           }}
           title={'View Your Attendance'}
         />
@@ -349,7 +350,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   headerBg: {
-    backgroundColor: 'rgba(22, 123, 196, 1)',
+    backgroundColor: '#7647EB',
     width: '100%',
     height: 227,
     flexDirection: 'column',

@@ -108,7 +108,7 @@ const RequestLeave = () => {
           <View style={{width: 280, height: 70}}>
             <Text style={{paddingLeft: 10}}>Leave Type</Text>
             <View
-              style={{borderRadius: 4, borderWidth: 1, borderColor: '#167BC4', margin: 10}}>
+              style={{borderRadius: 4, borderWidth: 1, borderColor: '#7647EB', margin: 10}}>
               <Picker
                 onValueChange={(val, index) => {
                   console.log('selected value is', val);
@@ -141,7 +141,7 @@ const RequestLeave = () => {
                 padding: 8,
                 borderWidth: 1,
                 borderRadius: 5,
-                borderColor: '#167BC4',
+                borderColor: '#7647EB',
                 marginHorizontal: 10,
               }}
               onPress={() => setIsModalVisible(true)}>

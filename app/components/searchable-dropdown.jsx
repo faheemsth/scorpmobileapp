@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
   },
   input: {
     fontFamily: 'outfit-400',
-    borderColor: '#167BC4',
+    borderColor: '#7647EB',
     borderWidth: 1,
     borderRadius: 5,
     paddingHorizontal: 10,
@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
   },
   dropdown: {
     fontFamily: 'outfit-400',
-    borderColor: '#167BC4',
+    borderColor: '#7647EB',
     borderWidth: 1,
     position: 'absolute', // Absolutely positioned
     top: 50, // Adjust the top based on the position of your TextInput
@@ -124,7 +124,7 @@ const styles = StyleSheet.create({
     fontFamily: 'outfit-400',
     padding: 10,
     borderBottomWidth: 1,
-    borderBottomColor: '#167BC4',
+    borderBottomColor: '#7647EB',
   },
 });
 
