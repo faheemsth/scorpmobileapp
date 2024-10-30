@@ -6,6 +6,16 @@ import { useFonts } from 'expo-font';
 
 export default function App() {
   const [loaded, error] = useFonts({
+    'Poppins-100': require('../assets/fonts/Poppins-100.otf'),
+    'Poppins-200': require('../assets/fonts/Poppins-200.otf'),
+    'Poppins-300': require('../assets/fonts/Poppins-300.otf'),
+    'Poppins-400': require('../assets/fonts/Poppins-400.otf'),
+    'Poppins-500': require('../assets/fonts/Poppins-500.otf'),
+    'Poppins-600': require('../assets/fonts/Poppins-600.otf'),
+    'Poppins-700': require('../assets/fonts/Poppins-700.otf'),
+    'Poppins-800': require('../assets/fonts/Poppins-800.otf'),
+    'Poppins-900': require('../assets/fonts/Poppins-900.otf'),
+    
     'outfit-100': require('../assets/fonts/outfit-100.otf'),
     'outfit-200': require('../assets/fonts/outfit-200.otf'),
     'outfit-300': require('../assets/fonts/outfit-300.otf'),
@@ -15,7 +25,7 @@ export default function App() {
     'outfit-700': require('../assets/fonts/outfit-700.otf'),
     'outfit-800': require('../assets/fonts/outfit-800.otf'),
     'outfit-900': require('../assets/fonts/outfit-900.otf'),
-  })
+  }) 
   useEffect(() => {
     const authCheck = async () => {
       const token = await datalayer.getData(datalayer.KEYS.token)

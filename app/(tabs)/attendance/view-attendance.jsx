@@ -13,18 +13,9 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import {Calendar, CalendarList} from 'react-native-calendars';
 import ReasonView from './reason-view';
 
-import Clockin from '../../../assets/icons/clockin.svg';
-import Clockinb from '../../../assets/icons/clockinb.svg';
-import Clockout from '../../../assets/icons/clockout.svg';
-import Clockoutb from '../../../assets/icons/clockoutb.svg';
-import Cross from '../../../assets/icons/cross.svg';
-import ClockMarked from '../../../assets/icons/clockmarked.svg';
-import ArrowRight from '../../../assets/icons/ArrowRight.svg';
 import Chevron from '../../../assets/icons/chevron.svg';
-import CalendarIcon from '../../../assets/icons/calendar.svg';
 import datalayer from '../../../datalayer/datalayer';
 import ArrowIcon from '../../../assets/icons/incomming.svg';
-
 getDay = (date = new Date()) => {
   let day = {short: '', full: ''};
   switch (date.getDay()) {
@@ -80,10 +71,10 @@ export function AttendanceRowNew({
         flexDirection: 'row',
         alignItems: 'center',
         borderWidth: 1,
-        width:362,
-        height:73,
+        width: 362,
+        height: 73,
         borderColor: '#00000026',
-        borderRadius:6,
+        borderRadius: 6,
         margin: 10,
         justifyContent: 'space-between',
       }}>
@@ -94,18 +85,16 @@ export function AttendanceRowNew({
           justifyContent: 'center',
           margin: 2,
           padding: 2,
-          width:53,
-          height:53,
+          width: 53,
+          height: 53,
           paddingHorizontal: 4,
-          
+
           borderRadius: 6,
-          backgroundColor: "#7647EB",
-          
-          
+          backgroundColor: '#7647EB',
         }}>
         <Text
           style={{
-            color:"#FFFFFF",
+            color: '#FFFFFF',
             textAlign: 'center',
             fontFamily: 'outfit-900',
             fontSize: 12,
@@ -115,7 +104,7 @@ export function AttendanceRowNew({
         </Text>
         <Text
           style={{
-            color: "#FFFFFF",
+            color: '#FFFFFF',
             textAlign: 'center',
             fontFamily: 'outfit-600',
             fontSize: 9,
@@ -131,7 +120,6 @@ export function AttendanceRowNew({
             textAlign: 'center',
             fontFamily: 'outfit-400',
             fontSize: 12,
-            
           }}>
           {clockInTime ?? '00:00'}
         </Text>
@@ -154,7 +142,6 @@ export function AttendanceRowNew({
             textAlign: 'center',
             fontFamily: 'outfit-400',
             fontSize: 12,
-            
           }}>
           {clockOutTime ?? '00:00'}
         </Text>
@@ -185,7 +172,6 @@ export function AttendanceRowNew({
     </View>
   );
 }
-
 const ViewAttendanceScreen = () => {
   const navigation = useNavigation();
   chips = ['All', 'Full Day', 'Early Leave', 'Absent'];

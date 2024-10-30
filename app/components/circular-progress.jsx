@@ -49,7 +49,7 @@ const CircularProgress = ({
           cx={size / 2}
           cy={size / 2}
           r={radius}
-          strokeWidth={strokeWidth}
+          strokeWidth={strokeWidth*0.8}
         />
         {/* Foreground Animated Circle */}
         <AnimatedCircle

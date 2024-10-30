@@ -15,7 +15,7 @@ const styles = StyleSheet.create({
   },
   font: (size = 400) => {
     return {
-      fontFamily: `outfit-${size}`,
+      fontFamily: `Poppins-${size}`,
     };
   },
   size: px => {

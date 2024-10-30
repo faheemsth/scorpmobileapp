@@ -80,25 +80,32 @@ const LeavesTab = () => {
               styles.justifyBetween,
               {width: 317},
             ]}>
-            <Text
-              style={[
-                styles.font(400),
-                styles.size(17),
-                styles.bg('#7647EB'),
-                styles.ph(16),
-                styles.pv(8),
-                {color: '#fff', borderRadius: 2000},
-              ]}>
-              Approvals
-            </Text>
             <Pressable
               onPress={handleLeaveHistoryClick}
               style={[
                 styles.ph(16),
                 styles.pv(8),
-                {borderWidth: 1, borderRadius: 200},
+                {
+                  borderWidth: 1,
+                  borderRadius: 5,
+                  gap: 10,
+                  paddingTop: 10,
+                  paddingVertical: 10,
+                  paddingHorizontal: 20,
+                  borderColor: '#7647EB',
+                },
               ]}>
-              <Text style={[styles.font(400), styles.size(17)]}>
+              <Text
+                style={[
+                  styles.font(400),
+                  styles.size(16),
+                  {
+                    fontWeight: 500,
+                    lineHeight: 23,
+                    alignItems: 'center',
+                    color: '#7647EB',
+                  },
+                ]}>
                 Leave History
               </Text>
             </Pressable>
@@ -115,30 +122,41 @@ const LeavesTab = () => {
                 key={e?.['id']}
                 uName={user?.['name']}
                 data={[
-                  {heading: 'Leave type', value: e?.['leave_type']},
+                  {heading: 'Leave type', value: e?.['leave_type'],rowStyle:{}},
                   {heading: 'Applied on', value: e?.['applied_on']},
                   {heading: 'Start Date', value: e?.['start_date']},
                   {heading: 'End Date', value: e?.['end_date']},
                   {heading: 'Leave Reason', value: e?.['leave_reason']},
                   {
-                    heading: 'Status',
+                    heading: 'STATUS',
                     value: e?.['status'],
-                    style: {
-                      ...styles.ph(10),
-                      ...styles.pv(3.5),
+                    rowStyle: {
                       ...styles.bg(
                         e?.['status'].toLocaleLowerCase() == 'pending'
-                          ? '#FDC933'
+                          ? '#FDC93333'
                           : e?.['status'].toLocaleLowerCase() == 'rejected'
-                          ? '#D5213C'
-                          : '#11A120',
-                      ),
-
-                      borderRadius: 1000,
+                          ? '#D5213C33'
+                          : '#11A12033',
+                      )
+                    },
+                    style: {
                       color:
                         e?.['status'].toLocaleLowerCase() == 'pending'
-                          ? '#000'
+                          ? '#FDC933'
                           : '#fff',
+                      flex: 1,
+                      alignItems: 'center',
+                      textAlign: 'center',
+                    },
+                    headingStyle: {
+                      backgroundColor: '#7647EB33',
+                      borderBottomLeftRadius: 10,
+                      color: '#7647EB',
+                      fontSize: 10,
+                      fontWeight: 600,
+                      alignItems: 'center',
+                      textAlign: 'center',
+                      padding: 8.73,
                     },
                   },
                 ]}
