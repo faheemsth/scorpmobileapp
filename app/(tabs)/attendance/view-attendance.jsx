@@ -2,12 +2,11 @@ import {
   View,
   Text,
   StyleSheet,
-  TouchableOpacity,
   ScrollView,
   Pressable,
   Alert,
 } from 'react-native';
-import React, {useCallback, useEffect, useState} from 'react';
+import React, { useEffect, useState} from 'react';
 import {useNavigation} from 'expo-router';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {Calendar, CalendarList} from 'react-native-calendars';
@@ -16,6 +15,7 @@ import ReasonView from './reason-view';
 import Chevron from '../../../assets/icons/chevron.svg';
 import datalayer from '../../../datalayer/datalayer';
 import ArrowIcon from '../../../assets/icons/incomming.svg';
+import { StatusBar } from 'expo-status-bar';
 getDay = (date = new Date()) => {
   let day = {short: '', full: ''};
   switch (date.getDay()) {
@@ -48,10 +48,10 @@ getDay = (date = new Date()) => {
 };
 
 const colors = {
-  black: '#555',
+  black: '#000000',
   blue: '#7647EB',
   green: '#33CC32',
-  red: '#000',
+  red: '#DC3545',
   yellow: '#f93',
   bg: '#FFFFFF',
 };
@@ -62,7 +62,7 @@ export function AttendanceRowNew({
   clockOutTime,
   totalHours,
   status,
-  onReasonClick,
+  hasReason = false,
   minimumTotalHours = 8,
 }) {
   return (
@@ -71,32 +71,32 @@ export function AttendanceRowNew({
         flexDirection: 'row',
         alignItems: 'center',
         borderWidth: 1,
-        width: 362,
-        height: 73,
-        borderColor: '#00000026',
+        borderColor: colors.black + '26',
         borderRadius: 6,
-        margin: 10,
+        marginHorizontal: 5,
+        marginVertical: 5,
+        paddingVertical: 10,
+        paddingHorizontal: 5,
         justifyContent: 'space-between',
+        elevation: 3,
+        backgroundColor: '#FFFFFF',
       }}>
       <View
         style={{
           flexDirection: 'column',
           alignContent: 'center',
           justifyContent: 'center',
-          margin: 2,
-          padding: 2,
           width: 53,
           height: 53,
           paddingHorizontal: 4,
-
           borderRadius: 6,
-          backgroundColor: '#7647EB',
+          backgroundColor: colors.blue,
         }}>
         <Text
           style={{
             color: '#FFFFFF',
             textAlign: 'center',
-            fontFamily: 'outfit-900',
+            fontFamily: 'poppins-900',
             fontSize: 12,
           }}>
           {date?.getDate() < 10 ? '0' : ''}
@@ -106,7 +106,7 @@ export function AttendanceRowNew({
           style={{
             color: '#FFFFFF',
             textAlign: 'center',
-            fontFamily: 'outfit-600',
+            fontFamily: 'poppins-600',
             fontSize: 9,
           }}>
           {getDay(date)?.short}
@@ -116,59 +116,65 @@ export function AttendanceRowNew({
         <ArrowIcon width={10} height={10} style={{color: colors.blue}} />
         <Text
           style={{
-            color: !!clockInTime ? colors.blue : colors.red,
+            color: !!clockInTime ? colors.green : colors.red,
             textAlign: 'center',
-            fontFamily: 'outfit-400',
+            fontFamily: 'poppins-400',
             fontSize: 12,
           }}>
           {clockInTime ?? '00:00'}
         </Text>
       </View>
-      <View style={{flexDirection: 'row', gap: 5, alignItems: 'center'}}>
-        <ArrowIcon
-          width={10}
-          height={10}
-          style={{
-            color:
-              totalHours?.substring(0, 2) >= minimumTotalHours
-                ? colors.green
-                : colors.red,
-            transform: [{rotateZ: '-90deg'}],
-          }}
-        />
-        <Text
-          style={{
-            color: !!clockOutTime ? colors.black : colors.red,
-            textAlign: 'center',
-            fontFamily: 'outfit-400',
-            fontSize: 12,
-          }}>
-          {clockOutTime ?? '00:00'}
-        </Text>
+      <View>
+        <View style={{flexDirection: 'row', gap: 5, alignItems: 'center'}}>
+          <ArrowIcon
+            width={10}
+            height={10}
+            style={{
+              color: colors.blue,
+              transform: [{rotateZ: '-90deg'}],
+            }}
+          />
+          <Text
+            style={{
+              color: !!clockOutTime ? colors.black : colors.red,
+              textAlign: 'center',
+              fontFamily: 'poppins-400',
+              fontSize: 12,
+            }}>
+            {clockOutTime ?? '00:00'}
+          </Text>
+        </View>
+
+        {!!hasReason ? (
+          <Text
+            style={{
+              color: colors.red,
+              fontSize: 12,
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'baseline',
+              textAlignVertical: 'bottom',
+              textAlign: 'center',
+            }}>
+            Reason
+            <Chevron width={14} height={7.3} style={{color: colors.red}} />
+          </Text>
+        ) : null}
       </View>
-      <Pressable
-        onPress={() => {
-          onReasonClick?.();
-        }}
-        style={{flexDirection: 'row', gap: 5, alignItems: 'center'}}>
-        <Text
-          style={{
-            color:
-              totalHours?.substring(0, 2) >= minimumTotalHours
-                ? colors.green
-                : colors.red,
-            textAlign: 'center',
-            fontFamily: 'outfit-400',
-            fontSize: 12,
-          }}>
-          {totalHours ?? '00:00'}
-        </Text>
-        {!!onReasonClick ? (
-          <Chevron width={8} height={8} style={[styles.flipX]} />
-        ) : (
-          <View style={{width: 8}} />
-        )}
-      </Pressable>
+      <Text
+        style={{
+          color:
+            totalHours?.substring(0, 2) >= minimumTotalHours
+              ? colors.green
+              : colors.red,
+          textAlign: 'center',
+          fontFamily: 'poppins-400',
+          fontSize: 12,
+          marginEnd: 15,
+        }}>
+        {totalHours ?? '00:00'}
+      </Text>
+      <StatusBar style='dark'/>
     </View>
   );
 }
@@ -258,7 +264,7 @@ const ViewAttendanceScreen = () => {
   return (
     <SafeAreaView style={styles.container}>
       <Text
-        style={{fontFamily: 'outfit-600', fontSize: 24, textAlign: 'center'}}>
+        style={{fontFamily: 'poppins-600', fontSize: 24, textAlign: 'center'}}>
         Attendance
       </Text>
       {/* Selected date view start */}
@@ -277,41 +283,41 @@ const ViewAttendanceScreen = () => {
           setIsLoading(true);
         }}
         renderArrow={direction => (
-          <Chevron style={direction == 'right' ? styles.flipX : null} />
+          <Chevron
+            style={[
+              direction != 'right' ? styles.flipX : null,
+              {color: '#000000'},
+            ]}
+          />
         )}
         hideArrows={false}
       />
       {/* Selected date view end */}
 
-      {/* chips view start */}
-      <ScrollView
-        showsHorizontalScrollIndicator={false}
-        horizontal={true}
-        style={{flexDirection: 'row', flexGrow: 0, flexShrink: 0, flex: 0}}
-        contentContainerStyle={{
+      <View
+        style={{
+          marginHorizontal: 15,
           display: 'flex',
           flexDirection: 'row',
-          alignItems: 'center',
+          justifyContent: 'space-between'
         }}>
-        {chips &&
-          Array.isArray(chips) &&
-          chips?.map((str, index) => (
-            <>
-              <Pressable
-                key={index}
-                onPress={() => handleChipClick(index)}
-                style={[
-                  styles.button,
-                  activeChip == index ? styles.active : {},
-                ]}>
-                <Text style={activeChip == index ? styles.active : {}}>
-                  {str}
-                </Text>
-              </Pressable>
-            </>
-          ))}
-      </ScrollView>
-      {/* chips view end */}
+        <Text
+          style={{fontSize: 12, fontFamily: 'poppins-400', marginStart: 17}}>
+          Date
+        </Text>
+        <Text
+          style={{fontSize: 12, fontFamily: 'poppins-400', marginStart: 17}}>
+          Clock In
+        </Text>
+        <Text
+          style={{fontSize: 12, fontFamily: 'poppins-400', marginStart: 17}}>
+          Clock Out
+        </Text>
+        <Text
+          style={{fontSize: 12, fontFamily: 'poppins-400', marginStart: 17}}>
+          Working-Hrs
+        </Text>
+      </View>
 
       {/* Attendace view start */}
       <ScrollView
@@ -320,9 +326,9 @@ const ViewAttendanceScreen = () => {
           padding: 10,
         }}>
         {!!isLoading ? (
-          <Text style={{fontFamily: 'outfit-400'}}>Loading...</Text>
+          <Text style={{fontFamily: 'poppins-400'}}>Loading...</Text>
         ) : attendance?.length < 1 ? (
-          <Text style={{fontFamily: 'outfit-400'}}>No Data...</Text>
+          <Text style={{fontFamily: 'poppins-400'}}>No Data...</Text>
         ) : (
           attendance?.map((e, index) => {
             if (e?.['status']?.toLowerCase() == 'holiday') {
@@ -333,16 +339,14 @@ const ViewAttendanceScreen = () => {
                   style={{alignItems: 'center', marginTop: 17}}>
                   <View
                     style={{
-                      backgroundColor: colors.yellow + '1',
-                      borderWidth: 1,
-                      borderColor: colors.yellow + '2',
+                      backgroundColor: colors.blue,
                       width: 330,
                       justifyContent: 'center',
                       alignItems: 'center',
                       borderRadius: 10,
                       padding: 10,
                     }}>
-                    <Text style={{color: colors.black}}>
+                    <Text style={{color: '#ffffff', fontSize: 12}}>
                       Weekend Off: {e?.['date']}
                     </Text>
                   </View>
@@ -351,17 +355,20 @@ const ViewAttendanceScreen = () => {
             }
             const reason = e?.['early_check_out_reason'];
             return (
-              <AttendanceRowNew
-                key={index}
-                date={new Date(e?.['date'])}
-                clockInTime={e?.['clock_in']?.substring(0, 5)}
-                clockOutTime={e?.['clock_out']?.substring(0, 5)}
-                totalHours={e?.['hours_worked']?.substring(0, 5)}
-                status={e?.['status']}
-                onReasonClick={
+              <Pressable
+                onPress={
                   !!reason ? () => handleReasonClick(reason) : undefined
-                }
-              />
+                }>
+                <AttendanceRowNew
+                  key={index}
+                  date={new Date(e?.['date'])}
+                  clockInTime={e?.['clock_in']?.substring(0, 5)}
+                  clockOutTime={e?.['clock_out']?.substring(0, 5)}
+                  totalHours={e?.['hours_worked']?.substring(0, 5)}
+                  status={e?.['status']}
+                  hasReason={!!reason}
+                />
+              </Pressable>
             );
           })
         )}

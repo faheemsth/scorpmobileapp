@@ -1,10 +1,8 @@
 import {View, Text, Alert, Modal} from 'react-native';
 import React, {useState} from 'react';
-import Bottomsheet from '../../components/bottom-sheet';
 import InputField from '../../components/input-field';
 import Btn from '../../components/btn';
 import datalayer from '../../../datalayer/datalayer';
-import {Line} from 'react-native-svg';
 
 const WriteEarlyCheckoutReason = ({onClose}) => {
   const [reason, setReason] = useState('');

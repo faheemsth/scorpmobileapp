@@ -17,6 +17,7 @@ const Hello = () => {
                 <Btn title={"Login to your Account"} handleClick={handleBtnClick} style={{paddingHorizontal: 50}} trailing={<><ArrowRight style={{color: "#fff"}} /></>} />
             {/* <LinearGradient colors={["#DDDDDD", "#7647EB"]} style={styles.container}>
             </LinearGradient> */}
+            <StatusBar style='dark'/>
         </View>
     )
 }
@@ -33,7 +34,7 @@ const styles = StyleSheet.create({
         height: "100%",
     },
     hello: {
-        fontFamily:"outfit-700",
+        fontFamily:"poppins-700",
         fontSize: 32,
         color: "#7647EB",
         margin: 39,

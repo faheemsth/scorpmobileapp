@@ -1,5 +1,9 @@
 {
   "expo": {
+    "androidStatusBar": {
+      "backgroundColor": "#7647EB",
+      "translucent": false
+    },
     "name": "Convosoft Mobile App",
     "slug": "scorp-mobile-app",
     "scheme": "scorp-mobile-app",
@@ -66,7 +70,17 @@
             "./assets/fonts/outfit-600.otf",
             "./assets/fonts/outfit-700.otf",
             "./assets/fonts/outfit-800.otf",
-            "./assets/fonts/outfit-900.otf"
+            "./assets/fonts/outfit-900.otf",
+            "./assets/fonts/poppins-100.otf",
+            "./assets/fonts/poppins-200.otf",
+            "./assets/fonts/poppins-300.otf",
+            "./assets/fonts/poppins-400.otf",
+            "./assets/fonts/poppins-500.otf",
+            "./assets/fonts/poppins-600.otf",
+            "./assets/fonts/poppins-700.otf",
+            "./assets/fonts/poppins-800.otf",
+            "./assets/fonts/poppins-900.otf"
+
           ]
         }
       ],

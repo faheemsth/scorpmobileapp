@@ -11,8 +11,7 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import LeavesOverview from '../../components/leaves/overview';
 import styles from '../../components/theme';
 import LeaveCard from '../../components/leaves/leaveCard';
-import datalayer, {useLeaves, useUser} from '../../../datalayer/datalayer';
-import Btn from '../../components/btn';
+import {useLeaves, useUser} from '../../../datalayer/datalayer';
 import PlusIcon from '../../../assets/icons/plus.svg';
 import {router, useFocusEffect, useNavigation} from 'expo-router';
 
@@ -72,97 +71,92 @@ const LeavesTab = () => {
         ) : (
           <Text>Loading...</Text>
         )}
-        <View style={[styles.gap(10)]}>
-          <View
-            style={[
-              styles.flex,
-              styles.row,
-              styles.justifyBetween,
-              {width: 317},
-            ]}>
-            <Pressable
-              onPress={handleLeaveHistoryClick}
-              style={[
-                styles.ph(16),
-                styles.pv(8),
-                {
-                  borderWidth: 1,
-                  borderRadius: 5,
-                  gap: 10,
-                  paddingTop: 10,
-                  paddingVertical: 10,
-                  paddingHorizontal: 20,
-                  borderColor: '#7647EB',
-                },
-              ]}>
-              <Text
-                style={[
-                  styles.font(400),
-                  styles.size(16),
-                  {
-                    fontWeight: 500,
-                    lineHeight: 23,
-                    alignItems: 'center',
-                    color: '#7647EB',
-                  },
-                ]}>
-                Leave History
-              </Text>
-            </Pressable>
-          </View>
-          {loading ? (
-            <Text style={[styles.font(400), styles.size(14)]}>Loading...</Text>
-          ) : leaves.length < 0 ? (
-            <Text style={[styles.font(400), styles.size(14)]}>No Data</Text>
-          ) : null}
-          {leaves?.map(e => {
-            return (
-              <LeaveCard
-                url={user?.['avatar']}
-                key={e?.['id']}
-                uName={user?.['name']}
-                data={[
-                  {heading: 'Leave type', value: e?.['leave_type'],rowStyle:{}},
-                  {heading: 'Applied on', value: e?.['applied_on']},
-                  {heading: 'Start Date', value: e?.['start_date']},
-                  {heading: 'End Date', value: e?.['end_date']},
-                  {heading: 'Leave Reason', value: e?.['leave_reason']},
-                  {
-                    heading: 'STATUS',
-                    value: e?.['status'],
-                    rowStyle: {
-                      ...styles.bg(
-                        e?.['status'].toLocaleLowerCase() == 'pending'
-                          ? '#FDC93333'
-                          : e?.['status'].toLocaleLowerCase() == 'rejected'
-                          ? '#D5213C33'
-                          : '#11A12033',
-                      )
-                    },
-                    style: {
-                      color:
-                        e?.['status'].toLocaleLowerCase() == 'pending'
-                          ? '#FDC933'
-                          : '#fff',
-                      flex: 1,
+        <View style={{flexDirection: 'row'}}>
+          <View style={{marginEnd: 5, flex: 1, display: 'flex'}}>
+            <View style={{flexDirection: 'row', justifyContent: 'flex-end'}}>
+              <View></View>
+              <Pressable onPress={handleLeaveHistoryClick}>
+                <Text
+                  style={[
+                    styles.ph(20),
+                    styles.pv(10),
+                    styles.font(400),
+                    styles.size(16),
+                    {
+                      borderWidth: 1,
+                      borderRadius: 5,
+                      borderColor: '#7647EB',
+                      fontWeight: 500,
+                      lineHeight: 23,
                       alignItems: 'center',
-                      textAlign: 'center',
-                    },
-                    headingStyle: {
-                      backgroundColor: '#7647EB33',
-                      borderBottomLeftRadius: 10,
                       color: '#7647EB',
-                      fontSize: 10,
-                      fontWeight: 600,
-                      alignItems: 'center',
-                      textAlign: 'center',
-                      padding: 8.73,
+                      marginBottom: 8,
                     },
-                  },
-                ]}
-              />
-            );
-          })}
+                  ]}>
+                  Leave History
+                </Text>
+              </Pressable>
+            </View>
+            {loading ? (
+              <Text style={[styles.font(400), styles.size(14)]}>
+                Loading...
+              </Text>
+            ) : leaves.length < 0 ? (
+              <Text style={[styles.font(400), styles.size(14)]}>No Data</Text>
+            ) : null}
+            {leaves?.map(e => {
+              console.info('leave is: ' + JSON.stringify(e));
+              return (
+                <LeaveCard
+                  leaveType={e?.leave_type}
+                  appliedOn={e?.applied_on}
+                  key={e?.['id']}
+                  data={[
+                    {
+                      heading: 'Leave type',
+                      value: e?.['leave_type'],
+                      rowStyle: {},
+                    },
+                    {heading: 'Start Date', value: e?.['start_date']},
+                    {heading: 'End Date', value: e?.['end_date']},
+                    {heading: 'Leave Reason', value: e?.['leave_reason']},
+                    {
+                      heading: 'STATUS',
+                      value: e?.['status'],
+                      rowStyle: {
+                        ...styles.bg(
+                          e?.['status'].toLocaleLowerCase() == 'pending'
+                            ? '#FDC93333'
+                            : e?.['status'].toLocaleLowerCase() == 'rejected'
+                            ? '#D5213C33'
+                            : '#11A12033',
+                        ),
+                      },
+                      style: {
+                        color:
+                          e?.['status'].toLocaleLowerCase() == 'pending'
+                            ? '#FDC933'
+                            : '#fff',
+                        flex: 1,
+                        alignItems: 'center',
+                        textAlign: 'center',
+                      },
+                      headingStyle: {
+                        backgroundColor: '#e4dafb',
+                        borderBottomLeftRadius: 10,
+                        color: '#7647EB',
+                        fontSize: 10,
+                        fontWeight: 600,
+                        alignItems: 'center',
+                        textAlign: 'center',
+                        padding: 8.73,
+                      },
+                    },
+                  ]}
+                />
+              );
+            })}
+          </View>
         </View>
       </ScrollView>
       <Pressable

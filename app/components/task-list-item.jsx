@@ -1,11 +1,4 @@
-import {
-  StyleSheet,
-  View,
-  Image,
-  Text,
-  TouchableOpacity,
-  Pressable,
-} from 'react-native';
+import {StyleSheet, View, Image, Text, Pressable} from 'react-native';
 import UserIcon from '../../assets/icons/profile.svg';
 
 export function TaskListItem({
@@ -13,86 +6,107 @@ export function TaskListItem({
   name,
   date,
   status,
-  description,
+  title,
   descriptionText,
   onDetailClick,
 }) {
   return (
-    <View
+    <Pressable
+      onPress={onDetailClick}
       style={{
-        borderBottomWidth: 1,
-        paddingBottom: 10,
-        borderStyle: 'dashed',
-        flexDirection: 'row',
-        gap: 10,
+        overflow: 'hidden',
+        borderRadius: 10,
+        borderColor: '#A0A0A0',
+        borderWidth: 1,
+        elevation: 4,
+        backgroundColor: "#ffffff"
       }}>
-      {imageUrl ? (
-        <Image
-          style={{
-            height: 32,
-            width: 32,
-            marginLeft: 12,
-            borderRadius: 20,
-            borderWidth: 1,
-            borderColor: 'black',
-          }}
-          source={{uri: imageUrl}}
-        />
-      ) : (
-        <UserIcon width={32} height={32} style={{color: '#D9D9D9'}} />
-      )}
-      <View style={{flexDirection: 'column', flex: 1, gap: 10}}>
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            flex: 1,
-          }}>
-          <View style={{flexDirection: 'column'}}>
-            <Text numberOfLines={1} ellipsizeMode="tail" style={styles.texts}>
-              {description}
-            </Text>
-            <Text numberOfLines={1} ellipsizeMode="tail" style={styles.dates}>
-              {date}
+      <View
+        style={{
+          paddingHorizontal: 15,
+          paddingVertical: 8,
+        }}>
+        <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+          <View style={{flexDirection: 'row'}}>
+            {imageUrl ? (
+              <Image
+                style={{
+                  height: 36,
+                  width: 36,
+                  marginLeft: 12,
+                  borderRadius: 20,
+                  borderWidth: 1,
+                  borderColor: 'black',
+                }}
+                source={{uri: imageUrl}}
+              />
+            ) : (
+              <UserIcon width={36} height={36} style={{color: '#D9D9D9'}} />
+            )}
+            <Text style={styles.description}>
+              {name} {'\n'}{' '}
+              <Text
+                style={{
+                  fontSize: 11,
+                  fontFamily: 'poppins-400',
+                  color: '#A0A0A0',
+                }}>
+                Assigned by
+              </Text>
             </Text>
           </View>
-          <Text
-            style={[
-              styles.btnStatus,
-              {
-                backgroundColor:
-                  status?.toLowerCase() == 'on going'
-                    ? '#FDC933'
-                    : status?.toLowerCase() == 'overdue'
-                    ? '#D5213C'
-                    : '#11A120',
-                color: status?.toLowerCase() == 'on going' ? '#000' : '#FFFFFF',
-              },
-            ]}>
-            {status}
-          </Text>
+          <Text style={{fontSize: 11, fontFamily: 'poppins-400'}}>{date}</Text>
         </View>
-        <Text style={styles.description}>{name}</Text>
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            flex: 1,
-          }}>
+        <Text
+          style={{fontFamily: 'poppins-500', fontSize: 12}}
+          numberOfLines={1}>
+          {title}
+        </Text>
+        <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
           <Text
-            numberOfLines={1}
-            ellipsizeMode="tail"
-            style={styles.subdescription}>
-            {descriptionText ?? "No Description"}
+            style={{fontFamily: 'poppins-400', fontSize: 10, color: '#6C6C6C'}}
+            numberOfLines={1}>
+            {descriptionText}
           </Text>
-          <Pressable onPress={onDetailClick}>
-            <Text numberOfLines={1} ellipsizeMode="tail" style={styles.details}>
-              Show Details
-            </Text>
-          </Pressable>
+          <Text
+            style={{fontFamily: 'poppins-400', fontSize: 10, color: '#7647EB'}}
+            numberOfLines={1}>
+            See more
+          </Text>
         </View>
       </View>
-    </View>
+      <View style={{flexDirection: 'row'}}>
+        <Text
+          style={{
+            flex: 1,
+            textAlign: 'center',
+            padding: 8,
+            backgroundColor: '#e4dafb',
+            color: '#7647EB',
+          }}>
+          Status
+        </Text>
+        <Text
+          style={{
+            flex: 1,
+            textAlign: 'center',
+            padding: 8,
+            backgroundColor: status?.toLowerCase() == 'on going'
+            ? '#FDC93333'
+            : status?.toLowerCase() == 'overdue'
+            ? '#D5213C33'
+            : '#11A12033',
+            color:
+              status?.toLowerCase() == 'on going'
+                ? '#FDC933'
+                : status?.toLowerCase() == 'overdue'
+                ? '#D5213C'
+                : '#11A120',
+          }}>
+          {status}
+        </Text>
+      </View>
+    </Pressable>
   );
 }
 
@@ -125,8 +139,11 @@ const styles = StyleSheet.create({
   },
 
   description: {
-    fontFamily: 'outfit-600',
-    color: '#6c6c6c88',
+    paddingHorizontal: 12,
+    fontFamily: 'poppins-600',
+    color: '#6c6c6c',
+    fontSize: 14,
+    lineHeight: 16,
   },
 
   subdescription: {
@@ -149,6 +166,6 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-end',
   },
   texts: {
-    fontFamily: 'outfit-600',
+    fontFamily: 'poppins-600',
   },
 });

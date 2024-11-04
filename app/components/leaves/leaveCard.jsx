@@ -1,10 +1,10 @@
-import {View, Text, Image, StyleSheet} from 'react-native';
+import {View, Text, StyleSheet} from 'react-native';
 import React from 'react';
 import styles from '../theme';
-import UserIcon from '../../../assets/icons/profile.svg';
 
 const LeaveCard = ({
-  uName = 'No Name...',
+  leaveType = 'type',
+  appliedOn = '13 aug',
   data = [
     {
       heading: 'heading',
@@ -14,7 +14,6 @@ const LeaveCard = ({
       rowStyle: StyleSheet.create({style: {}}).style,
     },
   ],
-  url = 'https://s3-alpha-sig.figma.com/img/1097/3fce/926bc64490c18217630a6c74affe3172?Expires=1728864000&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=aMAoK8gJb54DRLNClhEt8YpqwjHcpF8D2u8t3kXfEOoXoJDsV3jOgG0VyW22ICGEDOdrEEGyURcAqwoKdmKG1WEAc~OwuOC8fSwKbY26HnBde64zxOU49Df0U1FNCVrAVyb1b205tFXJHqgHC~wmvUytSId3vrmsHzEOClI5OLSILmm5nyQPHq80XGk2UAqaUlO0jJRhJoFQ1eWVihPJbnnFGefHtbKZrUaIGZVT6bXEiMOg9cDrTC8SmkPMkgZBtDsICmYw2Qwax8WShjtoNwCtwPoYNlqiHd9lnMPO7zh-m0Za8n5JeQAtaAg4bMiGspR4QdFxdsTw7WKlLq1QDg__',
 }) => {
   return (
     <View
@@ -28,28 +27,52 @@ const LeaveCard = ({
           elevation: 1,
           gap: 2,
           backgroundColor: '#ffffff',
+          overflow: 'hidden',
         },
-        styles.gap(5), 
+        styles.gap(5),
       ]}>
-      <Text
+      <View
         style={{
-          color: '#33CC32',
-          fontSize: 15.21,
-          fontWeight: 500,
-          lineHeight: 22.21,
-          borderWidth: 1,
-          borderColor: '#33CC32',
-          marginLeft:15,
-          marginTop:16,
-          paddingLeft:16,
-          paddingRight:8.21,
-          width:120,
-          paddingVertical: 0.19,
-          marginTop:16,
-          marginBottom: 10.19,
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          paddingHorizontal: 15,
         }}>
-        Sick leave
-      </Text>
+        <Text
+          numberOfLines={1}
+          ellipsizeMode="tail"
+          style={{
+            color: '#33CC32',
+            fontSize: 15.21,
+            fontWeight: 500,
+            lineHeight: 22.21,
+            borderWidth: 1,
+            borderColor: '#33CC32',
+            borderRadius: 4,
+            paddingHorizontal: 16,
+            paddingVertical: 0.19,
+            marginTop: 16,
+            marginBottom: 10.19,
+          }}>
+          {leaveType.toUpperCase()}
+        </Text>
+        <Text
+          numberOfLines={2}
+          style={[
+            styles.font(400),
+            styles.size(10),
+            {
+              color: '#414141',
+              fontSize: 8,
+              fontWeight: 600,
+              lineHeight: 13,
+              paddingHorizontal: 8,
+            },
+          ]}>
+          Applied On {'\n'}
+          {appliedOn}
+        </Text>
+      </View>
       {data?.map(e => (
         <View
           style={[
@@ -65,10 +88,10 @@ const LeaveCard = ({
               {
                 flex: 1,
                 color: '#A0A0A0',
-
                 fontSize: 12,
                 fontWeight: 400,
                 lineHeight: 18,
+                paddingHorizontal: 15,
               },
               e.headingStyle,
             ]}>
@@ -80,11 +103,11 @@ const LeaveCard = ({
               styles.size(10),
               {
                 color: '#414141',
-
                 flex: 1,
                 fontSize: 12,
                 fontWeight: 600,
                 lineHeight: 13,
+                paddingHorizontal: 15,
               },
               e.style,
             ]}>
@@ -97,4 +120,3 @@ const LeaveCard = ({
 };
 
 export default LeaveCard;
-0;

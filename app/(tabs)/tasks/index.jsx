@@ -57,7 +57,16 @@ const AllTasks = () => {
     <SafeAreaView
       style={{position: 'relative', height: '100%', backgroundColor: '#fff'}}>
       <ScrollView contentContainerStyle={{gap: 10, padding: 10}}>
-        <Text style={[styles.txt, {fontSize: 24, alignSelf: 'center'}]}>
+        <Text
+          style={[
+            styles.txt,
+            {
+              fontFamily: 'poppins-500',
+              color: '#7647EB',
+              fontSize: 20,
+              alignSelf: 'center',
+            },
+          ]}>
           Tasks
         </Text>
         <Text style={styles.txt}>
@@ -86,7 +95,7 @@ const AllTasks = () => {
               name={user?.['name']}
               date={t?.['due_date']}
               imageUrl={user?.['avatar']}
-              description={t?.['name']}
+              title={t?.['name']}
               status={taskStatus}
               descriptionText={t?.['description']}
               onDetailClick={() => {
@@ -116,8 +125,8 @@ const AllTasks = () => {
 
 const styles = StyleSheet.create({
   txt: {
-    fontFamily: 'outfit-600',
-    paddingVertical: 4
+    fontFamily: 'poppins-600',
+    paddingVertical: 4,
   },
 });
 

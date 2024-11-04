@@ -196,7 +196,7 @@ const AuthLayer = (() => {
     GoogleSignin.signOut();
   };
 
-  const getUserProfile = async ()=>{
+  const getUserProfile = async () => {
     const token = await getData(keys.token);
     if (!!!token) {
       return Promise.reject({message: 'no token'});
@@ -209,10 +209,9 @@ const AuthLayer = (() => {
         Authorization: `Bearer ${token}`,
       },
     });
-    const data = await res.json()
-    return data?.["profileData"]
-
-  }
+    const data = await res.json();
+    return data?.['profileData'];
+  };
 
   const postGoogleLoginReq = async email => {
     const res = await fetch(`${base_url}googlelogin`, {
@@ -316,10 +315,11 @@ const AuthLayer = (() => {
         'Content-Type': 'application/json',
       },
     });
-    const data = await res.json()
-    return data?.["metaData"]
-  }
-  const allowEmailPassLogin = async () => (await getMeta())?.["isLoginForm"] == 1
+    const data = await res.json();
+    return data?.['metaData'];
+  };
+  const allowEmailPassLogin = async () =>
+    (await getMeta())?.['isLoginForm'] == 1;
 
   return {
     login,
@@ -631,12 +631,25 @@ const LeavesLayer = (() => {
     leave_reason,
     start_date,
     end_date,
+    is_compensatory,
     remark = 'no remarks',
   }) => {
     const token = await getData(keys.token);
     if (!!!token) {
       return Promise.reject({message: 'no token'});
     }
+    const requestBody = JSON.stringify({
+      brand_id,
+      region_id,
+      branch_id,
+      leave_type_id,
+      leave_reason,
+      start_date,
+      end_date,
+      is_compensatory,
+      remark,
+    });
+    console.info("requestbody: " + requestBody)
     const res = await fetch(`${base_url}createLeave`, {
       method: 'POST',
       headers: {
@@ -644,19 +657,10 @@ const LeavesLayer = (() => {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({
-        brand_id,
-        region_id,
-        branch_id,
-        leave_type_id,
-        leave_reason,
-        start_date,
-        end_date,
-        remark,
-      }),
+      body: requestBody,
     });
-    const response = (await res.json());
-    console.log("leave request response", JSON.stringify(response))
+    const response = await res.json();
+    console.log('leave request response', JSON.stringify(response));
     return response?.['success'] == 'Leave successfully created.';
   };
 
@@ -720,7 +724,7 @@ export function useLeaves() {
         ...e,
         used: lvs?.filter(f => f?.['leave_type_id'] === e?.['id'])?.length ?? 0,
       }));
-
+      
       console.log('useLeaves', lvs, lvsTypes.length, lvsTypesWithUsed.length);
 
       setLeaves(lvsWithType ?? []);

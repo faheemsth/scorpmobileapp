@@ -33,15 +33,16 @@ const TaskField = ({
     <View
       style={{
         display: 'flex',
-        flexDirection: 'row',
+        flexDirection: 'column',
         width: '100%',
-        alignItems: 'center',
+        alignItems: 'flex-start',
         marginVertical: 8,
       }}>
-      <Text style={{flex: 0.5}}>{label}</Text>
+      <Text style={{fontFamily: 'poppins-400', fontSize: 12, color: '#A0A0A0'}}>{label}</Text>
       {isSearchable ? (
         <View
           style={{
+            flexDirection: 'row',
             borderRadius: 4,
             borderWidth: 1,
             borderColor: '#7647EB',
@@ -219,18 +220,15 @@ const CreateTask = () => {
   };
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={{backgroundColor: '#ffffff'}}>
       <ScrollView style={{marginTop:40, padding: 20}} contentContainerStyle={{gap: 10}}>
         <Text
           key={'Task Details'}
           style={{
-            fontFamily: 'outfit-400',
-            fontSize: 15,
-            paddingVertical: 10,
+            fontFamily: 'poppins-500',
+            fontSize: 16,
             width: '100%',
-            borderBottomWidth: 1,
-            borderStyle: 'dashed',
-            borderColor: '#0006',
+            color: '#7647EB'
           }}>
           Task Details
         </Text>
@@ -238,7 +236,7 @@ const CreateTask = () => {
         <View
           key={'TaskDetailsInputs'}
           style={{
-            marginVertical: 6,
+            marginBottom: 6,
           }}>
           <TaskField
             key={'Task Name'}
@@ -304,13 +302,10 @@ const CreateTask = () => {
         <Text
           key={'Additional Task Details'}
           style={{
-            fontFamily: 'outfit-400',
-            fontSize: 15,
+            fontFamily: 'poppins-500',
+            fontSize: 16,
             width: '100%',
-            borderBottomWidth: 1,
-            borderStyle: 'dashed',
-            borderColor: '#0006',
-            paddingBottom: 10
+            color: '#7647EB'
           }}>
           Additional Information
         </Text>
@@ -346,6 +341,26 @@ const CreateTask = () => {
             trailing={<ClockIcon />}
           />
         </View>
+        <Text
+          key={'Additional Task Details'}
+          style={{
+            fontFamily: 'poppins-500',
+            fontSize: 16,
+            width: '100%',
+            color: '#7647EB'
+          }}>
+          Task Description
+        </Text>
+        <InputField
+          lines={5}
+          value={taskDescription}
+          onChange={(value)=>{
+            console.info("task description will change to" + value);
+            setTaskDescription(value);
+          }}
+          style={{fieldStyle: {textAlignVertical: 'top'}}}
+          multiline={true}
+         />
         <View
           key={'footer'}
           style={{
@@ -354,7 +369,7 @@ const CreateTask = () => {
             flexWrap: 'nowrap',
             alignItems: 'end',
             alignContent: 'end',
-            justifyContent: 'flex-end',
+            justifyContent: 'center',
             gap: 10,
             flex: 1,
             marginBottom: 30
@@ -362,7 +377,7 @@ const CreateTask = () => {
           <Btn
             handleClick={onCancel}
             title="Cancel"
-            style={{backgroundColor: '#0001', color: 'black', elevation: 0}}
+            style={{borderColor: '#DC3545', backgroundColor: 'transparent', borderWidth: 1, color: '#DC3545', elevation: 0}}
           />
           <Btn title="Create" handleClick={create} style={{elevation: 0}} />
         </View>

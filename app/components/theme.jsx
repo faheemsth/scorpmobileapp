@@ -15,7 +15,7 @@ const styles = StyleSheet.create({
   },
   font: (size = 400) => {
     return {
-      fontFamily: `Poppins-${size}`,
+      fontFamily: `poppins-${size}`,
     };
   },
   size: px => {
@@ -56,8 +56,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   alignItemsCenter: {
-    alignItems: 'center',
-    alignContent: "center"
+    alignItems: 'center'
   },
 });
 

@@ -69,7 +69,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#7647EB',
     borderRadius: 8,
     
-    padding: 15.5,
+    paddingHorizontal: 20,
+    paddingVertical: 11,
     elevation: 0,
     color: '#fff',
     gap: 4,
@@ -81,7 +82,7 @@ const styles = StyleSheet.create({
       textAlign: 'center',
       margin: 4,
       fontSize: 16,
-      fontFamily: 'outfit-500',
+      fontFamily: 'poppins-500',
       fontWeight: 500,
     },
   },

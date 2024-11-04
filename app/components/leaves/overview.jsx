@@ -22,20 +22,22 @@ const LeavesOverview = ({leaves, leavesTypes}) => {
       <View
         style={[
           {
-            width: 346,
-            borderRadius: 20,
+            width: 362,
+            borderRadius: 10,
             margin: 5,
             padding: 15,
             elevation: 4,
-            borderColor:"#A0A0A0",
-            borderWidth:1,
+            borderColor: '#A0A0A0',
+            borderWidth: 1,
+            paddingVertical: 15,
+            paddingHorizontal: 27,
           },
           styles.whiteBg,
           styles.flex,
           styles.row,
           styles.gap(10),
         ]}>
-                  <View
+        <View
           style={[
             {flex: 1},
             styles.column,
@@ -46,21 +48,26 @@ const LeavesOverview = ({leaves, leavesTypes}) => {
           ]}>
           {leavesTypes?.map(e => (
             <View
-              style={[styles.row, styles.gap(5), styles.alignItemsCenter,{width:140},]}>
+              style={[
+                styles.row,
+                styles.gap(6),
+                styles.alignItemsCenter,
+                {width: 140},
+              ]}>
               <CircularProgress
                 progress={e?.['used'] / e?.['days']}
                 strokeWidth={5}
                 progressRotationOffset={-90}
                 size={31.85}>
-                <Text style={[styles.font(400), styles.size(12)]}>
+                <Text style={[styles.font(500), styles.size(10)]}>
                   {e?.['days'] - e?.['used']}
                 </Text>
               </CircularProgress>
               <Text
                 style={[
-                  styles.font(400),
-                  styles.size(12),
-                  {textAlign: 'center',colo:"#A0A0A0",}
+                  styles.font(500),
+                  styles.size(10),
+                  {textAlign: 'center', color: '#A0A0A0'},
                 ]}
                 ellipsizeMode="tail"
                 numberOfLines={2}>
@@ -76,11 +83,17 @@ const LeavesOverview = ({leaves, leavesTypes}) => {
             }
             strokeWidth={12}
             progressRotationOffset={-90}
-            size={122.12}>
+            size={145}
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+            }}>
             <Text style={[styles.font(400), styles.size(12)]}>
               Leave Balance
             </Text>
-            <Text style={[styles.font(500), styles.size(24),{color:"#7647EB",}]}>
+            <Text
+              style={[styles.font(500), styles.size(24), {color: '#7647EB', position: 'absolute', bottom: 10}]}>
               {totalLeavesCount - leaves.length}
             </Text>
           </CircularProgress>
@@ -89,7 +102,6 @@ const LeavesOverview = ({leaves, leavesTypes}) => {
               styles.flex,
               styles.column,
               styles.justifyContentCenter,
-              styles.gap(10),
             ]}>
             <View
               style={[
@@ -104,14 +116,14 @@ const LeavesOverview = ({leaves, leavesTypes}) => {
                   borderRadius: 1000,
                   width: 14,
                   height: 14,
-                  flexDirection:'row',
+                  flexDirection: 'row',
                   marginTop: 5,
                 }}
               />
               <View>
                 <Text style={[styles.font(400), styles.size(13)]}>
                   Total Leaves
-                <Text style={[styles.font(600)]}>{" "}{totalLeavesCount}</Text>
+                  <Text style={[styles.font(600)]}> {totalLeavesCount}</Text>
                 </Text>
               </View>
             </View>
@@ -136,13 +148,12 @@ const LeavesOverview = ({leaves, leavesTypes}) => {
               <View>
                 <Text style={[styles.font(400), styles.size(13)]}>
                   Used Leaves
-                <Text style={[styles.font(600)]}>{" "}{leaves?.length}</Text>
+                  <Text style={[styles.font(600)]}> {leaves?.length}</Text>
                 </Text>
               </View>
             </View>
           </View>
         </View>
-
       </View>
     )
   );
