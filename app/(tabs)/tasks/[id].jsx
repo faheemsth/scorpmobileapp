@@ -32,7 +32,7 @@ const ViewTask = () => {
   };
 
   useEffect(() => {
-    nav.setOptions({headerTitle: 'Task Details', headerTransparent: true});
+    nav.setOptions({headerTitle: 'Task Details', headerTransparent: false});
     fetchAsync = async () => {
       const tsk = await datalayer.taskLayer
         .getTaskDetails(id)
@@ -72,65 +72,84 @@ const ViewTask = () => {
   return (
     <ScrollView
       showsVerticalScrollIndicator={false}
-      contentContainerStyle={[styles.ph(10), styles.pv(80), styles.gap(10)]}>
+      contentContainerStyle={[
+        styles.ph(10),
+        styles.gap(10),
+        {backgroundColor: '#ffffff'},
+      ]}>
       {!!!task ? (
-        <Text>Loading...</Text>
+        <Text style={[styles.font(500), styles.size(16), {color: '#7647EB'}]}>
+          Loading...
+        </Text>
       ) : (
         <>
-          <View style={{flexDirection: 'row'}}>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <Text
+              style={[styles.font(500), styles.size(16)]}>
+              Task
+            </Text>
             <Text
               style={[
-                styles.font(500),
-                styles.size(14),
-                styles.pv(15),
-                {flex: 1, borderStyle: 'dashed', borderBottomWidth: 1},
+                styles.font(400),
+                styles.size(12),
+                {paddingStart: 16,flex: 1, color: '#A0A0A0'},
               ]}
               numberOfLines={2}
               ellipsizeMode="tail">
               {task?.['name']}
             </Text>
           </View>
-          <Text style={[styles.font(500), styles.size(13), styles.pv(15)]}>
+          <Text style={[styles.font(500), styles.size(16), {color: '#7647EB'}]}>
             Task Details
           </Text>
           {taskDetails?.map(tsk => (
             <View
-              style={[styles.flex, styles.row, styles.pv(6)]}
+              style={[styles.flex, styles.column, styles.pv(0)]}
               key={tsk?.['title']}>
-              <Text style={[styles.font(400), styles.size(12), {flex: 0.4}]}>
+              <Text
+                style={[styles.font(400), styles.size(12), {color: '#A0A0A0'}]}>
                 {tsk?.title}
               </Text>
-              <Text style={[styles.font(400), styles.size(10), {flex: 0.6}]}>
+              <Text
+                style={[styles.font(400), styles.size(12), {color: '#000000'}]}>
                 {tsk?.value}
               </Text>
             </View>
           ))}
 
-          <Text style={[styles.font(500), styles.size(13), styles.pv(15)]}>
+          <Text style={[styles.font(500), styles.size(16), {color: '#7647EB'}]}>
             Additional information
           </Text>
 
           {additionalDetails?.map(tsk => (
-            <View
-              style={[styles.flex, styles.row, styles.pv(6)]}
-              key={tsk?.['title']}>
-              <Text style={[styles.font(400), styles.size(12), {flex: 0.4}]}>
+            <View style={[styles.flex, styles.column]} key={tsk?.['title']}>
+              <Text
+                style={[styles.font(400), styles.size(12), {color: '#A0A0A0'}]}>
                 {tsk?.title}
               </Text>
-              <Text style={[styles.font(400), styles.size(10), {flex: 0.6}]}>
+              <Text
+                style={[styles.font(400), styles.size(12), {color: '#000000'}]}>
                 {tsk?.value}
               </Text>
             </View>
           ))}
+
+          <Text style={[styles.font(500), styles.size(16), {color: '#7647EB'}]}>
+            Task Description
+          </Text>
+          <Text style={[styles.font(400), styles.size(12), {color: '#000000'}]}>
+            {task?.description}
+          </Text>
           <Btn
             style={{
               alignSelf: 'center',
-              backgroundColor: task?.['status'] == 1 ? '#7647EB' : '#1A2',
+              backgroundColor: task?.['status'] == 1 ? '#FFFFFF' : '#7647EB',
+              color: task?.['status'] == 1 ? '#7647EB' : '#FFFFFF',
+              borderWidth: task?.['status'] == 1 ? 1 : 0,
+              borderColor: '#7647EB',
             }}
-            title={
-              task?.['status'] == 1 ? 'Already Completed' : 'Mark as Completed'
-            }
-            leading={<TickIcon />}
+            title={task?.['status'] == 1 ? 'Completed' : 'Mark as Completed'}
+            leading={task?.['status'] == 1 ? null : <TickIcon style={{color: '#7647EB'}} />}
             handleClick={onTaskComplete}
           />
         </>

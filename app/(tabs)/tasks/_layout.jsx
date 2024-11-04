@@ -15,8 +15,7 @@ const TasksStack = () => {
                 name='create-task'
                 options={{
                     headerTitle: "Create Task",
-                    headerTransparent: true,
-
+                    headerTransparent: false,
                 }}
                 />
         </Stack>
