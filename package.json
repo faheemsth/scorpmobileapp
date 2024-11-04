@@ -5,6 +5,9 @@
   "scripts": {
     "start": "expo start",
     "android": "expo run:android",
+    "clean": "expo prebuild --clean",
+    "publish-to-playstore": "eas submit -p android",
+    "configure-eas": "eas build:configure",
     "local-build": "eas build -p android --profile preview --local",
     "android_debug": "expo run:android --variant freeDebug ",
     "ios": "expo run:ios",

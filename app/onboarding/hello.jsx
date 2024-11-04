@@ -17,7 +17,6 @@ const Hello = () => {
                 <Btn title={"Login to your Account"} handleClick={handleBtnClick} style={{paddingHorizontal: 50}} trailing={<><ArrowRight style={{color: "#fff"}} /></>} />
             {/* <LinearGradient colors={["#DDDDDD", "#7647EB"]} style={styles.container}>
             </LinearGradient> */}
-            <StatusBar style='dark'/>
         </View>
     )
 }

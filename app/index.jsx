@@ -3,6 +3,7 @@ import {useEffect} from 'react';
 import {Alert, StyleSheet, Text} from 'react-native';
 import datalayer from '../datalayer/datalayer';
 import {useFonts} from 'expo-font';
+import { StatusBar } from 'expo-status-bar';
 
 export default function App() {
   const [loaded, error] = useFonts({
@@ -44,6 +45,7 @@ export default function App() {
   return (
     <>
       <Text>Loading Fonts</Text>
+      <StatusBar style='dark' />
     </>
   );
 }
