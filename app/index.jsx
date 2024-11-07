@@ -21,7 +21,7 @@ export default function App() {
     'outfit-200': require('../assets/fonts/outfit-200.otf'),
     'outfit-300': require('../assets/fonts/outfit-300.otf'),
     'outfit-400': require('../assets/fonts/outfit-400.otf'),
-    'outfit-500': require('../assets/fonts/outfit-500.otf'),
+    'osutfit-500': require('../assets/fonts/outfit-500.otf'),
     'outfit-600': require('../assets/fonts/outfit-600.otf'),
     'outfit-700': require('../assets/fonts/outfit-700.otf'),
     'outfit-800': require('../assets/fonts/outfit-800.otf'),
@@ -35,7 +35,7 @@ export default function App() {
         // token exists
         router.replace('/clock-in-out');
       } else {
-        router.replace('./onboarding/hello');
+        router.replace('./onboarding/onbording1');
       }
     };
     if (loaded) {

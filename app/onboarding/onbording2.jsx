@@ -1,4 +1,3 @@
-
 import {View, Text, ScrollView, Pressable, Image} from 'react-native';
 import React, {useEffect} from 'react';
 import BGCimg from '../../assets/icons/BGCimg.svg';
@@ -51,7 +50,7 @@ const Onbording1 = () => {
             fontWeight: 400,
             color: '#E2D8FB',
           }}>
-          Track all the members of your team, no matter how big or small they 
+          Track all the members of your team, no matter how big or small they
           are. Have a detailed record of all time attendance records taken, all
           on your device.
         </Text>
