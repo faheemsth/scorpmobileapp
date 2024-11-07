@@ -85,24 +85,25 @@ const Onbording1 = () => {
     navigation.setOptions({headerShown: false});
   }, []);
   return (
-    <ScrollView contentContainerStyle={{backgroundColor: '#7647EB'}}>
+    <ScrollView
+      contentContainerStyle={{
+        backgroundColor: '#7647EB',
+        width: '100%',
+        height: '500',
+      }}>
       <View
-        style={{marginTop: 130.86, alignSelf: 'center', marginBottom: 82.3}}>
+        style={{
+          marginTop: 60.86,
+          alignSelf: 'center',
+          marginBottom: 55.3,
+          width: 40,
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}>
         <View style={{marginBottom: -190}}>
           <BGCimg style={{Positions: 'absolute'}}></BGCimg>
         </View>
         <Wmenimg style={{justifyContent: 'Center'}}></Wmenimg>
-      </View>
-      <View>
-        <DOTicon
-          style={{
-            width: 30,
-            height: 5,
-            top: 389.5,
-            left: 173,
-            gap: 4,
-            opacity: 0,
-          }}></DOTicon>
       </View>
 
       <View style={{gap: 20, marginLeft: 14}}>
@@ -135,7 +136,7 @@ const Onbording1 = () => {
           flexDirection: 'row',
           alignItems: 'center',
           justifyContent: 'center',
-          marginTop: 96,
+          marginTop: 80,
           marginBottom: 39.67,
         }}>
         <View
