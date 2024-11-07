@@ -35,7 +35,7 @@ export default function App() {
         // token exists
         router.replace('/clock-in-out');
       } else {
-        router.replace('./onboarding/onbording1');
+        router.replace('./onboarding/onbording2');
       }
     };
     if (loaded) {
