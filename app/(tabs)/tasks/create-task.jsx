@@ -38,7 +38,9 @@ const TaskField = ({
         alignItems: 'flex-start',
         marginVertical: 8,
       }}>
-      <Text style={{fontFamily: 'poppins-400', fontSize: 12, color: '#A0A0A0'}}>{label}</Text>
+      <Text style={{fontFamily: 'poppins-400', fontSize: 12, color: '#A0A0A0'}}>
+        {label}
+      </Text>
       {isSearchable ? (
         <View
           style={{
@@ -147,18 +149,39 @@ const CreateTask = () => {
     console.log('setting ', type, value);
     switch (type) {
       case 'due_date':
-        setDueDate(value);
+        if (value >= now) {
+          setDueDate(value);
+        } else {
+          Alert.alert('Error', 'Due date must be after today');
+        }
         setShowDueDate(false);
         break;
       case 'start_date':
-        setStartDate(value);
+        if (value >= now) {
+          setStartDate(value);
+        } else {
+          Alert.alert('Error', 'Start date must be after today');
+        }
         setShowStartDate(false);
+        break;
       case 'remainder_date':
+        if (value > dueDate) {
+          Alert.alert('Error', 'Remainder date must be before Due Date');
+          setShowRemainderDate(false);
+          break;
+        }
+        if (value < now) {
+          Alert.alert('Error', 'Remainder date must be after today');
+          setShowRemainderDate(false);
+          break;
+        }
         setRemainderDate(value);
         setShowRemainderDate(false);
+        break;
       case 'remainder_time':
         setRemainderTime(value);
         setShowRemainderTime(false);
+        break;
       default:
         break;
     }
@@ -220,15 +243,17 @@ const CreateTask = () => {
   };
 
   return (
-    <SafeAreaView style={{backgroundColor: '#ffffff'}}>
-      <ScrollView style={{marginTop:40, padding: 20}} contentContainerStyle={{gap: 10}}>
+    <SafeAreaView style={{backgroundColor: '#ffffff', paddingTop: 40}}>
+      <ScrollView
+        style={{padding: 20}}
+        contentContainerStyle={{gap: 10}}>
         <Text
           key={'Task Details'}
           style={{
             fontFamily: 'poppins-500',
             fontSize: 16,
             width: '100%',
-            color: '#7647EB'
+            color: '#7647EB',
           }}>
           Task Details
         </Text>
@@ -305,7 +330,7 @@ const CreateTask = () => {
             fontFamily: 'poppins-500',
             fontSize: 16,
             width: '100%',
-            color: '#7647EB'
+            color: '#7647EB',
           }}>
           Additional Information
         </Text>
@@ -347,20 +372,20 @@ const CreateTask = () => {
             fontFamily: 'poppins-500',
             fontSize: 16,
             width: '100%',
-            color: '#7647EB'
+            color: '#7647EB',
           }}>
           Task Description
         </Text>
         <InputField
           lines={5}
           value={taskDescription}
-          onChange={(value)=>{
-            console.info("task description will change to" + value);
+          onChange={value => {
+            console.info('task description will change to' + value);
             setTaskDescription(value);
           }}
           style={{fieldStyle: {textAlignVertical: 'top'}}}
           multiline={true}
-         />
+        />
         <View
           key={'footer'}
           style={{
@@ -372,12 +397,19 @@ const CreateTask = () => {
             justifyContent: 'center',
             gap: 10,
             flex: 1,
-            marginBottom: 30
+            marginBottom: 30,
+            marginTop: 10,
           }}>
           <Btn
             handleClick={onCancel}
             title="Cancel"
-            style={{borderColor: '#DC3545', backgroundColor: 'transparent', borderWidth: 1, color: '#DC3545', elevation: 0}}
+            style={{
+              borderColor: '#DC3545',
+              backgroundColor: 'transparent',
+              borderWidth: 1,
+              color: '#DC3545',
+              elevation: 0,
+            }}
           />
           <Btn title="Create" handleClick={create} style={{elevation: 0}} />
         </View>

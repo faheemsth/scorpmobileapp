@@ -4,7 +4,8 @@ import { Stack } from 'expo-router'
 
 const AttendanceStack = () => {
   return (
-    <Stack>
+    <Stack screenOptions={{headerShadowVisible: false}}>
+
       <Stack.Screen
         name="view-attendance"
         options={{

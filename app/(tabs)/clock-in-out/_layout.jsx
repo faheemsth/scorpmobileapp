@@ -4,7 +4,8 @@ import { Stack } from "expo-router";
 
 const ClockInOutScreen = () => {
   return (
-    <Stack>
+    <Stack screenOptions={{headerShadowVisible: false}}>
+
       <Stack.Screen
         name="index"
         options={{

@@ -6,7 +6,7 @@ import {
   Pressable,
   Alert,
 } from 'react-native';
-import React, { useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useNavigation} from 'expo-router';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {Calendar, CalendarList} from 'react-native-calendars';
@@ -15,7 +15,7 @@ import ReasonView from './reason-view';
 import Chevron from '../../../assets/icons/chevron.svg';
 import datalayer from '../../../datalayer/datalayer';
 import ArrowIcon from '../../../assets/icons/incomming.svg';
-import { StatusBar } from 'expo-status-bar';
+import {StatusBar} from 'expo-status-bar';
 getDay = (date = new Date()) => {
   let day = {short: '', full: ''};
   switch (date.getDay()) {
@@ -174,7 +174,7 @@ export function AttendanceRowNew({
         }}>
         {totalHours ?? '00:00'}
       </Text>
-      <StatusBar style='dark'/>
+      <StatusBar style="dark" />
     </View>
   );
 }
@@ -264,8 +264,8 @@ const ViewAttendanceScreen = () => {
   return (
     <SafeAreaView style={styles.container}>
       <Text
-        style={{fontFamily: 'poppins-600', fontSize: 24, textAlign: 'center'}}>
-        Attendance
+        style={{fontFamily: 'poppins-500', fontSize: 20, textAlign: 'center', color: '#7647EB'}}>
+        My Attendance
       </Text>
       {/* Selected date view start */}
       <CalendarList
@@ -299,7 +299,7 @@ const ViewAttendanceScreen = () => {
           marginHorizontal: 15,
           display: 'flex',
           flexDirection: 'row',
-          justifyContent: 'space-between'
+          justifyContent: 'space-between',
         }}>
         <Text
           style={{fontSize: 12, fontFamily: 'poppins-400', marginStart: 17}}>

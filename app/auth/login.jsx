@@ -1,4 +1,3 @@
-import {LinearGradient} from 'expo-linear-gradient';
 import React, {useState, useEffect} from 'react';
 import {
   StyleSheet,
@@ -6,13 +5,10 @@ import {
   View,
   Image,
   ScrollView,
-  TextInput,
   Pressable,
   Alert,
 } from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import Email from '../../assets/icons/email.svg';
-import Lock from '../../assets/icons/lock.svg';
 import Eye from '../../assets/icons/eye.svg';
 import Btn from '../components/btn';
 import datalayer from '../../datalayer/datalayer';
@@ -48,8 +44,8 @@ const Login = () => {
     datalayer.authLayer
       .allowEmailPassLogin()
       .then(bool => {
-        setShowMasterLogin(true);
-        setImageTouchCount(5);
+        console.log('allowEmailPassLogin', bool);
+        setShowMasterLogin(bool);
       })
       .catch(console.error);
   }, []);
@@ -114,12 +110,12 @@ const Login = () => {
         contentContainerStyle={{flexGrow: 1}}
         style={styles.scrollable}>
         <SafeAreaView style={styles.container}>
-          <Text style={styles.headingText}>Convosoft People Portal</Text>
-          <Pressable onPress={handleImagePressed}>
-            <Image
-              source={require('../../assets/welcome_icon.png')}
-            />
-          </Pressable>
+          <View style={{alignItems: 'center', gap: 14}}>
+            <Text style={styles.headingText}>Convosoft People Portal</Text>
+            <Pressable onPress={handleImagePressed}>
+              <Image source={require('../../assets/welcome_icon.png')} />
+            </Pressable>
+          </View>
 
           <View style={styles.loginView}>
             <Text
@@ -131,8 +127,8 @@ const Login = () => {
               }}>
               Login with your email
             </Text>
-           
-            {!!showMasterLogin  ? (
+
+            {!!showMasterLogin ? (
               <>
                 <InputField
                   placeholder="Email"
@@ -154,52 +150,55 @@ const Login = () => {
                 />
                 <Btn title={'Login'} handleClick={handleMasterLoginClick} />
               </>
-            ) :  <Btn
-            leading={
-              <View
-                style={{
-                  flexDirection: 'row',
-                  gap: 5,
-                }}>
-                <GIcon></GIcon>
-                <Text
-                  style={{
-                    color: '#414141',
-                  }}>
-                  Google Login
-                </Text>
-              </View>
-            }
-            style={{
-              backgroundColor: '#FFFFFF',
-              elevation: 0,
-              borderWidth: 1.5,
-              borderColor: '#D0D0D0',
-            }}
-            handleClick={handleLoginClick}
-          />}
-          
-          <View
-                  style={{
-                    flexDirection: 'row',
-                    gap: 10,
-                  }}>
-                  <CHicon></CHicon>
-                  <Text
+            ) : (
+              <Btn
+                leading={
+                  <View
                     style={{
-                      fontSize: 12,
-                      fontWeight: 500,
-                      lineHeight: 18,
-                      display: 'flex',
-                      paddingBottom: 32,
-                      gap: 20,
+                      flexDirection: 'row',
+                      gap: 5,
                     }}>
-                    By signing up. you agree to the{' '}
-                    <Text style={{color: '#7647EB'}}>Terms of service </Text>{' '}
-                    and
-                    <Text style={{color: '#7647EB'}}> Privacy policy.</Text>
-                  </Text>
-                </View>
+                    <GIcon></GIcon>
+                    <Text
+                      style={{
+                        color: '#414141',
+                      }}>
+                      Google Login
+                    </Text>
+                  </View>
+                }
+                style={{
+                  backgroundColor: '#FFFFFF',
+                  elevation: 0,
+                  borderWidth: 1.5,
+                  borderColor: '#D0D0D0',
+                }}
+                handleClick={handleLoginClick}
+              />
+            )}
+
+            <View
+              style={{
+                flexDirection: 'row',
+
+                gap: 10,
+              }}>
+              <CHicon></CHicon>
+              <Text
+                style={{
+                  fontSize: 12,
+                  fontWeight: 500,
+                  lineHeight: 18,
+                  display: 'flex',
+                  marginEnd: 15,
+                  paddingBottom: 32,
+                  gap: 20,
+                }}>
+                By signing up. you agree to the{' '}
+                <Text style={{color: '#7647EB'}}>Terms of service </Text> and
+                <Text style={{color: '#7647EB'}}> Privacy policy.</Text>
+              </Text>
+            </View>
           </View>
         </SafeAreaView>
       </ScrollView>
@@ -215,6 +214,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
   },
   headingText: {
+    marginTop: 83,
     fontSize: 24,
     height: 36,
     marginBottom: 14,

@@ -113,7 +113,7 @@ const ClockInOut = () => {
   };
 
   const formatToHhMm = useCallback(date => {
-    if (!!!date) return '00:00 AM';
+    if (!!!date) return '00:00';
     const d = new Date(date);
     return `${d?.getHours() < 10 ? '0' : ''}${d?.getHours()}:${
       d?.getMinutes() < 10 ? '0' : ''

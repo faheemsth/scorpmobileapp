@@ -26,14 +26,13 @@ export function TaskListItem({
           paddingHorizontal: 15,
           paddingVertical: 8,
         }}>
-        <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+        <View style={{flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10}}>
           <View style={{flexDirection: 'row'}}>
             {imageUrl ? (
               <Image
                 style={{
                   height: 36,
                   width: 36,
-                  marginLeft: 12,
                   borderRadius: 20,
                   borderWidth: 1,
                   borderColor: 'black',

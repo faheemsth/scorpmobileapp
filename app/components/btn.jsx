@@ -35,7 +35,7 @@ const Btn = ({
           colors={gradientColors ?? ['#fff0', '#fff0']}>
           {!!leading? leading:null}
           {!!title ?(
-          <Text style={[styles.btn.txt, {color: style?.color ?? '#fff'}]}>
+          <Text style={[styles.btn.txt, {color: style?.color ?? '#fff',}]}>
             {title}
           </Text>
           ):null}

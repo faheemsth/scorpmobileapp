@@ -1,17 +1,19 @@
-import {View, Text, Pressable, Alert} from 'react-native';
+import {Text, Pressable, Alert} from 'react-native';
 import React, {useEffect, useState, useCallback} from 'react';
 import {TaskListItem} from '../../components/task-list-item';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {ScrollView, StyleSheet} from 'react-native';
 import datalayer from '../../../datalayer/datalayer';
-
 import Plus from '../../../assets/icons/plus.svg';
 import {router, useFocusEffect} from 'expo-router';
+import TabBar from '../../components/tab-bar';
 
 const AllTasks = () => {
   const [tasks, setTasks] = useState([]);
+  const [filteredTasks, setFilteredTasks] = useState([]);
   const [user, setUser] = useState();
   const [isLoading, setIsLoading] = useState(true);
+  const [filterIndex, setFilterIndex] = useState(0);
 
   const addTaskBtnClick = async () => {
     router.push('/tasks/create-task');
@@ -25,6 +27,35 @@ const AllTasks = () => {
   useEffect(() => {
     setIsLoading(false);
   }, [tasks]);
+
+  useEffect(() => {
+    if (filterIndex == 0) {
+      setFilteredTasks(tasks);
+    } else if (filterIndex == 1) {
+      const ft = tasks?.filter(t => {
+        const d = new Date(t['due_date']);
+        const today = new Date();
+        if (today.getTime() > d.getTime() && t.status == '0') {
+          return true;
+        }
+        return false;
+      });
+      setFilteredTasks(ft);
+    } else if (filterIndex == 2) {
+      const ft = tasks?.filter(t => {
+        const d = new Date(t['due_date']);
+        const today = new Date();
+        if (today.getTime() < d.getTime() && t.status == '0') {
+          return true;
+        }
+        return false;
+      });
+      setFilteredTasks(ft);
+    } else {
+      const ft = tasks?.filter(t => t.status == '1');
+      setFilteredTasks(ft);
+    }
+  }, [filterIndex, tasks]);
 
   useFocusEffect(
     useCallback(() => {
@@ -59,7 +90,6 @@ const AllTasks = () => {
       <ScrollView contentContainerStyle={{gap: 10, padding: 10}}>
         <Text
           style={[
-            styles.txt,
             {
               fontFamily: 'poppins-500',
               color: '#7647EB',
@@ -76,7 +106,20 @@ const AllTasks = () => {
             ? 'No Record Found'
             : 'All Tasks'}
         </Text>
-        {tasks?.map(t => {
+        <ScrollView
+          horizontal={true}
+          contentContainerStyle={{paddingHorizontal: 0, flexDirection: 'row', flex: 1}}>
+          <TabBar
+            tabs={[
+              {title: 'All'},
+              {title: 'Overdue'},
+              {title: 'On Going'},
+              {title: 'Completed'},
+            ]}
+            onTabChange={setFilterIndex}
+          />
+        </ScrollView>
+        {filteredTasks?.map(t => {
           let taskStatus;
           if (t['status'] == '1') {
             taskStatus = 'Completed';
@@ -125,8 +168,9 @@ const AllTasks = () => {
 
 const styles = StyleSheet.create({
   txt: {
-    fontFamily: 'poppins-600',
-    paddingVertical: 4,
+    fontFamily: 'poppins-500',
+    fontSize: 16,
+    lineHeight: 24
   },
 });
 

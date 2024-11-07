@@ -19,7 +19,6 @@ const LeaveCard = ({
     <View
       style={[
         styles.bg('#FFFFFF'),
-        {marginBottom: 8},
         {
           borderRadius: 10,
           borderColor: '#A0A0A0',

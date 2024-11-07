@@ -75,7 +75,7 @@ const ViewTask = () => {
       contentContainerStyle={[
         styles.ph(10),
         styles.gap(10),
-        {backgroundColor: '#ffffff'},
+        {backgroundColor: '#ffffff', flex: 1},
       ]}>
       {!!!task ? (
         <Text style={[styles.font(500), styles.size(16), {color: '#7647EB'}]}>
@@ -118,7 +118,7 @@ const ViewTask = () => {
           ))}
 
           <Text style={[styles.font(500), styles.size(16), {color: '#7647EB'}]}>
-            Additional information
+            Additional Information
           </Text>
 
           {additionalDetails?.map(tsk => (
@@ -143,13 +143,14 @@ const ViewTask = () => {
           <Btn
             style={{
               alignSelf: 'center',
+              marginTop: 20,
               backgroundColor: task?.['status'] == 1 ? '#FFFFFF' : '#7647EB',
               color: task?.['status'] == 1 ? '#7647EB' : '#FFFFFF',
               borderWidth: task?.['status'] == 1 ? 1 : 0,
               borderColor: '#7647EB',
             }}
             title={task?.['status'] == 1 ? 'Completed' : 'Mark as Completed'}
-            leading={task?.['status'] == 1 ? null : <TickIcon style={{color: '#7647EB'}} />}
+            leading={task?.['status'] == 1 ? <TickIcon style={{color: '#7647EB'}} /> : null}
             handleClick={onTaskComplete}
           />
         </>

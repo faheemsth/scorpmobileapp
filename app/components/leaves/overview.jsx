@@ -22,15 +22,14 @@ const LeavesOverview = ({leaves, leavesTypes}) => {
       <View
         style={[
           {
-            width: 362,
             borderRadius: 10,
-            margin: 5,
             padding: 15,
             elevation: 4,
             borderColor: '#A0A0A0',
             borderWidth: 1,
             paddingVertical: 15,
             paddingHorizontal: 27,
+            overflow: 'visible'
           },
           styles.whiteBg,
           styles.flex,
@@ -89,20 +88,23 @@ const LeavesOverview = ({leaves, leavesTypes}) => {
               flexDirection: 'column',
               justifyContent: 'center',
             }}>
-            <Text style={[styles.font(400), styles.size(12)]}>
-              Leave Balance
-            </Text>
-            <Text
-              style={[styles.font(500), styles.size(24), {color: '#7647EB', position: 'absolute', bottom: 10}]}>
-              {totalLeavesCount - leaves.length}
-            </Text>
+            <View style={{alignItems: 'center'}}>
+              <Text style={[styles.font(400), styles.size(12)]}>
+                Leave Balance
+              </Text>
+              <Text
+                style={[
+                  styles.font(500),
+                  styles.size(24),
+                  {lineHeight: 36, color: '#7647EB'},
+                ]}>
+                {totalLeavesCount - leaves.length < 10 ? '0' : null}
+                {totalLeavesCount - leaves.length}
+              </Text>
+            </View>
           </CircularProgress>
           <View
-            style={[
-              styles.flex,
-              styles.column,
-              styles.justifyContentCenter,
-            ]}>
+            style={[styles.flex, styles.column, styles.justifyContentCenter]}>
             <View
               style={[
                 styles.flex,

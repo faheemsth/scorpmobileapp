@@ -69,8 +69,10 @@ const CircularProgress = ({
           position: 'absolute',
           justifyContent: 'center',
           alignItems: 'center',
-          width: size,
-          height: size,
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
         }}>
         {children}
       </View>

@@ -71,8 +71,12 @@ const RequestLeave = () => {
         branch_id: user?.['branch_id'],
         leave_type_id: selectedLeaveTypeId,
         leave_reason: reason,
-        start_date: `${startDate.getFullYear()}-${startDate.getMonth()}-${startDate.getDate()}`,
-        end_date: `${endDate.getFullYear()}-${endDate.getMonth()}-${endDate.getDate()}`,
+        start_date: `${startDate.getFullYear()}-${
+          startDate.getMonth() + 1
+        }-${startDate.getDate()}`,
+        end_date: `${endDate.getFullYear()}-${
+          endDate.getMonth() + 1
+        }-${endDate.getDate()}`,
         is_compensatory: isCompensatory,
       })
       .catch(e => Alert.alert('Error', e?.['message']));
@@ -86,6 +90,8 @@ const RequestLeave = () => {
         padding: 14,
         gap: 100,
         backgroundColor: '#ffffff',
+        flex: 1,
+        justifyContent: 'space-between',
       }}>
       <View style={{gap: 10}}>
         <View style={{gap: 1}}>
@@ -134,12 +140,15 @@ const RequestLeave = () => {
           style={{
             flexDirection: 'row',
             justifyContent: 'space-between',
+            gap: 10,
             padding: 0,
           }}>
           <Pressable
             style={{
               display: 'flex',
               flexDirection: 'row',
+              alignItems: 'center',
+              flex: 1,
               justifyContent: 'space-between',
               padding: 8,
               borderWidth: 1,
@@ -172,6 +181,7 @@ const RequestLeave = () => {
           </Pressable>
           <Pressable
             style={{
+              flex: 1,
               display: 'flex',
               flexDirection: 'row',
               justifyContent: 'space-between',
@@ -179,7 +189,6 @@ const RequestLeave = () => {
               borderWidth: 1,
               borderRadius: 5,
               borderColor: '#A0A0A0',
-              marginHorizontal: 10,
               paddingLeft: 15,
             }}
             onPress={() => setIsModalVisible(true)}>
@@ -269,7 +278,8 @@ const RequestLeave = () => {
             <Pressable onPress={() => setIsCompensatory(1)}>
               <Text
                 style={{
-                  backgroundColor: isCompensatory == 1 ? '#33CC3211': '#ffffff',
+                  backgroundColor:
+                    isCompensatory == 1 ? '#33CC3211' : '#ffffff',
                   color: '#33CC32',
                   width: 104,
                   padding: 13.5,
@@ -283,9 +293,7 @@ const RequestLeave = () => {
           </View>
         </View>
       </View>
-      <View>
-        <Btn style={{}} title="Submit" handleClick={submitRequest} />
-      </View>
+      <Btn style={{}} title="Submit" handleClick={submitRequest} />
     </ScrollView>
   );
 };

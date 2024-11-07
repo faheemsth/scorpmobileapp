@@ -4,7 +4,7 @@ import {Stack} from 'expo-router';
 
 const LeavesStack = () => {
   return (
-    <Stack>
+    <Stack screenOptions={{headerShadowVisible: false}}>
       <Stack.Screen name="index" options={{headerShown: false}} />
       <Stack.Screen
         name="request-leave"

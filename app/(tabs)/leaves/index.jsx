@@ -17,7 +17,6 @@ import {router, useFocusEffect, useNavigation} from 'expo-router';
 
 const LeavesTab = () => {
   const [[leaves, leavesTypes], fetchLeavesAsync] = useLeaves();
-  const user = useUser();
   const [loading, setLoading] = useState(false);
 
   const nav = useNavigation();
@@ -47,34 +46,53 @@ const LeavesTab = () => {
       style={[
         styles.flex,
         styles.column,
-        styles.alignItemsCenter,
         styles.screenBg,
         styles.gap(18),
-        {flex: 1},
+        {
+          flex: 1,
+          alignItems: 'stretch',
+          paddingHorizontal: 16,
+          overflow: 'visible',
+        },
       ]}>
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={[
           styles.flex,
           styles.column,
-          styles.alignItemsCenter,
-          styles.screenBg,
           styles.gap(18),
+          {
+            alignItems: 'stretch',
+            overflow: 'visible',
+            paddingBottom: 10
+          },
         ]}>
-        <Text style={[styles.font(600), styles.size(24)]}>My Leaves</Text>
+        <Text
+          style={[
+            styles.font(500),
+            styles.size(20),
+            {color: '#7647EB', textAlign: 'center'},
+          ]}>
+          My Leaves
+        </Text>
         {leavesTypes ? (
-          <LeavesOverview
-            key={'090078601'}
-            leaves={leaves}
-            leavesTypes={leavesTypes}
-          />
+          <View style={{gap: 10}}>
+            <Text
+              style={[styles.font(500), styles.size(16), {color: '#414141'}]}>
+              Leaves Overview
+            </Text>
+            <LeavesOverview
+              key={'090078601'}
+              leaves={leaves}
+              leavesTypes={leavesTypes}
+            />
+          </View>
         ) : (
           <Text>Loading...</Text>
         )}
         <View style={{flexDirection: 'row'}}>
           <View style={{marginEnd: 5, flex: 1, display: 'flex'}}>
             <View style={{flexDirection: 'row', justifyContent: 'flex-end'}}>
-              <View></View>
               <Pressable onPress={handleLeaveHistoryClick}>
                 <Text
                   style={[
@@ -90,7 +108,7 @@ const LeavesTab = () => {
                       lineHeight: 23,
                       alignItems: 'center',
                       color: '#7647EB',
-                      marginBottom: 8,
+                      marginBottom: 10,
                     },
                   ]}>
                   Leave History
@@ -104,58 +122,60 @@ const LeavesTab = () => {
             ) : leaves.length < 0 ? (
               <Text style={[styles.font(400), styles.size(14)]}>No Data</Text>
             ) : null}
-            {leaves?.map(e => {
-              console.info('leave is: ' + JSON.stringify(e));
-              return (
-                <LeaveCard
-                  leaveType={e?.leave_type}
-                  appliedOn={e?.applied_on}
-                  key={e?.['id']}
-                  data={[
-                    {
-                      heading: 'Leave type',
-                      value: e?.['leave_type'],
-                      rowStyle: {},
-                    },
-                    {heading: 'Start Date', value: e?.['start_date']},
-                    {heading: 'End Date', value: e?.['end_date']},
-                    {heading: 'Leave Reason', value: e?.['leave_reason']},
-                    {
-                      heading: 'STATUS',
-                      value: e?.['status'],
-                      rowStyle: {
-                        ...styles.bg(
-                          e?.['status'].toLocaleLowerCase() == 'pending'
-                            ? '#FDC93333'
-                            : e?.['status'].toLocaleLowerCase() == 'rejected'
-                            ? '#D5213C33'
-                            : '#11A12033',
-                        ),
+            <View style={{gap: 10}}>
+              {leaves?.map(e => {
+                console.info('leave is: ' + JSON.stringify(e));
+                return (
+                  <LeaveCard
+                    leaveType={e?.leave_type}
+                    appliedOn={e?.applied_on}
+                    key={e?.['id']}
+                    data={[
+                      {
+                        heading: 'Leave type',
+                        value: e?.['leave_type'],
+                        rowStyle: {},
                       },
-                      style: {
-                        color:
-                          e?.['status'].toLocaleLowerCase() == 'pending'
-                            ? '#FDC933'
-                            : '#fff',
-                        flex: 1,
-                        alignItems: 'center',
-                        textAlign: 'center',
+                      {heading: 'Start Date', value: e?.['start_date']},
+                      {heading: 'End Date', value: e?.['end_date']},
+                      {heading: 'Leave Reason', value: e?.['leave_reason']},
+                      {
+                        heading: 'STATUS',
+                        value: e?.['status'],
+                        rowStyle: {
+                          ...styles.bg(
+                            e?.['status'].toLocaleLowerCase() == 'pending'
+                              ? '#FDC93333'
+                              : e?.['status'].toLocaleLowerCase() == 'rejected'
+                              ? '#D5213C33'
+                              : '#11A12033',
+                          ),
+                        },
+                        style: {
+                          color:
+                            e?.['status'].toLocaleLowerCase() == 'pending'
+                              ? '#FDC933'
+                              : '#fff',
+                          flex: 1,
+                          alignItems: 'center',
+                          textAlign: 'center',
+                        },
+                        headingStyle: {
+                          backgroundColor: '#e4dafb',
+                          borderBottomLeftRadius: 10,
+                          color: '#7647EB',
+                          fontSize: 10,
+                          fontWeight: 600,
+                          alignItems: 'center',
+                          textAlign: 'center',
+                          padding: 8.73,
+                        },
                       },
-                      headingStyle: {
-                        backgroundColor: '#e4dafb',
-                        borderBottomLeftRadius: 10,
-                        color: '#7647EB',
-                        fontSize: 10,
-                        fontWeight: 600,
-                        alignItems: 'center',
-                        textAlign: 'center',
-                        padding: 8.73,
-                      },
-                    },
-                  ]}
-                />
-              );
-            })}
+                    ]}
+                  />
+                );
+              })}
+            </View>
           </View>
         </View>
       </ScrollView>
