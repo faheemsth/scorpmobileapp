@@ -15,6 +15,7 @@ const Onbording1 = () => {
         backgroundColor: '#7647EB',
         flex: 1,
         justifyContent: 'space-around',
+        paddingHorizontal: 20,
       }}>
       <View
         style={{

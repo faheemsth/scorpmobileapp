@@ -37,11 +37,11 @@ export default function App() {
       } else {
         const hasSeenOnboarding = JSON.parse(await datalayer.getData(datalayer.KEYS.hasSeenOnboarding))
         console.log("hasSeenOnboarding", hasSeenOnboarding);
-        // if (hasSeenOnboarding) {
-          // router.replace('./onboarding/hello');
-        // } else {
+        if (hasSeenOnboarding) {
+          router.replace('./onboarding/hello');
+        } else {
           router.replace('./onboarding/onbording1')
-        // }
+        }
       }
     };
     if (loaded) {
