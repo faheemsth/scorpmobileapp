@@ -22,7 +22,7 @@ const CircularProgress = ({
   // Animate the progress
   useEffect(() => {
     Animated.timing(animatedValue, {
-      toValue: progress,
+      toValue: progress > 1 ? 1 : progress,
       duration: duration,
       easing: Easing.inOut(Easing.ease),
       useNativeDriver: true,

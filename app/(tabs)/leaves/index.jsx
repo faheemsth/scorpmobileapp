@@ -124,7 +124,6 @@ const LeavesTab = () => {
             ) : null}
             <View style={{gap: 10}}>
               {leaves?.map(e => {
-                console.info('leave is: ' + JSON.stringify(e));
                 return (
                   <LeaveCard
                     leaveType={e?.leave_type}

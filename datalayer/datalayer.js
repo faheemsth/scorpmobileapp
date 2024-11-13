@@ -260,7 +260,9 @@ const AuthLayer = (() => {
     const profData = await data?.['profileData'];
     const linkCorrectedData = {
       ...profData,
-      avatar: !!!profData.avatar ? '' : `${data?.avtar_base_url}${profData.avatar}`,
+      avatar: !!!profData.avatar
+        ? ''
+        : `${data?.avtar_base_url}${profData.avatar}`,
       employee_docs: {
         base_url: data?.doc_base_url,
         data: data?.employee_docs,
@@ -795,12 +797,45 @@ export function useLeaves() {
         ],
       }));
 
-      const lvsTypesWithUsed = lvsTypes?.map(e => ({
-        ...e,
-        used: lvs?.filter(f => f?.['leave_type_id'] === e?.['id'])?.length ?? 0,
-      }));
+      const lvsTypesWithUsed = lvsTypes
+        ?.map(e => {
+          const usedLeaves =
+            lvs
+              ?.filter(f => f?.['leave_type_id'] === e?.['id'])
+              ?.reduce((prev, current) => {
+                let endDate = new Date(current?.['end_date']);
+                let startDate = new Date(current?.['start_date']);
+                let daysDiff = (endDate - startDate) / 86400000 + 1;
+                console.log(
+                  'daysDiff',
+                  daysDiff,
+                  startDate.getDate(),
+                  endDate.getDate(),
+                );
+                let totalLeaves = daysDiff;
+                if (typeof prev === 'number') {
+                  totalLeaves = prev + daysDiff;
+                }
+                return totalLeaves;
+              }, 0) ?? 0;
+          console.log('usedLeaves', usedLeaves, e.title);
+          return {
+            ...e,
+            used: usedLeaves,
+          };
+        })
+        ?.sort((a, b) => {
+          if (a.id < b.id) return -1;
+          if (a.id > b.id) return 1;
+          return 0;
+        });
 
-      console.log('useLeaves', lvs, lvsTypes.length, lvsTypesWithUsed.length);
+      console.log(
+        'useLeaves',
+        lvs.length,
+        lvsTypes.length,
+        lvsTypesWithUsed.map(e => e.id),
+      );
 
       setLeaves(lvsWithType ?? []);
       setLeavesTypes(lvsTypesWithUsed ?? []);

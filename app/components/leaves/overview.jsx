@@ -5,6 +5,7 @@ import CircularProgress from '../circular-progress';
 
 const LeavesOverview = ({leaves, leavesTypes}) => {
   const [totalLeavesCount, setTotalLeavesCount] = useState(0);
+  const [leaveTypesViewData, setLeaveTypesViewData] = useState([]);
 
   useEffect(() => {
     fetchAsync = async () => {
@@ -12,13 +13,42 @@ const LeavesOverview = ({leaves, leavesTypes}) => {
         ?.map(e => e?.['days'])
         ?.reduce((previous, current) => previous + current, 0);
       setTotalLeavesCount(lvsTotalCount);
+
+      const otherLeaves = Array(...leavesTypes)
+        .slice(3)
+        .reduce(
+          (p, n) => {
+            console.log('p', p, 'n', n);
+            const returnable = {
+              used: p?.used + n?.used,
+              days: p?.days + n?.days,
+            };
+            console.log('returnable', returnable);
+            return returnable;
+          },
+          {
+            used: 0,
+            days: 0,
+          },
+        );
+      const lt = [
+        ...Array(...leavesTypes)?.slice(0, 3)?.map(e=>({days: e.days, used: e.used, title: e.title, color: e.color})),
+        {
+          days: otherLeaves.days,
+          used: otherLeaves.used,
+          title: 'Others',
+          color: '#007AFF',
+        },
+      ];
+      console.log("lt is: ", lt.length,  lt);
+      setLeaveTypesViewData(lt);
     };
     fetchAsync().catch(e => Alert.alert('Error', e?.['message']));
   }, [leavesTypes]);
 
   return (
     !!leaves &&
-    !!leavesTypes && (
+    !!leavesTypes && !!leaveTypesViewData && (
       <View
         style={[
           {
@@ -29,7 +59,7 @@ const LeavesOverview = ({leaves, leavesTypes}) => {
             borderWidth: 1,
             paddingVertical: 15,
             paddingHorizontal: 27,
-            overflow: 'visible'
+            overflow: 'visible',
           },
           styles.whiteBg,
           styles.flex,
@@ -45,35 +75,39 @@ const LeavesOverview = ({leaves, leavesTypes}) => {
             styles.alignItemsCenter,
             styles.justifyContentCenter,
           ]}>
-          {leavesTypes?.map(e => (
-            <View
-              style={[
-                styles.row,
-                styles.gap(6),
-                styles.alignItemsCenter,
-                {width: 140},
-              ]}>
-              <CircularProgress
-                progress={e?.['used'] / e?.['days']}
-                strokeWidth={5}
-                progressRotationOffset={-90}
-                size={31.85}>
-                <Text style={[styles.font(500), styles.size(10)]}>
-                  {e?.['days'] - e?.['used']}
-                </Text>
-              </CircularProgress>
-              <Text
+          {leaveTypesViewData?.map(e => {
+            console.log('leave type is', e);
+            return (
+              <View
                 style={[
-                  styles.font(500),
-                  styles.size(10),
-                  {textAlign: 'center', color: '#A0A0A0'},
-                ]}
-                ellipsizeMode="tail"
-                numberOfLines={2}>
-                {e?.['title']}
-              </Text>
-            </View>
-          ))}
+                  styles.row,
+                  styles.gap(6),
+                  styles.alignItemsCenter,
+                  {width: 140},
+                ]}>
+                <CircularProgress
+                  progress={e?.['used'] / e?.['days'] > 0 ? e?.days : 1}
+                  strokeWidth={5}
+                  progressRotationOffset={-90}
+                  progressColor={e?.['color']}
+                  size={31.85}>
+                  <Text style={[styles.font(500), styles.size(10)]}>
+                    {e?.['days'] - e?.['used']}
+                  </Text>
+                </CircularProgress>
+                <Text
+                  style={[
+                    styles.font(500),
+                    styles.size(10),
+                    {textAlign: 'center', color: '#A0A0A0'},
+                  ]}
+                  ellipsizeMode="tail"
+                  numberOfLines={2}>
+                  {e?.['title']}
+                </Text>
+              </View>
+            );
+          })}
         </View>
         <View>
           <CircularProgress
