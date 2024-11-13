@@ -119,7 +119,7 @@ const LeavesTab = () => {
               <Text style={[styles.font(400), styles.size(14)]}>
                 Loading...
               </Text>
-            ) : leaves.length < 0 ? (
+            ) : leaves?.length ?? 0  < 1 ? (
               <Text style={[styles.font(400), styles.size(14)]}>No Data</Text>
             ) : null}
             <View style={{gap: 10}}>

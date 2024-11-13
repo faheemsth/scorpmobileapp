@@ -37,7 +37,7 @@ const getData = async key => {
 export const download = async (name, url) => {
   console.log('Downloading', url);
   const dotSplittedUrl = String(url).split('.');
-  const extension = dotSplittedUrl.at(dotSplittedUrl.length - 1);
+  const extension = dotSplittedUrl.at((dotSplittedUrl?.length ?? 1) - 1);
   const fileName = `${name}.${extension}`;
 
   // Path for documentDirectory (default Expo location)
@@ -832,8 +832,8 @@ export function useLeaves() {
 
       console.log(
         'useLeaves',
-        lvs.length,
-        lvsTypes.length,
+        lvs?.length,
+        lvsTypes?.length,
         lvsTypesWithUsed.map(e => e.id),
       );
 

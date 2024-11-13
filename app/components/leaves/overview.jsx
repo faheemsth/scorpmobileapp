@@ -86,7 +86,7 @@ const LeavesOverview = ({leaves, leavesTypes}) => {
                   {width: 140},
                 ]}>
                 <CircularProgress
-                  progress={e?.['used'] / e?.['days'] > 0 ? e?.days : 1}
+                  progress={e?.['used'] / (e?.['days'] > 0 ? e?.days : 1)}
                   strokeWidth={5}
                   progressRotationOffset={-90}
                   progressColor={e?.['color']}
@@ -112,7 +112,7 @@ const LeavesOverview = ({leaves, leavesTypes}) => {
         <View>
           <CircularProgress
             progress={
-              leaves.length / (totalLeavesCount > 0 ? totalLeavesCount : 1)
+              leaves?.length ?? 0 / (totalLeavesCount > 0 ? totalLeavesCount : 1)
             }
             strokeWidth={12}
             progressRotationOffset={-90}
@@ -132,8 +132,8 @@ const LeavesOverview = ({leaves, leavesTypes}) => {
                   styles.size(24),
                   {lineHeight: 36, color: '#7647EB'},
                 ]}>
-                {totalLeavesCount - leaves.length < 10 ? '0' : null}
-                {totalLeavesCount - leaves.length}
+                {totalLeavesCount - leaves?.length ?? 0 < 10 ? '0' : null}
+                {totalLeavesCount - leaves?.length ?? 0}
               </Text>
             </View>
           </CircularProgress>
@@ -184,7 +184,7 @@ const LeavesOverview = ({leaves, leavesTypes}) => {
               <View>
                 <Text style={[styles.font(400), styles.size(13)]}>
                   Used Leaves
-                  <Text style={[styles.font(600)]}> {leaves?.length}</Text>
+                  <Text style={[styles.font(600)]}> {leaves?.length ?? 0}</Text>
                 </Text>
               </View>
             </View>
