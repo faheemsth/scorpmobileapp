@@ -9,6 +9,7 @@
     "publish-to-playstore": "eas submit -p android",
     "configure-eas": "eas build:configure",
     "local-build": "eas build -p android --profile preview --local",
+    "eas-build": "eas build -p android",
     "android_debug": "expo run:android --variant freeDebug ",
     "ios": "expo run:ios",
     "web": "expo start --web"
