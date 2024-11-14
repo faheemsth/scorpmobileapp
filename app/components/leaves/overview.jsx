@@ -4,14 +4,26 @@ import styles from '../theme';
 import CircularProgress from '../circular-progress';
 
 const LeavesOverview = ({leaves, leavesTypes}) => {
-  const [totalLeavesCount, setTotalLeavesCount] = useState(0);
+  const [totalLeavesCount, setTotalLeavesCount] = useState({used: 0, days: 0});
   const [leaveTypesViewData, setLeaveTypesViewData] = useState([]);
 
   useEffect(() => {
     fetchAsync = async () => {
       const lvsTotalCount = leavesTypes
-        ?.map(e => e?.['days'])
-        ?.reduce((previous, current) => previous + current, 0);
+        ?.map(e => {
+          console.log('lvs', e?.['days'], e?.['used']);
+          return {days: e?.days, used: e?.used};
+        })
+        ?.reduce(
+          (previous, current) => {
+            console.log(previous, current);
+            return {
+              used: previous.used + current.used,
+              days: previous.days + current.days,
+            };
+          },
+          {used: 0, days: 0},
+        );
       setTotalLeavesCount(lvsTotalCount);
 
       const otherLeaves = Array(...leavesTypes)
@@ -32,7 +44,14 @@ const LeavesOverview = ({leaves, leavesTypes}) => {
           },
         );
       const lt = [
-        ...Array(...leavesTypes)?.slice(0, 3)?.map(e=>({days: e.days, used: e.used, title: e.title, color: e.color})),
+        ...Array(...leavesTypes)
+          ?.slice(0, 3)
+          ?.map(e => ({
+            days: e.days,
+            used: e.used,
+            title: e.title,
+            color: e.color,
+          })),
         {
           days: otherLeaves.days,
           used: otherLeaves.used,
@@ -40,7 +59,7 @@ const LeavesOverview = ({leaves, leavesTypes}) => {
           color: '#007AFF',
         },
       ];
-      console.log("lt is: ", lt.length,  lt);
+      console.log('lt is: ', lt.length, lt);
       setLeaveTypesViewData(lt);
     };
     fetchAsync().catch(e => Alert.alert('Error', e?.['message']));
@@ -48,7 +67,8 @@ const LeavesOverview = ({leaves, leavesTypes}) => {
 
   return (
     !!leaves &&
-    !!leavesTypes && !!leaveTypesViewData && (
+    !!leavesTypes &&
+    !!leaveTypesViewData && (
       <View
         style={[
           {
@@ -112,7 +132,8 @@ const LeavesOverview = ({leaves, leavesTypes}) => {
         <View>
           <CircularProgress
             progress={
-              leaves?.length ?? 0 / (totalLeavesCount > 0 ? totalLeavesCount : 1)
+              totalLeavesCount?.used ??
+              0 / (totalLeavesCount?.days > 0 ? totalLeavesCount?.days : 1)
             }
             strokeWidth={12}
             progressRotationOffset={-90}
@@ -132,8 +153,10 @@ const LeavesOverview = ({leaves, leavesTypes}) => {
                   styles.size(24),
                   {lineHeight: 36, color: '#7647EB'},
                 ]}>
-                {totalLeavesCount - leaves?.length ?? 0 < 10 ? '0' : null}
-                {totalLeavesCount - leaves?.length ?? 0}
+                {(Math.abs(totalLeavesCount?.days - totalLeavesCount?.used ?? 0) < 10) 
+                  ? '0'
+                  : null}
+                {totalLeavesCount?.days - totalLeavesCount?.used ?? 0}
               </Text>
             </View>
           </CircularProgress>
@@ -159,7 +182,10 @@ const LeavesOverview = ({leaves, leavesTypes}) => {
               <View>
                 <Text style={[styles.font(400), styles.size(13)]}>
                   Total Leaves
-                  <Text style={[styles.font(600)]}> {totalLeavesCount}</Text>
+                  <Text style={[styles.font(600)]}>
+                    {' '}
+                    {totalLeavesCount?.days}
+                  </Text>
                 </Text>
               </View>
             </View>
@@ -184,7 +210,10 @@ const LeavesOverview = ({leaves, leavesTypes}) => {
               <View>
                 <Text style={[styles.font(400), styles.size(13)]}>
                   Used Leaves
-                  <Text style={[styles.font(600)]}> {leaves?.length ?? 0}</Text>
+                  <Text style={[styles.font(600)]}>
+                    {' '}
+                    {totalLeavesCount?.used ?? 0}
+                  </Text>
                 </Text>
               </View>
             </View>
