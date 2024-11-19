@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import * as Location from 'expo-location';
-import {useCallback, useEffect, useMemo, useState} from 'react';
+import {useCallback, useEffect, useState} from 'react';
 import {Alert} from 'react-native';
 import {fetchText} from 'react-native-svg';
 import * as FileSystem from 'expo-file-system';
@@ -340,6 +340,7 @@ const AuthLayer = (() => {
       }),
     });
     const response = await res.json();
+    console.log('login response is', response);
     const data = response['data'];
     if (!!!data || !!!data?.['token'])
       return Promise.reject({message: 'Authentication error'});
@@ -404,7 +405,7 @@ const isAtSite = async (userLatLng, branchLatLng) => {
   );
   const allowedRadius = await attendanceLayer.allowedRadius();
   console.info('distance', distance, 'allowedRadius', allowedRadius);
-  return distance <= allowedRadius;
+  return {atSite: distance <= allowedRadius, distance, allowedRadius};
 };
 
 const AttendanceLayer = (() => {
@@ -466,15 +467,19 @@ const AttendanceLayer = (() => {
       clockInStatus = status.LOGIN_FROM_BRANCH;
     }
 
-    if (
-      !!!(await isAtSite(
-        {lat: lnp.coords.latitude, lng: lnp.coords.longitude},
-        user?.['isloginrestrickted'] == 1 ? branchLatLng : userLatLng,
-      )) &&
-      user?.['isloginanywhere'] == 0
-    ) {
+    const {atSite, distance, allowedRadius} = await isAtSite(
+      {lat: lnp.coords.latitude, lng: lnp.coords.longitude},
+      user?.['isloginrestrickted'] == 1 ? branchLatLng : userLatLng,
+    );
+    if (!!!atSite && user?.['isloginanywhere'] == 0) {
       return Promise.reject({
-        message: 'you are out of the 100 meters radius from your branch',
+        message:
+          'you are out of the ' +
+          allowedRadius +
+          ' meters radius from your branch' +
+          'you are ' +
+          distance +
+          ' meters away',
       });
     }
     const token = await getData(keys.token);
@@ -565,15 +570,20 @@ const AttendanceLayer = (() => {
         message: 'user allowed clocking location is missing',
       });
 
-    if (
-      !!!(await isAtSite(
-        {lat: lnp.coords.latitude, lng: lnp.coords.longitude},
-        user?.['isloginrestrickted'] == 1 ? branchLatLng : userLatLng,
-      )) &&
-      user?.['isloginanywhere'] == 0
-    ) {
+    const {atSite, distance, allowedRadius} = await isAtSite(
+      {lat: lnp.coords.latitude, lng: lnp.coords.longitude},
+      user?.['isloginrestrickted'] == 1 ? branchLatLng : userLatLng,
+    );
+
+    if (!!!atSite && user?.['isloginanywhere'] == 0) {
       return Promise.reject({
-        message: 'you are out of the 100 meters radius from your branch',
+        message:
+          'you are out of the ' +
+          allowedRadius +
+          ' meters radius from your branch ' +
+          'you are ' +
+          distance +
+          ' meters away',
       });
     }
 
