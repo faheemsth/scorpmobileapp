@@ -83,7 +83,7 @@ const ClockInOut = () => {
     let newValue = false;
     if (!!clockinStatus) {
       const hasCompletedHours =
-        (await datalayer.attendanceLayer.hasCompletedHours(9)) == true;
+        (await datalayer.attendanceLayer.hasCompletedHours(8)) == true;
       console.log('hasCompletedHours', hasCompletedHours);
       if (!hasCompletedHours) {
         // show bottom-sheet and request reason
