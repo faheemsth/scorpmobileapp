@@ -18,6 +18,7 @@
     },
     "ios": {
       "supportsTablet": true,
+      "googleServicesFile": "./GoogleService-Info.plist", 
       "infoPlist": {
         "UIBackgroundModes": [
           "location",
