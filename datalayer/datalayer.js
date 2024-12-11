@@ -524,7 +524,9 @@ const AttendanceLayer = (() => {
     const minutes = Math.floor((diffMs / 60000) % 60);
     return {hours, minutes};
   };
-  const hasCompletedHours = async totalDutyHoursPerDay => {
+  const hasCompletedHours = async () => {
+    const branch = (await authLayer.getUserBranchAsync()).branch;
+    console.log('branch is: ', branch);
     const cit = JSON.parse(await getData(keys.clockedInTime));
     console.log('cit', cit);
     const now = new Date().getTime();
@@ -532,8 +534,15 @@ const AttendanceLayer = (() => {
     const diffMs = now - cit;
     const diffHrs = Math.floor(diffMs / 3.6e6);
     const diffMinutes = Math.floor((diffMs / 60000) % 60);
-    console.log('diffHrs', diffHrs, 'diffMinutes', diffMinutes);
-    return totalDutyHoursPerDay <= diffHrs;
+    console.log(
+      'diffHrs',
+      diffHrs,
+      'diffMinutes',
+      diffMinutes,
+      `(${branch?.shift_time} ?? 8 = ${branch?.shift_time ?? 8}) <= ${diffHrs}`,
+      branch?.shift_time ?? 8 <= diffHrs,
+    );
+    return (branch?.shift_time ?? 8) <= diffHrs;
   };
   const clockOut = async reason => {
     const user = await authLayer.getUserProfile();

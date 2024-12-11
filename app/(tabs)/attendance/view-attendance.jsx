@@ -321,7 +321,7 @@ const ViewAttendanceScreen = () => {
 
       {/* Attendace view start */}
       <ScrollView
-        style={{
+        contentContainerStyle={{
           paddingBottom: 20,
           padding: 10,
         }}>
@@ -330,7 +330,7 @@ const ViewAttendanceScreen = () => {
         ) : attendance?.length < 1 ? (
           <Text style={{fontFamily: 'poppins-400'}}>No Data...</Text>
         ) : (
-          attendance?.map((e, index) => {
+          attendance?.reverse()?.map((e, index) => {
             if (e?.['status']?.toLowerCase() == 'holiday') {
               return (
                 <View

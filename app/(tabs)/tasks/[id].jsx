@@ -56,11 +56,14 @@ const ViewTask = () => {
         {title: 'Due Date', value: tsk?.['due_date']},
       ];
 
+      const updtdAt = new Date(tsk?.['updated_at']);
+      const creatdAt = new Date(tsk?.['created_at'])
+
       const adDtl = [
         {title: 'Start Date', value: tsk?.['start_date']},
         {title: 'Remainder Date', value: tsk?.['remainder_date']},
-        {title: 'Updated At', value: tsk?.['updated_at']},
-        {title: 'Created At', value: tsk?.['created_at']},
+        {title: 'Updated At', value: `${updtdAt.toDateString()} ${updtdAt.toLocaleTimeString()}`},
+        {title: 'Created At', value: `${creatdAt.toDateString()} ${creatdAt.toLocaleTimeString()}`},
       ];
 
       setTask(tsk);
@@ -72,10 +75,11 @@ const ViewTask = () => {
   return (
     <ScrollView
       showsVerticalScrollIndicator={false}
+      style={{flex: 1}}
       contentContainerStyle={[
         styles.ph(10),
         styles.gap(10),
-        {backgroundColor: '#ffffff', flex: 1},
+        {backgroundColor: '#ffffff', },
       ]}>
       {!!!task ? (
         <Text style={[styles.font(500), styles.size(16), {color: '#7647EB'}]}>

@@ -75,6 +75,7 @@ const InputField = ({
             value={value}
             onChangeText={onChange}
             readOnly={readonly}
+            
           />
         )}
         {trailing}
@@ -85,14 +86,18 @@ const InputField = ({
 
 const styles = StyleSheet.create({
   iconedTextField: {
-    inputField: {
-      paddingHorizontal: 8,
-      flexGrow: 1,
-      height: '100%',
-    },
+    inputField: StyleSheet.create({
+      inputField: {
+        paddingHorizontal: 8,
+        flexGrow: 1,
+        height: '100%',
+        maxWidth: "100%"
+      }
+    }).inputField,
     overflow: 'scroll',
     display: 'flex',
     flexDirection: 'row',
+    flex: 1,
     flexWrap: 'nowrap',
     alignItems: 'center',
     padding: 15.5,
