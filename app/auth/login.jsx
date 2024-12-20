@@ -146,8 +146,10 @@ const Login = () => {
                         <Eye width={20} height={20} />
                       </Pressable>
                     </>
+                    
                   }
                 />
+                 
                 <Btn title={'Login'} handleClick={handleMasterLoginClick} />
               </>
             ) : (
@@ -176,29 +178,8 @@ const Login = () => {
                 handleClick={handleLoginClick}
               />
             )}
+            
 
-            <View
-              style={{
-                flexDirection: 'row',
-
-                gap: 10,
-              }}>
-              <CHicon></CHicon>
-              <Text
-                style={{
-                  fontSize: 12,
-                  fontWeight: 500,
-                  lineHeight: 18,
-                  display: 'flex',
-                  marginEnd: 15,
-                  paddingBottom: 32,
-                  gap: 20,
-                }}>
-                By signing up. you agree to the{' '}
-                <Text style={{color: '#7647EB'}}>Terms of service </Text> and
-                <Text style={{color: '#7647EB'}}> Privacy policy.</Text>
-              </Text>
-            </View>
           </View>
         </SafeAreaView>
       </ScrollView>
@@ -219,6 +200,7 @@ const styles = StyleSheet.create({
     height: 36,
     marginBottom: 14,
     width: 362,
+    textTransform: "uppercase",
     lineHeight: 36,
     textAlign: 'center',
     fontWeight: '700',

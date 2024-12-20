@@ -10,10 +10,9 @@ import {
   Alert,
 } from 'react-native';
 
-
 import Clockout from '../../../assets/icons/clockkout.svg';
 import Clockmarked from '../../../assets/icons/totalhrs.svg';
-import Clockin from   '../../../assets/icons/clockkin.svg';  
+import Clockin from '../../../assets/icons/clockkin.svg';
 import {LinearGradient} from 'expo-linear-gradient';
 import datalayer, {
   useClockinStatus,
@@ -164,12 +163,20 @@ const ClockInOut = () => {
             </View>
           </View>
         </View>
-        <BGIcon style={{position: "absolute",right:0,}}></BGIcon>
+        <BGIcon style={{position: 'absolute', right: 0}}></BGIcon>
         <View style={styles.indexCard}>
           <Text style={{marginTop: 27, fontWeight: 500, fontSize: 32}}>
             {time.toTimeString().substring(0, 5)}
           </Text>
-          <Text style={{color: '#A0A0A0',fontSize:16,fontWeight: 400,lineHeight:26,}}>{time.toDateString()}</Text>
+          <Text
+            style={{
+              color: '#A0A0A0',
+              fontSize: 16,
+              fontWeight: 400,
+              lineHeight: 26,
+            }}>
+            {time.toDateString()}
+          </Text>
           <View
             style={{
               alignItems: 'center',
@@ -178,7 +185,6 @@ const ClockInOut = () => {
               padding: 15,
               backgroundColor: '#E2E6EA',
               borderRadius: 1000,
-              
             }}>
             <TouchableOpacity
               activeOpacity={0.9}
@@ -190,12 +196,11 @@ const ClockInOut = () => {
                   height: 97,
                   borderRadius: 1000,
                   borderWidth: 6.73,
-                  borderColor:"#fff",
+                  borderColor: '#fff',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   overflow: 'hidden',
-                  
                 }}>
                 <Text
                   style={{
@@ -211,8 +216,6 @@ const ClockInOut = () => {
             </TouchableOpacity>
           </View>
 
-         
-
           <View
             style={{
               display: 'flex',
@@ -227,22 +230,26 @@ const ClockInOut = () => {
                 marginHorizontal: 12,
                 marginVertical: 19,
               }}>
-
               <Clockin width={26} height={32} />
 
               <Text
                 style={{
                   textAlign: 'center',
-                  lineHeight:21,
-                  fontWeight:600,
+                  lineHeight: 21,
+                  fontWeight: 600,
                   color: '#000',
                   fontSize: 14,
-                  
                 }}>
                 {formatToHhMm(clockinTime)}
                 {'\n'}
-                <Text style={{color:'#A0A0A0',fontSize:12,fontWeight:400,lineHeight:18,}}>
-                Clock in
+                <Text
+                  style={{
+                    color: '#A0A0A0',
+                    fontSize: 12,
+                    fontWeight: 400,
+                    lineHeight: 18,
+                  }}>
+                  Clock in
                 </Text>
               </Text>
             </View>
@@ -252,15 +259,21 @@ const ClockInOut = () => {
               <Text
                 style={{
                   textAlign: 'center',
-                  lineHeight:21,
-                  fontWeight:600,
+                  lineHeight: 21,
+                  fontWeight: 600,
                   color: '#000',
                   fontSize: 14,
                 }}>
                 {formatToHhMm(clockoutTime)}
                 {'\n'}
-                <Text style={{color:'#A0A0A0',fontSize:12,fontWeight:400,lineHeight:18,}}>
-                Clock out
+                <Text
+                  style={{
+                    color: '#A0A0A0',
+                    fontSize: 12,
+                    fontWeight: 400,
+                    lineHeight: 18,
+                  }}>
+                  Clock out
                 </Text>
               </Text>
             </View>
@@ -270,15 +283,21 @@ const ClockInOut = () => {
               <Text
                 style={{
                   textAlign: 'center',
-                  lineHeight:21,
-                  fontWeight:600,
+                  lineHeight: 21,
+                  fontWeight: 600,
                   color: '#000',
                   fontSize: 14,
                 }}>
                 {formatTotalHours(totalHours ?? {hours: 0, minutes: 0})}
                 {'\n'}
-                <Text style={{color:'#A0A0A0',fontSize:12,fontWeight:400,lineHeight:18,}}>
-                Total hrs
+                <Text
+                  style={{
+                    color: '#A0A0A0',
+                    fontSize: 12,
+                    fontWeight: 400,
+                    lineHeight: 18,
+                  }}>
+                  Total hrs
                 </Text>
               </Text>
             </View>
@@ -300,7 +319,7 @@ const ClockInOut = () => {
           title={'View Your Attendance'}
         />
       </ScrollView>
-      {requestEarlyCheckoutReason && (
+      {requestEarlyCheckoutReason   && (
         <View
           style={{
             position: 'absolute',
@@ -335,7 +354,7 @@ const ClockInOut = () => {
             flex: 1,
           }}>
           <View
-            style={{backgroundColor: '#fff', padding: '50', borderRadius: 4,}}>
+            style={{backgroundColor: '#fff', padding: '50', borderRadius: 4}}>
             <Text>Loading...</Text>
           </View>
         </View>
@@ -350,7 +369,6 @@ const styles = StyleSheet.create({
     position: 'relative',
     backgroundColor: 'white',
     gap: 25,
-    
   },
   header: {
     width: 328,
@@ -405,11 +423,20 @@ const styles = StyleSheet.create({
     color: 'white',
     marginTop: 28,
     fontWeight: '600',
+    fontSize: 20,
+    
+    letterSpacing: 0.005,
   },
   textC: {
     color: 'white',
-    marginTop: 7,
+    marginTop: 0,
+
     fontWeight: '400',
+    fontFamily: 'Outfit',
+    fontSize: 14,
+    lineHeight: 26,
+    letterSpacing: 0.005,
+    textAlign: 'left',
   },
 });
 

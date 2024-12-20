@@ -147,8 +147,10 @@ const ViewTask = () => {
           <Btn
             style={{
               alignSelf: 'center',
-              marginTop: 20,
-              backgroundColor: task?.['status'] == 1 ? '#FFFFFF' : '#7647EB',
+              marginBottom: 32,
+              marginTop: 33.73,
+              borderRadius: 10,
+              backgroundColor: task?.['status'] == 1 ? '#FFFFFF;' : '#7647EB',
               color: task?.['status'] == 1 ? '#7647EB' : '#FFFFFF',
               borderWidth: task?.['status'] == 1 ? 1 : 0,
               borderColor: '#7647EB',

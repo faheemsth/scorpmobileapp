@@ -7,7 +7,7 @@ import CalendarIcon from '../../../assets/icons/calendar.svg';
 import Btn from '../../components/btn';
 import {router} from 'expo-router';
 import {Picker} from '@react-native-picker/picker';
-
+import {TextInput} from 'react-native';
 const RequestLeave = () => {
   const [user, setUser] = useState();
   const [leaveTypes, setLeaveTypes] = useState();
@@ -233,12 +233,20 @@ const RequestLeave = () => {
             }}>
             Reason for leave
           </Text>
-          <InputField
-            placeholder={''}
+
+          <TextInput
+            placeholder=""
             value={reason}
-            onChange={setReason}
+            onChangeText={setReason}
             multiline={true}
-            style={{height: 130, borderColor: '#DC3545', borderRadius: 6}}
+            numberOfLines={5}
+            style={{
+              borderColor: '#DC3545',
+              borderWidth: 1,
+              borderRadius: 6,
+              padding: 10,
+              textAlignVertical: 'top',
+            }}
           />
         </View>
 

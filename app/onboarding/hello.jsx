@@ -13,7 +13,7 @@ const Hello = () => {
   handleBtnClick = () => router.replace('../auth/login');
   return (
     <View style={styles.container}>
-      <Text style={styles.hello}>Hello</Text>
+      <Text style={styles.hello}>Hello!</Text>
       <Image source={require('../../assets/welcome_icon.png')} />
       <Text style={styles.message}>
         Streamline and Access Your Entire Business, Right from the Palm of Your

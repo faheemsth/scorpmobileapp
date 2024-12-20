@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
     overflow: 'scroll',
     display: 'flex',
     flexDirection: 'row',
-    flex: 1,
+    // flex: 1,
     flexWrap: 'nowrap',
     alignItems: 'center',
     padding: 15.5,

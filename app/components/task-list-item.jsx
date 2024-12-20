@@ -61,16 +61,16 @@ export function TaskListItem({
           numberOfLines={1}>
           {title}
         </Text>
-        <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+        <View style={{flexDirection: 'row-reverse', justifyContent: 'space-between', overflow: 'hidden', gap: 10}}>
+          <Text
+            style={{fontFamily: 'poppins-400', fontSize: 10, color: '#7647EB',}}
+            numberOfLines={1}>
+            See more
+          </Text>
           <Text
             style={{fontFamily: 'poppins-400', fontSize: 10, color: '#6C6C6C'}}
             numberOfLines={1}>
             {descriptionText}
-          </Text>
-          <Text
-            style={{fontFamily: 'poppins-400', fontSize: 10, color: '#7647EB'}}
-            numberOfLines={1}>
-            See more
           </Text>
         </View>
       </View>

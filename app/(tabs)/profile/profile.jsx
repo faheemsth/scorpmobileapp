@@ -67,12 +67,13 @@ const Profile = () => {
         }}>
         Profile
       </Text>
+      
       <ScrollView
         contentContainerStyle={{flex: 1, alignItems: 'center', gap: 48}}>
         <View style={{alignItems: 'center', gap: 10}}>
           {user?.['avatar'] ? (
             <Image
-              blurRadius={5}
+              
               fadeDuration={1000}
               source={{
                 height: 109,
@@ -93,6 +94,11 @@ const Profile = () => {
               style={{color: '#D9D9D9', marginTop: 12}}
             />
           )}
+
+
+
+         
+
           <View style={{alignItems: 'center'}}>
             <Text
               style={{

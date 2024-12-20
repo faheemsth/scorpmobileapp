@@ -22,6 +22,7 @@ const TabBar = ({
         borderRadius: 1000,
         borderWidth: 1,
         borderColor: '#A0A0A0',
+        width:  350,
         overflow: 'hidden',
       }}>
       {tabs.map((t, i) => (

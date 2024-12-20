@@ -7,6 +7,7 @@ import datalayer from '../../../datalayer/datalayer';
 import Plus from '../../../assets/icons/plus.svg';
 import {router, useFocusEffect} from 'expo-router';
 import TabBar from '../../components/tab-bar';
+import { setStatusBarHidden } from 'expo-status-bar';
 
 const AllTasks = () => {
   const [tasks, setTasks] = useState([]);
@@ -87,7 +88,7 @@ const AllTasks = () => {
   return (
     <SafeAreaView
       style={{position: 'relative', height: '100%', backgroundColor: '#fff'}}>
-      <ScrollView contentContainerStyle={{gap: 10, padding: 10}}>
+      <ScrollView contentContainerStyle={{gap: 10, paddingHorizontal: 10,}}>
         <Text
           style={[
             {
@@ -106,19 +107,33 @@ const AllTasks = () => {
             ? 'No Record Found'
             : 'All Tasks'}
         </Text>
-        <ScrollView
-          horizontal={true}
-          contentContainerStyle={{paddingHorizontal: 0, flexDirection: 'row', flex: 1}}>
-          <TabBar
-            tabs={[
-              {title: 'All'},
-              {title: 'Overdue'},
-              {title: 'On Going'},
-              {title: 'Completed'},
-            ]}
-            onTabChange={setFilterIndex}
-          />
-        </ScrollView>
+        
+<ScrollView
+  style={{ alignContent: 'center' }}
+  horizontal={true}
+  contentContainerStyle={{
+    paddingHorizontal: 10, 
+    flexDirection: 'row',   
+    alignItems: 'center',  
+    justifyContent: 'flex-start',
+  }}
+  showsHorizontalScrollIndicator={false}
+>
+  <TabBar
+    tabs={[
+      { title: 'All' },
+      { title: 'Overdue' },
+      { title: 'On Going' },
+      { title: 'Completed' },
+    ]}
+    onTabChange={setFilterIndex}
+    selectedIndex={filterIndex} // Pass the selectedIndex to highlight the active tab
+  />
+</ScrollView>
+
+
+  
+
         {filteredTasks?.map(t => {
           let taskStatus;
           if (t['status'] == '1') {

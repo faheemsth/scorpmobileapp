@@ -153,10 +153,9 @@ const LeavesOverview = ({leaves, leavesTypes}) => {
                   styles.size(24),
                   {lineHeight: 36, color: '#7647EB'},
                 ]}>
-                {(Math.abs(totalLeavesCount?.days - totalLeavesCount?.used ?? 0) < 10) 
-                  ? '0'
-                  : null}
-                {totalLeavesCount?.days - totalLeavesCount?.used ?? 0}
+                {totalLeavesCount?.days - totalLeavesCount?.used < 0
+                  ? totalLeavesCount?.days - totalLeavesCount?.used
+                  : `0`}
               </Text>
             </View>
           </CircularProgress>
