@@ -22,7 +22,7 @@ const CircularProgress = ({
   // Animate the progress
   useEffect(() => {
     Animated.timing(animatedValue, {
-      toValue: progress,
+      toValue: progress > 1 ? 1 : progress,
       duration: duration,
       easing: Easing.inOut(Easing.ease),
       useNativeDriver: true,
@@ -49,7 +49,7 @@ const CircularProgress = ({
           cx={size / 2}
           cy={size / 2}
           r={radius}
-          strokeWidth={strokeWidth}
+          strokeWidth={strokeWidth*0.8}
         />
         {/* Foreground Animated Circle */}
         <AnimatedCircle
@@ -69,8 +69,10 @@ const CircularProgress = ({
           position: 'absolute',
           justifyContent: 'center',
           alignItems: 'center',
-          width: size,
-          height: size,
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
         }}>
         {children}
       </View>

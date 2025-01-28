@@ -21,6 +21,7 @@ const InputField = ({
   multiline,
   isBottomSheet,
   readonly = false,
+  lines= 1,
 }) => {
   const ref = useRef();
   return (
@@ -51,6 +52,7 @@ const InputField = ({
               !!multiline
                 ? styles.textAlignTopVertical
                 : styles.textAlignCenterVertical,
+              {color: "#D0D0D0"},
               style?.fieldStyle,
             ]}>
             <Text>{value}</Text>
@@ -68,9 +70,12 @@ const InputField = ({
               style?.fieldStyle,
             ]}
             placeholder={placeholder}
+            placeholderTextColor="#D0D0D0"
+            numberOfLines={lines}
             value={value}
             onChangeText={onChange}
             readOnly={readonly}
+            
           />
         )}
         {trailing}
@@ -81,21 +86,25 @@ const InputField = ({
 
 const styles = StyleSheet.create({
   iconedTextField: {
-    inputField: {
-      paddingHorizontal: 8,
-      flexGrow: 1,
-      height: '100%',
-    },
+    inputField: StyleSheet.create({
+      inputField: {
+        paddingHorizontal: 8,
+        flexGrow: 1,
+        height: '100%',
+        maxWidth: "100%"
+      }
+    }).inputField,
     overflow: 'scroll',
     display: 'flex',
     flexDirection: 'row',
+    // flex: 1,
     flexWrap: 'nowrap',
     alignItems: 'center',
-    padding: 8,
+    padding: 15.5,
     borderWidth: 1,
-    borderRadius: 5,
-    borderColor: '#7647EB',
-    marginHorizontal: 10,
+    borderRadius: 6,
+    borderColor: "#A0A0A0",
+    
   },
   textAlignTopVertical: {
     textAlignVertical: 'top',

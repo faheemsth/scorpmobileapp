@@ -1,31 +1,51 @@
-import {View, Text} from 'react-native';
+import {View, Text, Modal, Pressable} from 'react-native';
 import React from 'react';
-import Bottomsheet from '../../components/bottom-sheet';
+import Cross from '../../../assets/icons/cross.svg';
 
 const ReasonView = ({onClose, reason}) => {
   return (
-    <Bottomsheet
-      onClose={onClose}
-      handleComponent={() => (
-        <Text
+    <Modal transparent={true} animated={true} animationType='slide'>
+      <View
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          flexDirection: 'column',
+          flex: 1,
+          height: '100%',
+          justifyContent: 'center',
+        }}>
+        <View
           style={{
-            padding: 15,
-            width: '100%',
-            backgroundColor: '#7647EB',
-            color: '#fff',
-            borderTopLeftRadius: 15,
-            borderTopRightRadius: 15,
+            display: 'flex',
+            alignItems: 'center',
+            flexDirection: 'column',
+            backgroundColor: '#FFFFFF',
+            borderRadius: 10,
+            overflow: 'hidden',
+            position: 'relative',
           }}>
-          Reason For Early Clock Out
-        </Text>
-      )}
-      style={{
-        padding: 0,
-        contentContainer: {padding: 0},
-        elevation: 4,
-      }}>
-        <Text style={{padding: 20, width: "100%"}}>{reason}</Text>
-      </Bottomsheet>
+          <Pressable
+            onPress={onClose}
+            style={{position: 'absolute', zIndex: 1, right: 8, top: 5}}>
+            <Cross style={{color: '#ffffff'}} />
+          </Pressable>
+          <Text
+            style={{
+              backgroundColor: '#DC3545',
+              paddingVertical: 16.93,
+              paddingHorizontal: 51,
+              color: '#ffffff',
+              fontSize: 16,
+            }}>
+            Reason For Early Clock-Out
+          </Text>
+          <Text
+            style={{paddingHorizontal: 20, paddingVertical: 32, fontSize: 12}}>
+            {reason}
+          </Text>
+        </View>
+      </View>
+    </Modal>
   );
 };
 

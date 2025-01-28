@@ -1,17 +1,20 @@
-import {View, Text, Pressable, Alert} from 'react-native';
+import {Text, Pressable, Alert} from 'react-native';
 import React, {useEffect, useState, useCallback} from 'react';
 import {TaskListItem} from '../../components/task-list-item';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {ScrollView, StyleSheet} from 'react-native';
 import datalayer from '../../../datalayer/datalayer';
-
 import Plus from '../../../assets/icons/plus.svg';
 import {router, useFocusEffect} from 'expo-router';
+import TabBar from '../../components/tab-bar';
+import { setStatusBarHidden } from 'expo-status-bar';
 
 const AllTasks = () => {
   const [tasks, setTasks] = useState([]);
+  const [filteredTasks, setFilteredTasks] = useState([]);
   const [user, setUser] = useState();
   const [isLoading, setIsLoading] = useState(true);
+  const [filterIndex, setFilterIndex] = useState(0);
 
   const addTaskBtnClick = async () => {
     router.push('/tasks/create-task');
@@ -25,6 +28,35 @@ const AllTasks = () => {
   useEffect(() => {
     setIsLoading(false);
   }, [tasks]);
+
+  useEffect(() => {
+    if (filterIndex == 0) {
+      setFilteredTasks(tasks);
+    } else if (filterIndex == 1) {
+      const ft = tasks?.filter(t => {
+        const d = new Date(t['due_date']);
+        const today = new Date();
+        if (today.getTime() > d.getTime() && t.status == '0') {
+          return true;
+        }
+        return false;
+      });
+      setFilteredTasks(ft);
+    } else if (filterIndex == 2) {
+      const ft = tasks?.filter(t => {
+        const d = new Date(t['due_date']);
+        const today = new Date();
+        if (today.getTime() < d.getTime() && t.status == '0') {
+          return true;
+        }
+        return false;
+      });
+      setFilteredTasks(ft);
+    } else {
+      const ft = tasks?.filter(t => t.status == '1');
+      setFilteredTasks(ft);
+    }
+  }, [filterIndex, tasks]);
 
   useFocusEffect(
     useCallback(() => {
@@ -56,8 +88,16 @@ const AllTasks = () => {
   return (
     <SafeAreaView
       style={{position: 'relative', height: '100%', backgroundColor: '#fff'}}>
-      <ScrollView contentContainerStyle={{gap: 10, padding: 10}}>
-        <Text style={[styles.txt, {fontSize: 24, alignSelf: 'center'}]}>
+      <ScrollView contentContainerStyle={{gap: 10, paddingHorizontal: 10,}}>
+        <Text
+          style={[
+            {
+              fontFamily: 'poppins-500',
+              color: '#7647EB',
+              fontSize: 20,
+              alignSelf: 'center',
+            },
+          ]}>
           Tasks
         </Text>
         <Text style={styles.txt}>
@@ -67,7 +107,34 @@ const AllTasks = () => {
             ? 'No Record Found'
             : 'All Tasks'}
         </Text>
-        {tasks?.map(t => {
+        
+<ScrollView
+  style={{ alignContent: 'center' }}
+  horizontal={true}
+  contentContainerStyle={{
+    paddingHorizontal: 10, 
+    flexDirection: 'row',   
+    alignItems: 'center',  
+    justifyContent: 'flex-start',
+  }}
+  showsHorizontalScrollIndicator={false}
+>
+  <TabBar
+    tabs={[
+      { title: 'All' },
+      { title: 'Overdue' },
+      { title: 'On Going' },
+      { title: 'Completed' },
+    ]}
+    onTabChange={setFilterIndex}
+    selectedIndex={filterIndex} // Pass the selectedIndex to highlight the active tab
+  />
+</ScrollView>
+
+
+  
+
+        {filteredTasks?.map(t => {
           let taskStatus;
           if (t['status'] == '1') {
             taskStatus = 'Completed';
@@ -86,7 +153,7 @@ const AllTasks = () => {
               name={user?.['name']}
               date={t?.['due_date']}
               imageUrl={user?.['avatar']}
-              description={t?.['name']}
+              title={t?.['name']}
               status={taskStatus}
               descriptionText={t?.['description']}
               onDetailClick={() => {
@@ -116,8 +183,9 @@ const AllTasks = () => {
 
 const styles = StyleSheet.create({
   txt: {
-    fontFamily: 'outfit-600',
-    paddingVertical: 4
+    fontFamily: 'poppins-500',
+    fontSize: 16,
+    lineHeight: 24
   },
 });
 

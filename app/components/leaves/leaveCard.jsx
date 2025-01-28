@@ -1,62 +1,117 @@
-import {View, Text, Image, StyleSheet} from 'react-native';
+import {View, Text, StyleSheet} from 'react-native';
 import React from 'react';
 import styles from '../theme';
-import UserIcon from '../../../assets/icons/profile.svg';
 
 const LeaveCard = ({
-  uName = 'No Name...',
+  leaveType = 'type',
+  appliedOn = '13 aug',
   data = [
     {
       heading: 'heading',
       value: 'value',
       style: StyleSheet.create({style: {}}).style,
+      headingStyle: StyleSheet.create({style: {}}).style,
+      rowStyle: StyleSheet.create({style: {}}).style,
     },
   ],
-  url = 'https://s3-alpha-sig.figma.com/img/1097/3fce/926bc64490c18217630a6c74affe3172?Expires=1728864000&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=aMAoK8gJb54DRLNClhEt8YpqwjHcpF8D2u8t3kXfEOoXoJDsV3jOgG0VyW22ICGEDOdrEEGyURcAqwoKdmKG1WEAc~OwuOC8fSwKbY26HnBde64zxOU49Df0U1FNCVrAVyb1b205tFXJHqgHC~wmvUytSId3vrmsHzEOClI5OLSILmm5nyQPHq80XGk2UAqaUlO0jJRhJoFQ1eWVihPJbnnFGefHtbKZrUaIGZVT6bXEiMOg9cDrTC8SmkPMkgZBtDsICmYw2Qwax8WShjtoNwCtwPoYNlqiHd9lnMPO7zh-m0Za8n5JeQAtaAg4bMiGspR4QdFxdsTw7WKlLq1QDg__',
 }) => {
   return (
     <View
       style={[
-        styles.ph(12),
-        styles.pv(12),
-        styles.bg('#fff'),
-        {borderRadius: 5},
+        styles.bg('#FFFFFF'),
+        {
+          borderRadius: 10,
+          borderColor: '#A0A0A0',
+          borderWidth: 1,
+          elevation: 1,
+          gap: 2,
+          backgroundColor: '#ffffff',
+          overflow: 'hidden',
+        },
         styles.gap(5),
       ]}>
-      <View style={[styles.row, styles.gap(10), styles.alignItemsCenter]}>
-        {!!url ? (
-          <Image
-            style={{
-              width: 27,
-              height: 27,
-              borderRadius: 20,
-              borderWidth: 1,
-              borderColor: 'black',
-            }}
-            source={{uri: url}}
-          />
-        ) : (
-          <UserIcon width={27} height={27} style={{color: '#D9D9D9'}} />
-        )}
-        <Text style={[styles.font(400), styles.size(14)]}>{uName}</Text>
+      <View
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          paddingHorizontal: 15,
+        }}>
+        <Text
+          numberOfLines={1}
+          ellipsizeMode="tail"
+          style={{
+            color: '#33CC32',
+            fontSize: 15.21,
+            fontWeight: 500,
+            lineHeight: 22.21,
+            borderWidth: 1,
+            borderColor: '#33CC32',
+            borderRadius: 4,
+            paddingHorizontal: 16,
+            paddingVertical: 0.19,
+            marginTop: 16,
+            marginBottom: 10.19,
+          }}>
+          {leaveType.toUpperCase()}
+        </Text>
+        <Text
+          numberOfLines={2}
+          style={[
+            styles.font(400),
+            styles.size(10),
+            {
+              color: '#414141',
+              fontSize: 8,
+              fontWeight: 600,
+              lineHeight: 13,
+              paddingHorizontal: 8,
+            },
+          ]}>
+          Applied On {'\n'}
+          {appliedOn}
+        </Text>
       </View>
       {data?.map(e => (
         <View
           style={[
             styles.row,
             styles.alignItemsCenter,
-            {justifyContent: 'flex-start'},
+            {justifyContent: 'space-between'},
+            e.rowStyle,
           ]}>
-          <Text style={[styles.font(400), styles.size(12), {flex: 0.8}]}>
+          <Text
+            style={[
+              styles.font(400),
+              styles.size(12),
+              {
+                flex: 1,
+                color: '#A0A0A0',
+                fontSize: 12,
+                fontWeight: 400,
+                lineHeight: 18,
+                paddingHorizontal: 15,
+              },
+              e.headingStyle,
+            ]}>
             {e.heading}
           </Text>
-          <View style={{flex: 1}}>
-            <View style={[styles.row, styles.alignItemsCenter, {flex: 1}]}>
-              <Text style={[styles.font(400), styles.size(10), e.style]}>
-                {e.value}
-              </Text>
-            </View>
-          </View>
+          <Text
+            style={[
+              styles.font(400),
+              styles.size(10),
+              {
+                color: '#414141',
+                flex: 1,
+                fontSize: 12,
+                fontWeight: 600,
+                lineHeight: 13,
+                paddingHorizontal: 15,
+              },
+              e.style,
+            ]}>
+            {e.value}
+          </Text>
         </View>
       ))}
     </View>
@@ -64,4 +119,3 @@ const LeaveCard = ({
 };
 
 export default LeaveCard;
-0;

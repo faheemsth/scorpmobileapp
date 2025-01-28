@@ -10,11 +10,9 @@ import {
   Alert,
 } from 'react-native';
 
-import Clock from '../../../assets/icons/clock.svg';
-import Clockin from '../../../assets/icons/clockin.svg';
-import Clockout from '../../../assets/icons/clockout.svg';
-import Clockmarked from '../../../assets/icons/clockmarked.svg';
-
+import Clockout from '../../../assets/icons/clockkout.svg';
+import Clockmarked from '../../../assets/icons/totalhrs.svg';
+import Clockin from '../../../assets/icons/clockkin.svg';
 import {LinearGradient} from 'expo-linear-gradient';
 import datalayer, {
   useClockinStatus,
@@ -23,7 +21,7 @@ import datalayer, {
 import {router, useFocusEffect} from 'expo-router';
 import WriteEarlyCheckoutReason from './write-early-check-out-reason';
 import Btn from '../../components/btn';
-
+import BGIcon from '../../../assets/icons/BGIcon.svg';
 import UserIcon from '../../../assets/icons/profile.svg';
 
 const ClockInOut = () => {
@@ -84,7 +82,7 @@ const ClockInOut = () => {
     let newValue = false;
     if (!!clockinStatus) {
       const hasCompletedHours =
-        (await datalayer.attendanceLayer.hasCompletedHours(9)) == true;
+        (await datalayer.attendanceLayer.hasCompletedHours()) == true;
       console.log('hasCompletedHours', hasCompletedHours);
       if (!hasCompletedHours) {
         // show bottom-sheet and request reason
@@ -114,7 +112,7 @@ const ClockInOut = () => {
   };
 
   const formatToHhMm = useCallback(date => {
-    if (!!!date) return '00:00 AM';
+    if (!!!date) return '00:00';
     const d = new Date(date);
     return `${d?.getHours() < 10 ? '0' : ''}${d?.getHours()}:${
       d?.getMinutes() < 10 ? '0' : ''
@@ -165,11 +163,20 @@ const ClockInOut = () => {
             </View>
           </View>
         </View>
+        <BGIcon style={{position: 'absolute', right: 0}}></BGIcon>
         <View style={styles.indexCard}>
-          <Text style={{marginTop: 27, fontWeight: 600, fontSize: 32}}>
+          <Text style={{marginTop: 27, fontWeight: 500, fontSize: 32}}>
             {time.toTimeString().substring(0, 5)}
           </Text>
-          <Text style={{color: '#6C6C6C'}}>{time.toDateString()}</Text>
+          <Text
+            style={{
+              color: '#A0A0A0',
+              fontSize: 16,
+              fontWeight: 400,
+              lineHeight: 26,
+            }}>
+            {time.toDateString()}
+          </Text>
           <View
             style={{
               alignItems: 'center',
@@ -189,7 +196,7 @@ const ClockInOut = () => {
                   height: 97,
                   borderRadius: 1000,
                   borderWidth: 6.73,
-                  borderColor:"#fff",
+                  borderColor: '#fff',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -197,7 +204,7 @@ const ClockInOut = () => {
                 }}>
                 <Text
                   style={{
-                    color: 'white',
+                    color: '#FFFFFF',
                     fontWeight: '500',
                     marginTop: 5,
                     marginBottom: 10,
@@ -211,21 +218,11 @@ const ClockInOut = () => {
 
           <View
             style={{
-              borderBottomWidth: 1,
-              borderColor: 'rgba(0, 0, 0, 0.25)',
-              borderStyle: 'dashed',
-              width: 261,
-              alignSelf: 'center',
-              marginTop: 39,
-            }}
-          />
-
-          <View
-            style={{
               display: 'flex',
               flexDirection: 'row',
               alignItems: 'center',
               justifyContent: 'space-between',
+              marginTop: 26,
             }}>
             <View
               style={{
@@ -233,54 +230,85 @@ const ClockInOut = () => {
                 marginHorizontal: 12,
                 marginVertical: 19,
               }}>
-              <Clockin width={26} height={22} />
+              <Clockin width={26} height={32} />
 
               <Text
                 style={{
                   textAlign: 'center',
-                  marginTop: 3,
-                  color: '#A0A0A0',
+                  lineHeight: 21,
+                  fontWeight: 600,
+                  color: '#000',
+                  fontSize: 14,
                 }}>
                 {formatToHhMm(clockinTime)}
-                {'\n'}Clock in
+                {'\n'}
+                <Text
+                  style={{
+                    color: '#A0A0A0',
+                    fontSize: 12,
+                    fontWeight: 400,
+                    lineHeight: 18,
+                  }}>
+                  Clock in
+                </Text>
               </Text>
             </View>
 
             <View style={{alignItems: 'center', marginHorizontal: 12}}>
-              <Clockout width={30} height={24} />
+              <Clockout width={30} height={32} />
               <Text
                 style={{
                   textAlign: 'center',
-                  marginTop: 3,
-                  color: '#A0A0A0',
+                  lineHeight: 21,
+                  fontWeight: 600,
+                  color: '#000',
+                  fontSize: 14,
                 }}>
                 {formatToHhMm(clockoutTime)}
-                {'\n'}Clock out
+                {'\n'}
+                <Text
+                  style={{
+                    color: '#A0A0A0',
+                    fontSize: 12,
+                    fontWeight: 400,
+                    lineHeight: 18,
+                  }}>
+                  Clock out
+                </Text>
               </Text>
             </View>
 
             <View style={{alignItems: 'center', marginHorizontal: 12}}>
-              <Clockmarked width={27} height={24} />
+              <Clockmarked width={27} height={32} />
               <Text
                 style={{
                   textAlign: 'center',
-                  marginTop: 4,
-                  color: '#A0A0A0',
+                  lineHeight: 21,
+                  fontWeight: 600,
+                  color: '#000',
+                  fontSize: 14,
                 }}>
                 {formatTotalHours(totalHours ?? {hours: 0, minutes: 0})}
-                {'\n'}Total hrs
+                {'\n'}
+                <Text
+                  style={{
+                    color: '#A0A0A0',
+                    fontSize: 12,
+                    fontWeight: 400,
+                    lineHeight: 18,
+                  }}>
+                  Total hrs
+                </Text>
               </Text>
             </View>
           </View>
         </View>
-
         <Btn
           handleClick={handleViewAttendanceClicked}
           style={{
             width: 328,
             borderColor: '#7647EB',
             borderWidth: 1,
-
             elevation: 0,
             alignSelf: 'center',
             marginVertical: 20,
@@ -291,7 +319,7 @@ const ClockInOut = () => {
           title={'View Your Attendance'}
         />
       </ScrollView>
-      {requestEarlyCheckoutReason && (
+      {requestEarlyCheckoutReason   && (
         <View
           style={{
             position: 'absolute',
@@ -395,11 +423,20 @@ const styles = StyleSheet.create({
     color: 'white',
     marginTop: 28,
     fontWeight: '600',
+    fontSize: 20,
+    
+    letterSpacing: 0.005,
   },
   textC: {
     color: 'white',
-    marginTop: 7,
+    marginTop: 0,
+
     fontWeight: '400',
+    fontFamily: 'Outfit',
+    fontSize: 14,
+    lineHeight: 26,
+    letterSpacing: 0.005,
+    textAlign: 'left',
   },
 });
 

@@ -4,7 +4,8 @@ import { Stack } from 'expo-router'
 
 const TasksStack = () => {
     return (
-        <Stack>
+        <Stack screenOptions={{headerShadowVisible: false}}>
+
             <Stack.Screen
                 name='index'
                 options={{
@@ -14,9 +15,10 @@ const TasksStack = () => {
             <Stack.Screen
                 name='create-task'
                 options={{
-                    headerTitle: "Create Task",
+                    headerTitle: "Create New Task",
                     headerTransparent: true,
-
+                    headerTitleStyle: {color: "#7647EB"},
+                    headerTitleAlign: 'center',
                 }}
                 />
         </Stack>

@@ -1,23 +1,21 @@
-import { LinearGradient } from 'expo-linear-gradient';
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   StyleSheet,
   Text,
   View,
   Image,
   ScrollView,
-  TextInput,
   Pressable,
   Alert,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import Email from '../../assets/icons/email.svg';
-import Lock from '../../assets/icons/lock.svg';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import Eye from '../../assets/icons/eye.svg';
 import Btn from '../components/btn';
 import datalayer from '../../datalayer/datalayer';
-import { router, useNavigation } from 'expo-router';
+import {router, useNavigation} from 'expo-router';
 import InputField from '../components/input-field';
+import GIcon from '../../assets/icons/g-icon.svg';
+import CHicon from '../../assets/icons/CHicon.svg';
 
 import {
   GoogleSignin,
@@ -42,8 +40,14 @@ const Login = () => {
   }, [imgTouchCount]);
 
   useEffect(() => {
-    navigation.setOptions({ headerShown: false });
-    datalayer.authLayer.allowEmailPassLogin().then(bool => { setShowMasterLogin(true); setImageTouchCount(5) }).catch(console.error)
+    navigation.setOptions({headerShown: false});
+    datalayer.authLayer
+      .allowEmailPassLogin()
+      .then(bool => {
+        console.log('allowEmailPassLogin', bool);
+        setShowMasterLogin(bool);
+      })
+      .catch(console.error);
   }, []);
 
   handlePassEyeClick = () => {
@@ -82,10 +86,11 @@ const Login = () => {
         if (isErrorWithCode(error)) {
           msg = 'an error with code:' + JSON.stringify(error);
         } else {
-          msg = 'Some other error' + JSON.stringify(error?.['message'] ?? error);
+          msg =
+            'Some other error' + JSON.stringify(error?.['message'] ?? error);
         }
       }
-      console.error("Error", msg);
+      console.error('Error', msg);
       Alert.alert('Error', msg);
     }
   };
@@ -102,32 +107,37 @@ const Login = () => {
   return (
     <View style={styles.root}>
       <ScrollView
-        contentContainerStyle={{ flexGrow: 1 }}
+        contentContainerStyle={{flexGrow: 1}}
         style={styles.scrollable}>
         <SafeAreaView style={styles.container}>
-          <Text style={styles.headingText}>Convosoft People Portal</Text>
-          <Pressable onPress={handleImagePressed}>
-            <Image source={require('../../assets/welcome_icon.png')} />
-          </Pressable>
-          <View
-            style={styles.loginView}>
-            <Btn
-              title={'Google Login'}
-              style={{ marginHorizontal: 10 }}
-              handleClick={handleLoginClick}
-            />
+          <View style={{alignItems: 'center', gap: 14}}>
+            <Text style={styles.headingText}>Convosoft People Portal</Text>
+            <Pressable onPress={handleImagePressed}>
+              <Image source={require('../../assets/welcome_icon.png')} />
+            </Pressable>
+          </View>
+
+          <View style={styles.loginView}>
+            <Text
+              style={{
+                color: '#7647EB',
+                fontSize: 24,
+                fontWeight: 500,
+                textAlign: 'center',
+              }}>
+              Login with your email
+            </Text>
+
             {!!showMasterLogin ? (
               <>
                 <InputField
-                  leading={<Email width={20} height={20} />}
-                  placeholder="Enter Your Email"
+                  placeholder="Email"
                   value={email}
                   onChange={setEmail}
                 />
                 <InputField
-                  leading={<Lock width={20} height={20} />}
                   secureTextEntry={hidePass}
-                  placeholder="Enter Your Password"
+                  placeholder="Password"
                   value={pswd}
                   onChange={setPswd}
                   trailing={
@@ -136,16 +146,40 @@ const Login = () => {
                         <Eye width={20} height={20} />
                       </Pressable>
                     </>
+                    
                   }
                 />
-
-                <Btn
-                  title={'Login'}
-                  style={{ marginHorizontal: 10 }}
-                  handleClick={handleMasterLoginClick}
-                />
+                 
+                <Btn title={'Login'} handleClick={handleMasterLoginClick} />
               </>
-            ) : null}
+            ) : (
+              <Btn
+                leading={
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      gap: 5,
+                    }}>
+                    <GIcon></GIcon>
+                    <Text
+                      style={{
+                        color: '#414141',
+                      }}>
+                      Google Login
+                    </Text>
+                  </View>
+                }
+                style={{
+                  backgroundColor: '#FFFFFF',
+                  elevation: 0,
+                  borderWidth: 1.5,
+                  borderColor: '#D0D0D0',
+                }}
+                handleClick={handleLoginClick}
+              />
+            )}
+            
+
           </View>
         </SafeAreaView>
       </ScrollView>
@@ -157,13 +191,22 @@ const styles = StyleSheet.create({
   root: {
     width: '100%',
     height: '100%',
+    borderColor: '#ffffff',
+    backgroundColor: '#FFFFFF',
   },
   headingText: {
-    fontSize: 20,
+    marginTop: 83,
+    fontSize: 24,
+    height: 36,
+    marginBottom: 14,
+    width: 362,
+    textTransform: "uppercase",
+    lineHeight: 36,
+    textAlign: 'center',
     fontWeight: '700',
     color: '#7647EB',
   },
-  scrollable: { flexGrow: 1, display: 'flex' },
+  scrollable: {flexGrow: 1, display: 'flex'},
   container: {
     display: 'flex',
     flexDirection: 'column',
@@ -195,7 +238,7 @@ const styles = StyleSheet.create({
     padding: 8,
     borderWidth: 1,
     borderRadius: 5,
-    borderColor: '#7647EB',
+    borderColor: '#000',
     marginHorizontal: 10,
   },
 });

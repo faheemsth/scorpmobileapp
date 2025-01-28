@@ -1,9 +1,11 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import * as Location from 'expo-location';
-import {useCallback, useEffect, useMemo, useState} from 'react';
+import {useCallback, useEffect, useState} from 'react';
 import {Alert} from 'react-native';
 import {fetchText} from 'react-native-svg';
+import * as FileSystem from 'expo-file-system';
+import * as Sharing from 'expo-sharing';
 
 const base_url = 'https://api.convosoftserver.com/api/'; // Private variable
 const keys = {
@@ -12,6 +14,7 @@ const keys = {
   clockedIn: 'CLOCKED_IN',
   clockedInTime: 'CLOCKED_IN_TIME',
   clockedOutTime: 'CLOCKED_OUT_TIME',
+  hasSeenOnboarding: 'HAS_SEEN_ONBOARDING',
 };
 
 const storeData = async (key, data) => {
@@ -31,15 +34,42 @@ const getData = async key => {
   }
 };
 
-const isAtSite = async (userLatLng, branchLatLng) => {
-  const distance = await LocationLayer.getDistanceFromLatLonInM(
-    userLatLng.lat,
-    userLatLng.lng,
-    branchLatLng.lat,
-    branchLatLng.lng,
+export const download = async (name, url) => {
+  console.log('Downloading', url);
+  const dotSplittedUrl = String(url).split('.');
+  const extension = dotSplittedUrl.at((dotSplittedUrl?.length ?? 1) - 1);
+  const fileName = `${name}.${extension}`;
+
+  // Path for documentDirectory (default Expo location)
+  const downloadPath = FileSystem.cacheDirectory + fileName;
+
+  const downloadResumable = FileSystem.createDownloadResumable(
+    url,
+    downloadPath,
+    {},
+    downloadProgress => {
+      const progress =
+        (downloadProgress.totalBytesWritten /
+          downloadProgress.totalBytesExpectedToWrite) *
+        100;
+      console.info('Downloaded ', progress, '%');
+    },
   );
-  console.info('distance', distance);
-  return distance <= 100;
+
+  try {
+    const {uri} = await downloadResumable.downloadAsync();
+    console.log('Finished downloading to', uri);
+
+    // Now open share dialog for saving in Downloads
+    if (await Sharing.isAvailableAsync()) {
+      await Sharing.shareAsync(uri);
+      console.log('File shared successfully.');
+    } else {
+      console.log('Sharing not available on this device');
+    }
+  } catch (e) {
+    console.error(e);
+  }
 };
 
 const LocationLayer = (() => {
@@ -196,7 +226,24 @@ const AuthLayer = (() => {
     GoogleSignin.signOut();
   };
 
-  const getUserProfile = async ()=>{
+  const editProfile = async ({email, name, phone, address}) => {
+    const token = await getData(keys.token);
+    if (!!!token) {
+      return Promise.reject({message: 'no token'});
+    }
+    const res = await fetch(`${base_url}editProfile`, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({email, name, phone, address}),
+    });
+    return await res.json();
+  };
+
+  const getUserProfile = async () => {
     const token = await getData(keys.token);
     if (!!!token) {
       return Promise.reject({message: 'no token'});
@@ -209,10 +256,21 @@ const AuthLayer = (() => {
         Authorization: `Bearer ${token}`,
       },
     });
-    const data = await res.json()
-    return data?.["profileData"]
-
-  }
+    const data = await res.json();
+    const profData = await data?.['profileData'];
+    const linkCorrectedData = {
+      ...profData,
+      avatar: !!!profData.avatar
+        ? ''
+        : `${data?.avtar_base_url}${profData.avatar}`,
+      employee_docs: {
+        base_url: data?.doc_base_url,
+        data: data?.employee_docs,
+      },
+    };
+    console.log('getUserProfile', linkCorrectedData);
+    return linkCorrectedData;
+  };
 
   const postGoogleLoginReq = async email => {
     const res = await fetch(`${base_url}googlelogin`, {
@@ -282,6 +340,7 @@ const AuthLayer = (() => {
       }),
     });
     const response = await res.json();
+    console.log('login response is', response);
     const data = response['data'];
     if (!!!data || !!!data?.['token'])
       return Promise.reject({message: 'Authentication error'});
@@ -316,10 +375,11 @@ const AuthLayer = (() => {
         'Content-Type': 'application/json',
       },
     });
-    const data = await res.json()
-    return data?.["metaData"]
-  }
-  const allowEmailPassLogin = async () => (await getMeta())?.["isLoginForm"] == 1
+    const data = await res.json();
+    return data?.['metaData'];
+  };
+  const allowEmailPassLogin = async () =>
+    (await getMeta())?.['isLoginForm'] == 1;
 
   return {
     login,
@@ -331,8 +391,22 @@ const AuthLayer = (() => {
     getUserProfile,
     getMeta,
     allowEmailPassLogin,
+    editProfile,
   };
 })();
+
+const isAtSite = async (userLatLng, branchLatLng) => {
+  const attendanceLayer = AttendanceLayer;
+  const distance = await LocationLayer.getDistanceFromLatLonInM(
+    userLatLng.lat,
+    userLatLng.lng,
+    branchLatLng.lat,
+    branchLatLng.lng,
+  );
+  const allowedRadius = await attendanceLayer.allowedRadius();
+  console.info('distance', distance, 'allowedRadius', allowedRadius);
+  return {atSite: distance <= allowedRadius, distance, allowedRadius};
+};
 
 const AttendanceLayer = (() => {
   const authLayer = AuthLayer;
@@ -342,6 +416,9 @@ const AttendanceLayer = (() => {
     LOGIN_FROM_SPECIFIC_LOCATION: 2,
     LOGIN_FROM_BRANCH: 1,
   };
+
+  const allowedRadius = async () =>
+    (await authLayer.getMeta())?.['allowedRadius'];
 
   const clockIn = async () => {
     const user = await authLayer.getUserProfile();
@@ -390,15 +467,19 @@ const AttendanceLayer = (() => {
       clockInStatus = status.LOGIN_FROM_BRANCH;
     }
 
-    if (
-      !!!(await isAtSite(
-        {lat: lnp.coords.latitude, lng: lnp.coords.longitude},
-        user?.['isloginrestrickted'] == 1 ? branchLatLng : userLatLng,
-      )) &&
-      user?.['isloginanywhere'] == 0
-    ) {
+    const {atSite, distance, allowedRadius} = await isAtSite(
+      {lat: lnp.coords.latitude, lng: lnp.coords.longitude},
+      user?.['isloginrestrickted'] == 1 ? branchLatLng : userLatLng,
+    );
+    if (!!!atSite && user?.['isloginanywhere'] == 0) {
       return Promise.reject({
-        message: 'you are out of the 100 meters radius from your branch',
+        message:
+          'you are out of the ' +
+          allowedRadius +
+          ' meters radius from your branch' +
+          'you are ' +
+          distance +
+          ' meters away',
       });
     }
     const token = await getData(keys.token);
@@ -443,7 +524,9 @@ const AttendanceLayer = (() => {
     const minutes = Math.floor((diffMs / 60000) % 60);
     return {hours, minutes};
   };
-  const hasCompletedHours = async totalDutyHoursPerDay => {
+  const hasCompletedHours = async () => {
+    const branch = (await authLayer.getUserBranchAsync()).branch;
+    console.log('branch is: ', branch);
     const cit = JSON.parse(await getData(keys.clockedInTime));
     console.log('cit', cit);
     const now = new Date().getTime();
@@ -451,8 +534,15 @@ const AttendanceLayer = (() => {
     const diffMs = now - cit;
     const diffHrs = Math.floor(diffMs / 3.6e6);
     const diffMinutes = Math.floor((diffMs / 60000) % 60);
-    console.log('diffHrs', diffHrs, 'diffMinutes', diffMinutes);
-    return totalDutyHoursPerDay <= diffHrs;
+    console.log(
+      'diffHrs',
+      diffHrs,
+      'diffMinutes',
+      diffMinutes,
+      `(${branch?.shift_time} ?? 8 = ${branch?.shift_time ?? 8}) <= ${diffHrs}`,
+      branch?.shift_time ?? 8 <= diffHrs,
+    );
+    return (branch?.shift_time ?? 8) <= diffHrs;
   };
   const clockOut = async reason => {
     const user = await authLayer.getUserProfile();
@@ -489,15 +579,20 @@ const AttendanceLayer = (() => {
         message: 'user allowed clocking location is missing',
       });
 
-    if (
-      !!!(await isAtSite(
-        {lat: lnp.coords.latitude, lng: lnp.coords.longitude},
-        user?.['isloginrestrickted'] == 1 ? branchLatLng : userLatLng,
-      )) &&
-      user?.['isloginanywhere'] == 0
-    ) {
+    const {atSite, distance, allowedRadius} = await isAtSite(
+      {lat: lnp.coords.latitude, lng: lnp.coords.longitude},
+      user?.['isloginrestrickted'] == 1 ? branchLatLng : userLatLng,
+    );
+
+    if (!!!atSite && user?.['isloginanywhere'] == 0) {
       return Promise.reject({
-        message: 'you are out of the 100 meters radius from your branch',
+        message:
+          'you are out of the ' +
+          allowedRadius +
+          ' meters radius from your branch ' +
+          'you are ' +
+          distance +
+          ' meters away',
       });
     }
 
@@ -588,6 +683,7 @@ const AttendanceLayer = (() => {
     getClockoutTimeAsync,
     hasCompletedHours,
     countDutyTime,
+    allowedRadius,
   };
 })();
 
@@ -631,12 +727,25 @@ const LeavesLayer = (() => {
     leave_reason,
     start_date,
     end_date,
+    is_compensatory,
     remark = 'no remarks',
   }) => {
     const token = await getData(keys.token);
     if (!!!token) {
       return Promise.reject({message: 'no token'});
     }
+    const requestBody = JSON.stringify({
+      brand_id,
+      region_id,
+      branch_id,
+      leave_type_id,
+      leave_reason,
+      start_date,
+      end_date,
+      is_compensatory,
+      remark,
+    });
+    console.info('requestbody: ' + requestBody);
     const res = await fetch(`${base_url}createLeave`, {
       method: 'POST',
       headers: {
@@ -644,19 +753,10 @@ const LeavesLayer = (() => {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({
-        brand_id,
-        region_id,
-        branch_id,
-        leave_type_id,
-        leave_reason,
-        start_date,
-        end_date,
-        remark,
-      }),
+      body: requestBody,
     });
-    const response = (await res.json());
-    console.log("leave request response", JSON.stringify(response))
+    const response = await res.json();
+    console.log('leave request response', JSON.stringify(response));
     return response?.['success'] == 'Leave successfully created.';
   };
 
@@ -716,12 +816,45 @@ export function useLeaves() {
         ],
       }));
 
-      const lvsTypesWithUsed = lvsTypes?.map(e => ({
-        ...e,
-        used: lvs?.filter(f => f?.['leave_type_id'] === e?.['id'])?.length ?? 0,
-      }));
+      const lvsTypesWithUsed = lvsTypes
+        ?.map(e => {
+          const usedLeaves =
+            lvs
+              ?.filter(f => f?.['leave_type_id'] === e?.['id'])
+              ?.reduce((prev, current) => {
+                let endDate = new Date(current?.['end_date']);
+                let startDate = new Date(current?.['start_date']);
+                let daysDiff = (endDate - startDate) / 86400000 + 1;
+                console.log(
+                  'daysDiff',
+                  daysDiff,
+                  startDate.getDate(),
+                  endDate.getDate(),
+                );
+                let totalLeaves = daysDiff;
+                if (typeof prev === 'number') {
+                  totalLeaves = prev + daysDiff;
+                }
+                return totalLeaves;
+              }, 0) ?? 0;
+          console.log('usedLeaves', usedLeaves, e.title);
+          return {
+            ...e,
+            used: usedLeaves,
+          };
+        })
+        ?.sort((a, b) => {
+          if (a.id < b.id) return -1;
+          if (a.id > b.id) return 1;
+          return 0;
+        });
 
-      console.log('useLeaves', lvs, lvsTypes.length, lvsTypesWithUsed.length);
+      console.log(
+        'useLeaves',
+        lvs?.length,
+        lvsTypes?.length,
+        lvsTypesWithUsed.map(e => e.id),
+      );
 
       setLeaves(lvsWithType ?? []);
       setLeavesTypes(lvsTypesWithUsed ?? []);

@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   input: {
-    fontFamily: 'outfit-400',
+    fontFamily: 'poppins-400',
     borderColor: '#7647EB',
     borderWidth: 1,
     borderRadius: 5,
@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   dropdown: {
-    fontFamily: 'outfit-400',
+    fontFamily: 'poppins-400',
     borderColor: '#7647EB',
     borderWidth: 1,
     position: 'absolute', // Absolutely positioned
@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
     elevation: 5, // For Android shadow
   },
   item: {
-    fontFamily: 'outfit-400',
+    fontFamily: 'poppins-400',
     padding: 10,
     borderBottomWidth: 1,
     borderBottomColor: '#7647EB',

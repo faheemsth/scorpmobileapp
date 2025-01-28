@@ -33,11 +33,13 @@ const Btn = ({
         <LinearGradient
           style={[styles.btn, style]}
           colors={gradientColors ?? ['#fff0', '#fff0']}>
-          {leading}
-          <Text style={[styles.btn.txt, {color: style?.color ?? '#fff'}]}>
+          {!!leading? leading:null}
+          {!!title ?(
+          <Text style={[styles.btn.txt, {color: style?.color ?? '#fff',}]}>
             {title}
           </Text>
-          {trailing}
+          ):null}
+          {!!trailing? trailing:null}
         </LinearGradient>
       </Pressable>
       <Modal
@@ -61,12 +63,15 @@ const Btn = ({
 const styles = StyleSheet.create({
   btn: {
     display: 'flex',
+    
     flexDirection: 'row',
     flexWrap: 'nowrap',
     backgroundColor: '#7647EB',
-    borderRadius: 5,
-    padding: 8,
-    elevation: 4,
+    borderRadius: 8,
+    
+    paddingHorizontal: 20,
+    paddingVertical: 11,
+    elevation: 0,
     color: '#fff',
     gap: 4,
     justifyContent: 'space-around',
@@ -76,7 +81,9 @@ const styles = StyleSheet.create({
       color: '#fff',
       textAlign: 'center',
       margin: 4,
-      fontFamily: 'outfit-500',
+      fontSize: 16,
+      fontFamily: 'poppins-500',
+      fontWeight: 500,
     },
   },
 });

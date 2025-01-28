@@ -58,38 +58,52 @@ const LeaveHistory = () => {
           leaves?.map(e => {
             return (
               <LeaveCard
-                url={user?.['avatar']}
-                key={e?.['id']}
-                uName={user?.['name']}
-                data={[
-                  {heading: 'Leave type', value: e?.['leave_type']},
-                  {heading: 'Applied on', value: e?.['applied_on']},
-                  {heading: 'Start Date', value: e?.['start_date']},
-                  {heading: 'End Date', value: e?.['end_date']},
-                  {heading: 'Leave Reason', value: e?.['leave_reason']},
-                  {
-                    heading: 'Status',
-                    value: e?.['status'],
-                    style: {
-                      ...styles.ph(10),
-                      ...styles.pv(3.5),
-                      ...styles.bg(
-                        e?.['status'].toLocaleLowerCase() == 'pending'
-                          ? '#FDC933'
-                          : e?.['status'].toLocaleLowerCase() == 'rejected'
-                          ? '#D5213C'
-                          : '#11A120',
-                      ),
-
-                      borderRadius: 1000,
-                      color:
-                        e?.['status'].toLocaleLowerCase() == 'pending'
-                          ? '#000'
-                          : '#fff',
+                  leaveType={e?.leave_type}
+                  appliedOn={e?.applied_on}
+                  key={e?.['id']}
+                  data={[
+                    {
+                      heading: 'Leave type',
+                      value: e?.['leave_type'],
+                      rowStyle: {},
                     },
-                  },
-                ]}
-              />
+                    {heading: 'Start Date', value: e?.['start_date']},
+                    {heading: 'End Date', value: e?.['end_date']},
+                    {heading: 'Leave Reason', value: e?.['leave_reason']},
+                    {
+                      heading: 'STATUS',
+                      value: e?.['status'],
+                      rowStyle: {
+                        ...styles.bg(
+                          e?.['status'].toLocaleLowerCase() == 'pending'
+                            ? '#FDC93333'
+                            : e?.['status'].toLocaleLowerCase() == 'rejected'
+                            ? '#D5213C33'
+                            : '#11A12033',
+                        ),
+                      },
+                      style: {
+                        color:
+                          e?.['status'].toLocaleLowerCase() == 'pending'
+                            ? '#FDC933'
+                            : '#fff',
+                        flex: 1,
+                        alignItems: 'center',
+                        textAlign: 'center',
+                      },
+                      headingStyle: {
+                        backgroundColor: '#e4dafb',
+                        borderBottomLeftRadius: 10,
+                        color: '#7647EB',
+                        fontSize: 10,
+                        fontWeight: 600,
+                        alignItems: 'center',
+                        textAlign: 'center',
+                        padding: 8.73,
+                      },
+                    },
+                  ]}
+                />
             );
           })}
       </ScrollView>
